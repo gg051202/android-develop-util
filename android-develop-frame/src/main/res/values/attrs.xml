@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="InfoItem">
+        <!--右边的图片资源id-->
+        <attr name="InfoItemImage" format="reference"/>
+
+        <!--右边图片的宽高-->
+        <attr name="InfoItemImageHeight" format="dimension"/>
+        <attr name="InfoItemImageWidth" format="dimension"/>
+        <!--titleTextView的宽度-->
+        <attr name="InfoItemtitleTextWidth" format="dimension"/>
+
+        <!--InfoItem的内边距-->
+        <attr name="InfoItemPaddingLeft" format="dimension"/>
+        <attr name="InfoItemPaddingTop" format="dimension"/>
+        <attr name="InfoItemPaddingRight" format="dimension"/>
+        <attr name="InfoItemPaddingBottom" format="dimension"/>
+
+        <!--titleTextView的尺寸、颜色-->
+        <attr name="InfoItemTitleText" format="string"/>
+        <attr name="InfoItemTitleTextSize" format="integer"/>
+        <attr name="InfoItemTitleTextColor" format="color"/>
+        <!--descTextViewd的文字的尺寸、颜色-->
+        <attr name="InfoItemDescText" format="string"/>
+        <attr name="InfoItemDescTextSize" format="integer"/>
+        <attr name="InfoItemDescTextColor" format="color"/>
+        <!--InfoItemItem的高度-->
+        <attr name="InfoItemHeight" format="dimension"/>
+        <!--InfoItemItem的上下分割线是否显示-->
+        <attr name="InfoItemShowTopDivider" format="boolean"/>
+        <attr name="InfoItemShowBottomDivider" format="boolean"/>
+    </declare-styleable>
+
+
+    <declare-styleable name="CommonItem">
+        <!--左边的图片资源id-->
+        <attr name="commonLeftImage" format="reference"/>
+        <!--右边的图片资源id-->
+        <attr name="commonRightImage" format="reference"/>
+
+        <!--左边图片的宽高-->
+        <attr name="commonLeftImageHeight" format="dimension"/>
+        <attr name="commonLeftImageWidth" format="dimension"/>
+        <!--右边图片的宽高-->
+        <attr name="commonRightImageHeight" format="dimension"/>
+        <attr name="commonRightImageWidth" format="dimension"/>
+        <!--左边图片与文字的间距-->
+        <attr name="commonLeftMargin" format="dimension"/>
+        <!--右边图片与文字的间距-->
+        <attr name="commonRightMargin" format="dimension"/>
+
+        <!--CommonItem的内边距-->
+        <attr name="commonPaddingLeft" format="dimension"/>
+        <attr name="commonPaddingTop" format="dimension"/>
+        <attr name="commonPaddingRight" format="dimension"/>
+        <attr name="commonPaddingBottom" format="dimension"/>
+
+        <!--左边文字的尺寸、颜色-->
+        <attr name="commonLeftText" format="string"/>
+        <attr name="commonLeftTextSize" format="integer"/>
+        <attr name="commonLeftTextColor" format="color"/>
+        <!--右边文字的尺寸、颜色-->
+        <attr name="commonRightText" format="string"/>
+        <attr name="commonRightTextSize" format="integer"/>
+        <attr name="commonRightTextColor" format="color"/>
+        <!--CommonItem的高度-->
+        <attr name="commonHeight" format="dimension"/>
+        <!--CommonItem是否显示上下分割线-->
+        <attr name="commonShowTopDivider" format="boolean"/>
+        <attr name="commonShowBottomDivider" format="boolean"/>
+        <!--点击时是否变色-->
+        <attr name="commonClickColor" format="boolean"/>
+    </declare-styleable>
+
+
+</resources>

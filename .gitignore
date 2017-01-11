@@ -1,0 +1,12 @@
+*.iml
+.gradle
+.idea
+build
+/local.properties
+.DS_Store
+/captures
+.externalNativeBuild
+node_modules/
+npm-debug.log
+demo
+js
