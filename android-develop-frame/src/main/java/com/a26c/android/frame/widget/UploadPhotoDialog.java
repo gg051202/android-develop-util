@@ -66,7 +66,7 @@ public class UploadPhotoDialog {
 
 
     private AlertDialog dialog;
-    private OnItemClick listener;
+    private DialogListener listener;
     private Context context;
     /**
      * 这个值等于0表示获取到的图片无需压缩
@@ -83,7 +83,7 @@ public class UploadPhotoDialog {
      * @param ratio_  想要获取图片的宽高比，必传！传0表示不进行压缩
      * @param l       点击按钮的监听 ，可以设为空，那么就默认打开相机和相册的操作
      */
-    public UploadPhotoDialog(Context context, float ratio_, OnItemClick l) {
+    public UploadPhotoDialog(Context context, float ratio_, DialogListener l) {
         this.context = context;
         radio = ratio_;
         listener = l;
@@ -138,10 +138,15 @@ public class UploadPhotoDialog {
     }
 
 
-    public interface OnItemClick {
+    public interface DialogListener {
         void photoClick();
 
         void albumClick();
+
+        /**
+         * 从相册或者相机刚刚获取到图片时
+         */
+        void receiveImage();
 
     }
 
@@ -172,6 +177,7 @@ public class UploadPhotoDialog {
             return;
         switch (requestCode) {
             case RESULT_CAMERA:
+                if (listener != null) listener.receiveImage();
                 Observable.just(1)
                         .map(new Func1<Integer, HashMap<String, Object>>() {
                             @Override
@@ -202,6 +208,7 @@ public class UploadPhotoDialog {
                 break;
 
             case RESULT_ALBUM:
+                if (listener != null) listener.receiveImage();
                 Observable.just(1)
                         .map(new Func1<Integer, HashMap<String, Object>>() {
                             @Override
