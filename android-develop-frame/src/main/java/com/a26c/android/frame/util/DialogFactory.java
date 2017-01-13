@@ -11,20 +11,9 @@ import android.support.v7.app.AlertDialog;
 public class DialogFactory {
 
 
-    public static AlertDialog show(Context context, String title, String message,
-                                   String negative, DialogInterface.OnClickListener negativeListener,
-                                   String positive, DialogInterface.OnClickListener positiveListener) {
-
-        AlertDialog alertDialog = new AlertDialog.Builder(context).setTitle(title)
-                .setMessage(message)
-                .setNegativeButton(negative, negativeListener)
-                .setPositiveButton(positive, positiveListener).create();
-        alertDialog.show();
-        return alertDialog;
-    }
-    public static AlertDialog show(Context context, String title, CharSequence message,
-                                   String negative, DialogInterface.OnClickListener negativeListener,
-                                   String positive, DialogInterface.OnClickListener positiveListener) {
+    public static AlertDialog show(Context context, CharSequence title, CharSequence message,
+                                   CharSequence negative, DialogInterface.OnClickListener negativeListener,
+                                   CharSequence positive, DialogInterface.OnClickListener positiveListener) {
 
         AlertDialog alertDialog = new AlertDialog.Builder(context).setTitle(title)
                 .setMessage(message)
@@ -34,8 +23,8 @@ public class DialogFactory {
         return alertDialog;
     }
 
-    public static AlertDialog show(Context context, String title, String message,
-                                   String positive, DialogInterface.OnClickListener positiveListener) {
+    public static AlertDialog show(Context context, CharSequence title, CharSequence message,
+                                   CharSequence positive, DialogInterface.OnClickListener positiveListener) {
 
         AlertDialog alertDialog = new AlertDialog.Builder(context).setTitle(title)
                 .setMessage(message)
@@ -44,8 +33,8 @@ public class DialogFactory {
         return alertDialog;
     }
 
-    public static AlertDialog show(Context context, String title,
-                                   String positive, DialogInterface.OnClickListener positiveListener) {
+    public static AlertDialog show(Context context, CharSequence title,
+                                   CharSequence positive, DialogInterface.OnClickListener positiveListener) {
 
         AlertDialog alertDialog = new AlertDialog.Builder(context).setTitle(title)
                 .setPositiveButton(positive, positiveListener).create();
