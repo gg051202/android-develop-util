@@ -74,4 +74,17 @@
     </declare-styleable>
 
 
+    <!-- 自定义的ratingBar -->
+    <declare-styleable name="FrameRatingBar">
+
+        <!-- 选中的图片资源 -->
+        <attr name="rating_starSrc" format="reference" />
+        <!-- 未选中的图片资源 -->
+        <attr name="rating_starDst" format="reference" />
+        <!-- boolean值 -->
+        <attr name="rating_clickable" format="boolean" />
+        <attr name="rating_step" format="float" />
+        <attr name="rating_space" format="float" />
+        <attr name="rating_starNumber" format="integer" />
+    </declare-styleable>
 </resources>
