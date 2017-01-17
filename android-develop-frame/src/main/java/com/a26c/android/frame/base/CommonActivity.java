@@ -4,11 +4,16 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -23,6 +28,9 @@ import com.a26c.android.frame.R;
 import com.a26c.android.frame.util.FrameAppManager;
 import com.a26c.android.frame.util.FrameDensityUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.a26c.android.frame.util.FrameAppManager.getAppManager;
 
 
@@ -35,6 +43,7 @@ public abstract class CommonActivity extends AppCompatActivity {
     protected String TAG = getClass().getSimpleName();
     protected Context mContext;
     protected Activity mActivity;
+
     /**
      * 标题文字
      */
@@ -47,6 +56,7 @@ public abstract class CommonActivity extends AppCompatActivity {
      * 标题栏
      */
     private Toolbar titleBar;
+    private List<PermissionData> list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -169,7 +179,7 @@ public abstract class CommonActivity extends AppCompatActivity {
     /**
      * 跳转Activity
      */
-    public void gotoActivity(Class<?> cls ) {
+    public void gotoActivity(Class<?> cls) {
         Intent intent;
         intent = new Intent(this, cls);
         intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
@@ -254,5 +264,118 @@ public abstract class CommonActivity extends AppCompatActivity {
             mContainView.setVisibility(View.GONE);
         }
     }
+
+
+    private static final int REQUEST_PERMISSION = 1221;
+    private OnCheckPermissionListener checkPermissionListener;
+
+    protected void checkPermission(@NonNull OnCheckPermissionListener checkPermissionListener, String... permissions) {
+
+        if (!isMarshmallow()) {//如果是6.0以上系统，不需要验证权限
+            checkPermissionListener.success();
+            return;
+        }
+
+        this.checkPermissionListener = checkPermissionListener;
+        list = new ArrayList<>();
+        for (String permission : permissions) {
+            PermissionData data = new PermissionData();
+            data.setPermissionName(permission);
+            data.setGranted(ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED);
+            if (!data.isGranted()) {//对要申请的权限进行一次筛选，list里的数据为需要筛选的权限
+                list.add(data);
+            }
+        }
+
+        if (list.size() > 0) {
+            String[] strs = new String[list.size()];
+            int i = 0;
+            for (PermissionData data : list) {
+                strs[i++] = data.getPermissionName();
+            }
+            ActivityCompat.requestPermissions(this, strs, REQUEST_PERMISSION);
+        } else {
+            checkPermissionListener.success();
+        }
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode != REQUEST_PERMISSION) {
+            return;
+        }
+
+        int isAllGranted = 0;
+        for (int i = 0; i < list.size(); i++) {
+            PermissionData item = list.get(i);
+            item.setResult(grantResults[i] == PackageManager.PERMISSION_GRANTED);
+            if (!item.isResult()) {
+                isAllGranted++;//如果有一个申请结果失败，就自增1，表示申请失败了
+            }
+        }
+
+        if (isAllGranted == 0) {
+            checkPermissionListener.success();
+        } else {
+            checkPermissionListener.fail();
+        }
+
+    }
+
+    class PermissionData {
+        private String permissionName;
+        /**
+         * 该权限是否拥有
+         */
+        private boolean isGranted;
+        /**
+         * 申请权限的结果，true表示用户通过，false表示用户未通过
+         */
+        private boolean result;
+
+        public boolean isResult() {
+            return result;
+        }
+
+        public void setResult(boolean result) {
+            this.result = result;
+        }
+
+        public boolean isGranted() {
+            return isGranted;
+        }
+
+        public void setGranted(boolean granted) {
+            isGranted = granted;
+        }
+
+        public String getPermissionName() {
+            return permissionName;
+        }
+
+        public void setPermissionName(String permissionName) {
+            this.permissionName = permissionName;
+        }
+    }
+
+    public interface OnCheckPermissionListener {
+        /**
+         * 申请权限成功，所有权限全部允许才算申请成功
+         */
+        void success();
+
+        /**
+         * 申请权限失败
+         */
+        void fail();
+    }
+
+    private boolean isMarshmallow() {
+        return Build.VERSION.SDK_INT >= 23;
+    }
+
+
 }
 
