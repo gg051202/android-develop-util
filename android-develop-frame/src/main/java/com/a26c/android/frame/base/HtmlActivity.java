@@ -30,11 +30,11 @@ import com.a26c.android.frame.R;
 public class HtmlActivity extends CommonActivity {
 
     protected WebView webView;
-    private ProgressBar progressBar;
-    private SwipeRefreshLayout swipeRefreshLayout;
+    protected ProgressBar progressBar;
+    protected SwipeRefreshLayout swipeRefreshLayout;
 
-    private String mUrl;
-    private String mTitle;
+    protected String mUrl;
+    protected String mTitle;
 
     /**
      * @param title 如果为空表示不需要标题，根据网页的标题来设置
