@@ -8,5 +8,4 @@ build
 .externalNativeBuild
 node_modules/
 npm-debug.log
-demo
 js
