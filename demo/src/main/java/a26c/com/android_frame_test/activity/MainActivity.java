@@ -106,11 +106,12 @@ public class MainActivity extends CommonActivity {
         });
 
         CommonFragmentPagerAdapter adapter = new CommonFragmentPagerAdapter(getSupportFragmentManager());
-        adapter.addTab(TestLasyFragment.getInstance(1), "1");
-        adapter.addTab(TestLasyFragment.getInstance(2), "2");
-        adapter.addTab(TestLasyFragment.getInstance(3), "3");
-        adapter.addTab(TestLasyFragment.getInstance(4), "4");
+        adapter.addTab(TestLazyFragment.getInstance(1), "1");
+        adapter.addTab(TestLazyFragment.getInstance(2), "2");
+        adapter.addTab(TestLazyFragment.getInstance(3), "3");
+        adapter.addTab(TestLazyFragment.getInstance(4), "4");
         viewPager.setAdapter(adapter);
+        viewPager.setOffscreenPageLimit(1);
 
     }
 
