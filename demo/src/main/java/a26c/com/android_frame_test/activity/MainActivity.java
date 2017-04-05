@@ -33,13 +33,12 @@ import com.a26c.android.frame.widget.MutiItemDecoration;
 import com.a26c.android.frame.widget.RedPointTextView;
 import com.a26c.android.frame.widget.UploadPhotoDialog;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import a26c.com.android_frame_test.R;
 import a26c.com.android_frame_test.adapter.TestBaseAdapter;
-import a26c.com.android_frame_test.adapter.TestBaseAdapterData;
 import a26c.com.android_frame_test.model.TestModel;
+import a26c.com.android_frame_test.model.TestRecylerData;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -120,27 +119,18 @@ public class MainActivity extends CommonActivity {
     }
 
     private void testBaseRecyclerView() {
-        List<TestBaseAdapterData> list = new ArrayList<>();
+        final List<TestRecylerData> list = TestModel.getTestList();
+        GridLayoutManager layoutManager = new GridLayoutManager(this, 5);
+        baseRecyclerView.setLayoutManager(layoutManager);
         TestBaseAdapter adapter = new TestBaseAdapter(list);
-        baseRecyclerView.init(adapter, new BaseRecyclerView.NetworkHandle() {
+        baseRecyclerView.setAdapter(adapter);
+        layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
-            public void init(BaseRecyclerView baseRecyclerView) {
-                baseRecyclerView.openLoadMore(20);
-                baseRecyclerView.setNodataLayoutId(R.layout.layout_empty);
-                baseRecyclerView.setErrLayoutId(R.layout.layout_err);
-            }
-
-            @Override
-            public void loadData(boolean isRefresh, final String pageIndex) {
-                baseRecyclerView.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        baseRecyclerView.onLoadDataComplete(TestModel.getTestList(pageIndex));
-                    }
-                }, 11);
+            public int getSpanSize(int position) {
+                return list.get(position).getItemType() == TestRecylerData.TITLE ? 5 : 1;
             }
         });
-        baseRecyclerView.setLayoutManager(new GridLayoutManager(this, 5));
+
         baseRecyclerView.removeDivider();
         baseRecyclerView.addDivider(new MutiItemDecoration(MutiItemDecoration.Type.ALL, 5, 0xff00ff00));
     }
