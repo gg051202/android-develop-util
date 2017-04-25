@@ -170,13 +170,6 @@ public class MainActivity extends CommonActivity {
                 HtmlActivity.languch(mActivity, "aaa", "https://ssl.22.cn/");
                 break;
 
-            case R.id.reactNative:
-                Bundle bundle = new Bundle();
-                bundle.putString("name", "guilin");
-                bundle.putString("age", "122");
-                gotoActivity(HelloReactActivity.class, bundle);
-                break;
-
         }
     }
 

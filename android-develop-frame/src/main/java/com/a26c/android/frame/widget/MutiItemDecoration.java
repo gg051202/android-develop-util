@@ -41,19 +41,19 @@ public class MutiItemDecoration extends RecyclerView.ItemDecoration {
         switch (type) {
             case ALL:
                 if (itemPosition % spanCount == 0) {//第一列
-                    if (isLastRaw(parent, itemPosition, spanCount, childCount)) {
+                    if (verticalNeedToDraw(parent, itemPosition, spanCount, childCount)) {
                         outRect.set(0, 0, dividerSize / 2, 0);
                     } else {
                         outRect.set(0, 0, dividerSize / 2, dividerSize);
                     }
                 } else if (itemPosition % spanCount == spanCount - 1) {//最后一列
-                    if (isLastRaw(parent, itemPosition, spanCount, childCount)) {
+                    if (verticalNeedToDraw(parent, itemPosition, spanCount, childCount)) {
                         outRect.set(dividerSize / 2, 0, 0, 0);
                     } else {
                         outRect.set(dividerSize / 2, 0, 0, dividerSize);
                     }
                 } else {//中间列
-                    if (isLastRaw(parent, itemPosition, spanCount, childCount)) {
+                    if (verticalNeedToDraw(parent, itemPosition, spanCount, childCount)) {
                         outRect.set(dividerSize / 2, 0, dividerSize / 2, 0);
                     } else {
                         outRect.set(dividerSize / 2, 0, dividerSize / 2, dividerSize);
@@ -61,10 +61,11 @@ public class MutiItemDecoration extends RecyclerView.ItemDecoration {
                 }
                 break;
             case VERTICAL:
-                if (isLastRaw(parent, itemPosition, spanCount, childCount)) {
-                    outRect.set(0, 0, 0, 0);
-                } else {
+                System.out.println(itemPosition + "," + verticalNeedToDraw(parent, itemPosition, spanCount, childCount));
+                if (verticalNeedToDraw(parent, itemPosition, spanCount, childCount)) {
                     outRect.set(0, 0, 0, dividerSize);
+                } else {
+                    outRect.set(0, 0, 0, 0);
                 }
                 break;
             case HORIZONTAL:
@@ -91,12 +92,16 @@ public class MutiItemDecoration extends RecyclerView.ItemDecoration {
     }
 
     // 是否是最后一行
-    private boolean isLastRaw(RecyclerView parent, int pos, int spanCount, int childCount) {
+    private boolean verticalNeedToDraw(RecyclerView parent, int pos, int spanCount, int childCount) {
         RecyclerView.LayoutManager layoutManager = parent.getLayoutManager();
         if (layoutManager instanceof GridLayoutManager) {
-            childCount = childCount - childCount % spanCount;
-            if (pos >= childCount)
+
+            GridLayoutManager gridLayoutManager = (GridLayoutManager) layoutManager;
+            GridLayoutManager.SpanSizeLookup spanSizeLookup = gridLayoutManager.getSpanSizeLookup();
+            if (spanSizeLookup.getSpanSize(pos) == 1 &&
+                    spanSizeLookup.getSpanIndex(pos, spanCount) < spanCount - 1) {
                 return true;
+            }
         } else {
             if (pos == childCount - 1)
                 return true;
@@ -143,7 +148,22 @@ public class MutiItemDecoration extends RecyclerView.ItemDecoration {
         final int bottom = parent.getHeight() - parent.getPaddingBottom();
 
         final int childCount = parent.getChildCount();
+
+        GridLayoutManager gridManager = null;
+        if (parent.getLayoutManager() instanceof GridLayoutManager) {
+            gridManager = (GridLayoutManager) parent.getLayoutManager();
+        }
+
         for (int i = 0; i < childCount; i++) {
+
+            if (gridManager != null) {
+                GridLayoutManager.SpanSizeLookup spanSizeLookup = gridManager.getSpanSizeLookup();
+                if (spanSizeLookup.getSpanSize(i) == 1 &&
+                        spanSizeLookup.getSpanIndex(i,gridManager.getSpanCount()) < gridManager.getSpanCount() - 1) {
+                    continue;
+                }
+            }
+
             final View child = parent.getChildAt(i);
             final RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) child.getLayoutParams();
             final int left = child.getRight() + params.rightMargin;

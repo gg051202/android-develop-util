@@ -32,5 +32,4 @@ dependencies {
     compile 'com.github.sd6352051.niftydialogeffects:niftydialogeffects:1.0.0@aar'
     compile 'com.jakewharton:butterknife:8.4.0'
     compile 'com.github.githubwing:DragPhotoView:1.0.1'
-    compile 'com.facebook.react:react-native:0.36.1'
 }
