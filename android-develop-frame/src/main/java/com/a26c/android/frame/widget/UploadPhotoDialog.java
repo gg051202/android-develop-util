@@ -14,17 +14,17 @@ import android.support.v7.app.AlertDialog;
 import android.view.View;
 
 import com.a26c.android.frame.R;
+import com.a26c.android.frame.util.DialogFactory;
 import com.a26c.android.frame.util.FrameBitmapUtil;
 import com.a26c.android.frame.util.FrameCropUtils;
-import com.a26c.android.frame.util.DialogFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
 import rx.Observable;
+import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
@@ -52,9 +52,9 @@ public class UploadPhotoDialog {
     private int type = PHOTO_AND_ALBUM;
 
     /**
-     * 想要获取图片的大小
+    * 想要获取图片的大小
      */
-    private int imageSize = 100;
+    private Integer imageSize = 100;
     /**
      * 裁剪出来的图片的高
      */
@@ -160,6 +160,8 @@ public class UploadPhotoDialog {
          */
         void success(Bitmap bitmap, String imagePath);
 
+        void fail();
+
     }
 
 
@@ -195,14 +197,7 @@ public class UploadPhotoDialog {
                         })
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeOn(Schedulers.io())
-                        .subscribe(new Action1<HashMap<String, Object>>() {
-                            @Override
-                            public void call(HashMap<String, Object> map) {
-                                if (map != null && l != null) {
-                                    l.success((Bitmap) map.get("bitmap"), (String) map.get("filePath"));
-                                }
-                            }
-                        });
+                        .subscribe(getSubscriber(l));
 
 
                 break;
@@ -228,14 +223,7 @@ public class UploadPhotoDialog {
                         })
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeOn(Schedulers.io())
-                        .subscribe(new Action1<HashMap<String, Object>>() {
-                            @Override
-                            public void call(HashMap<String, Object> map) {
-                                if (map != null && l != null) {
-                                    l.success((Bitmap) map.get("bitmap"), (String) map.get("filePath"));
-                                }
-                            }
-                        });
+                        .subscribe(getSubscriber(l));
                 break;
 
             // 压缩并保存图片
@@ -254,20 +242,39 @@ public class UploadPhotoDialog {
                         })
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeOn(Schedulers.io())
-                        .subscribe(new Action1<HashMap<String, Object>>() {
-                            @Override
-                            public void call(HashMap<String, Object> map) {
-                                if (map != null && l != null) {
-                                    l.success((Bitmap) map.get("bitmap"), (String) map.get("filePath"));
-                                }
-                            }
-                        });
+                        .subscribe(getSubscriber(l));
 
                 break;
             default:
                 break;
         }
 
+    }
+
+    @NonNull
+    private Subscriber<HashMap<String, Object>> getSubscriber(final OnGetImageSuccessListener l) {
+        return new Subscriber<HashMap<String, Object>>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                if (l != null) l.fail();
+            }
+
+            @Override
+            public void onNext(HashMap<String, Object> map) {
+                if (l != null) {
+                    if (map != null) {
+                        l.success((Bitmap) map.get("bitmap"), (String) map.get("filePath"));
+                    } else {
+                        l.fail();
+                    }
+                }
+            }
+        };
     }
 
     @NonNull

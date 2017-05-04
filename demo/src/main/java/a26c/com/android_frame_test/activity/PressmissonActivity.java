@@ -51,6 +51,11 @@ public class PressmissonActivity extends CommonActivity implements CommonActivit
             public void success(Bitmap bitmap, String imagePath) {
                 image.setImageBitmap(bitmap);
             }
+
+            @Override
+            public void fail() {
+
+            }
         });
 
     }

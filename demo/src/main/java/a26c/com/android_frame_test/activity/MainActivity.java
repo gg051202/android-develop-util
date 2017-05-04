@@ -194,6 +194,11 @@ public class MainActivity extends CommonActivity {
                 uploadImageView.setImageBitmap(bitmap);
                 Log.i(TAG, "保存到本地的地址：" + imagePath);
             }
+
+            @Override
+            public void fail() {
+
+            }
         });
     }
 
