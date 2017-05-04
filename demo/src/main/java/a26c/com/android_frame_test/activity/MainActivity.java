@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.a26c.android.frame.adapter.DialogListenerAdapter;
 import com.a26c.android.frame.base.CommonActivity;
@@ -197,7 +198,7 @@ public class MainActivity extends CommonActivity {
 
             @Override
             public void fail() {
-
+                Toast.makeText(MainActivity.this, "失败啦", Toast.LENGTH_LONG).show();
             }
         });
     }

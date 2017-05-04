@@ -24,20 +24,18 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".activity.MainActivity">
-
-        </activity>
-        <activity android:name="com.a26c.android.frame.base.HtmlActivity" />
-        <activity android:name=".activity.HelloReactActivity" />
-        <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
-        <activity android:name=".activity.ReactTalkActivity" />
-        <activity android:name=".activity.PressmissonActivity" />
-        <activity android:name=".activity.StatusBarActivity" />
-        <activity android:name=".activity.RecyclerActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name="com.a26c.android.frame.base.HtmlActivity" />
+        <activity android:name=".activity.ReactTalkActivity" />
+        <activity android:name=".activity.PressmissonActivity" />
+        <activity android:name=".activity.StatusBarActivity" />
+        <activity android:name=".activity.RecyclerActivity">
+
         </activity>
     </application>
 
