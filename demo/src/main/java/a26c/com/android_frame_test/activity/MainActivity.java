@@ -103,7 +103,7 @@ public class MainActivity extends CommonActivity {
             @Override
             public void onClick(View view) {
 
-                DialogFactory.showMulti(MainActivity.this, list, new DialogFactory.OnDialogSelectedListener() {
+                DialogFactory.showSingle(MainActivity.this, list, key, new DialogFactory.OnDialogSelectedListener() {
                     @Override
                     public void onSelect(String k) {
                         key = k;

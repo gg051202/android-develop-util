@@ -59,7 +59,7 @@ public class DialogFactory {
         int select = -1;
         for (int i = 0; i < list.size(); i++) {
             scList[i] = list.get(i).value;
-            if (select == -1 && !TextUtils.isEmpty(selectKey) && selectKey.equals(list.get(i).value)) {
+            if (select == -1 && !TextUtils.isEmpty(selectKey) && selectKey.equals(list.get(i).key)) {
                 select = i;
             }
         }
