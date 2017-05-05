@@ -4,16 +4,11 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.GridLayoutManager;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -34,6 +29,7 @@ import com.a26c.android.frame.widget.MutiItemDecoration;
 import com.a26c.android.frame.widget.RedPointTextView;
 import com.a26c.android.frame.widget.UploadPhotoDialog;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import a26c.com.android_frame_test.R;
@@ -85,6 +81,8 @@ public class MainActivity extends CommonActivity {
         return R.layout.activity_main;
     }
 
+    private String key;
+
     @Override
     protected void init(Bundle savedInstanceState) {
         ButterKnife.bind(this);
@@ -96,12 +94,27 @@ public class MainActivity extends CommonActivity {
 
         testBaseRecyclerView();
 
+        final List<DialogFactory.ChoiceData> list = new ArrayList<>();
+        for (int i = 0; i < 225; i++) {
+            list.add(new DialogFactory.ChoiceData("key" + i, "value" + i));
+        }
+
         dialog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Spannable span = new SpannableString("123456");
-                span.setSpan(new ForegroundColorSpan(Color.RED), 1, 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                DialogFactory.show(MainActivity.this, span, span, span, null, span, null);
+
+                DialogFactory.showMulti(MainActivity.this, list, new DialogFactory.OnDialogSelectedListener() {
+                    @Override
+                    public void onSelect(String k) {
+                        key = k;
+                        for (DialogFactory.ChoiceData choiceData : list) {
+                            if (choiceData.isSelected) {
+                                System.out.println(choiceData.value);
+                            }
+                        }
+                    }
+                });
+
             }
         });
 

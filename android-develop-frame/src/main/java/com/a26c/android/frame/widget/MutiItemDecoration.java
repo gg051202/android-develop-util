@@ -61,7 +61,6 @@ public class MutiItemDecoration extends RecyclerView.ItemDecoration {
                 }
                 break;
             case VERTICAL:
-                System.out.println(itemPosition + "," + verticalNeedToDraw(parent, itemPosition, spanCount, childCount));
                 if (verticalNeedToDraw(parent, itemPosition, spanCount, childCount)) {
                     outRect.set(0, 0, 0, dividerSize);
                 } else {
