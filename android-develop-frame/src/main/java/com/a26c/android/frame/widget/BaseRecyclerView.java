@@ -24,26 +24,25 @@ import java.util.List;
  */
 public class BaseRecyclerView extends FrameLayout {
 
+    private Context context;
     private RecyclerView recyclerView;
     private SwipeRefreshLayout refreshLayout;
     private BaseQuickAdapter adapter;
-    private Context context;
-    private ViewStub nodataViewStub;
-    private ViewStub errViewStub;
-    private SwipeRefreshLayout.OnRefreshListener onRefreshListener;
-
-    private NetworkHandle networkHandle;
-
-    private int nodataLayoutId = 0;
-    private int errLayoutId = 0;
     private boolean firstLoadData = true;
     private boolean showNodataView = true;
     private MutiItemDecoration decor;
+    private SwipeRefreshLayout.OnRefreshListener onRefreshListener;
+    private NetworkHandle networkHandle;
+
+    private ViewStub nodataViewStub;
+    private ViewStub errViewStub;
+    private int errLayoutId = 0;
+    private int nodataLayoutId = 0;
     private TextView nodataTextView;
-    /**
-     * 没有数据时的提示信息
-     */
+    private TextView errTextView;
     private String nodataString = "暂无数据";
+    private String errdataString = "请求失败";
+
     /**
      * 初始值设置这么大表示不需要上拉加载，但是如果外部调用了baseRecyclerView.openLoadMore,将会改变这个值，
      * 每次下拉刷新会重新开启上拉加载，避免出现上拉加载后没有数据后，再下拉刷新反而无法上拉加载的情况
@@ -151,18 +150,12 @@ public class BaseRecyclerView extends FrameLayout {
         refreshLayout.setRefreshing(false);
         //如果listview没有数据,显示无数据的提示,否则隐藏
         if (adapter.getItemCount() - adapter.getHeaderLayoutCount() - adapter.getFooterLayoutCount() == 0) {
-            showNoDataView();
+            if (showNodataView) {
+                nodataViewStub.setVisibility(VISIBLE);
+                errViewStub.setVisibility(INVISIBLE);
+            }
         } else {
-            showNothing();
-        }
-    }
-
-    /**
-     * 显示无数据视图
-     */
-    public void showNoDataView() {
-        if (showNodataView) {
-            nodataViewStub.setVisibility(VISIBLE);
+            nodataViewStub.setVisibility(INVISIBLE);
             errViewStub.setVisibility(INVISIBLE);
         }
     }
@@ -171,25 +164,14 @@ public class BaseRecyclerView extends FrameLayout {
      * 显示网络异常的视图
      * 细节:如果网络异常并且当前无数据才显示errTextView,否则弹出dialog提示就行
      */
-    public void showErrView() {
-        if (adapter.getData().size() == 0) {
-            nodataViewStub.setVisibility(INVISIBLE);
-            errViewStub.setVisibility(VISIBLE);
-        } else {
-            showNothing();
-            Toast.makeText(context, "网络请求失败,请检查网络连接", Toast.LENGTH_LONG).show();
-        }
-
-    }
-
-    /**
-     * 都什么视图都不显示,显示listview
-     */
-    public void showNothing() {
+    public void showErrView(CharSequence err) {
         nodataViewStub.setVisibility(INVISIBLE);
-        errViewStub.setVisibility(INVISIBLE);
-    }
+        errViewStub.setVisibility(VISIBLE);
+        if (errTextView != null) {
+            errTextView.setText(err);
 
+        }
+    }
 
     private void initNodataView() {
         if (nodataLayoutId == 0) nodataLayoutId = R.layout.frame_layout_network_nodata;
@@ -198,19 +180,24 @@ public class BaseRecyclerView extends FrameLayout {
         nodataViewStub.setLayoutResource(nodataLayoutId);
         errViewStub.setLayoutResource(errLayoutId);
         View nodataView = nodataViewStub.inflate();
-        errViewStub.inflate();
+        View errdataView = errViewStub.inflate();
         nodataViewStub.setVisibility(GONE);
         errViewStub.setVisibility(GONE);
-        nodataTextView = (TextView) nodataView.findViewById(R.id.nodataTextView);
-        if (nodataTextView != null) {
+
+        if (nodataLayoutId == 0) {
+            nodataTextView = (TextView) nodataView.findViewById(R.id.nodataTextView);
             nodataTextView.setText(nodataString);
         }
+        if (errLayoutId == 0) {
+            errTextView = (TextView) errdataView.findViewById(R.id.errTextView);
+            errTextView.setText(errdataString);
+        }
+
     }
 
     public void addOnItemTouchListener(OnItemClickListener listener) {
         recyclerView.addOnItemTouchListener(listener);
     }
-
 
 
     public interface NetworkHandle {
@@ -231,40 +218,8 @@ public class BaseRecyclerView extends FrameLayout {
         void loadData(boolean isRefresh, String pageIndex);
     }
 
-    public void setNodataLayoutId(int nodataLayoutId) {
-        this.nodataLayoutId = nodataLayoutId;
-    }
-
-    public void setErrLayoutId(int errLayoutId) {
-        this.errLayoutId = errLayoutId;
-    }
-
-    public void setFirstLoadData(boolean firstLoadData) {
-        this.firstLoadData = firstLoadData;
-    }
-
-    public void setShowNodataView(boolean showNodataView) {
-        this.showNodataView = showNodataView;
-    }
-
-    public void setRefreshingFirst(boolean refreshingFirst) {
-        isRefreshingFirst = refreshingFirst;
-    }
-
     public void loadComplete() {
         adapter.loadComplete();
-    }
-
-    public RecyclerView getRecyclerView() {
-        return recyclerView;
-    }
-
-    public SwipeRefreshLayout getRefreshLayout() {
-        return refreshLayout;
-    }
-
-    public void setPageIndex(int pageIndex) {
-        this.pageIndex = pageIndex;
     }
 
     public void setIsRefreshing(boolean b) {
@@ -299,7 +254,152 @@ public class BaseRecyclerView extends FrameLayout {
         refreshLayout.setRefreshing(true);
     }
 
+
+    public RecyclerView getRecyclerView() {
+        return recyclerView;
+    }
+
+    public void setRecyclerView(RecyclerView recyclerView) {
+        this.recyclerView = recyclerView;
+    }
+
+    public SwipeRefreshLayout getRefreshLayout() {
+        return refreshLayout;
+    }
+
+    public void setRefreshLayout(SwipeRefreshLayout refreshLayout) {
+        this.refreshLayout = refreshLayout;
+    }
+
+    public BaseQuickAdapter getAdapter() {
+        return adapter;
+    }
+
+    public boolean isFirstLoadData() {
+        return firstLoadData;
+    }
+
+    public void setFirstLoadData(boolean firstLoadData) {
+        this.firstLoadData = firstLoadData;
+    }
+
+    public boolean isShowNodataView() {
+        return showNodataView;
+    }
+
+    public void setShowNodataView(boolean showNodataView) {
+        this.showNodataView = showNodataView;
+    }
+
+    public MutiItemDecoration getDecor() {
+        return decor;
+    }
+
+    public void setDecor(MutiItemDecoration decor) {
+        this.decor = decor;
+    }
+
+    public SwipeRefreshLayout.OnRefreshListener getOnRefreshListener() {
+        return onRefreshListener;
+    }
+
+    public void setOnRefreshListener(SwipeRefreshLayout.OnRefreshListener onRefreshListener) {
+        this.onRefreshListener = onRefreshListener;
+    }
+
+    public NetworkHandle getNetworkHandle() {
+        return networkHandle;
+    }
+
+    public void setNetworkHandle(NetworkHandle networkHandle) {
+        this.networkHandle = networkHandle;
+    }
+
+    public ViewStub getNodataViewStub() {
+        return nodataViewStub;
+    }
+
+    public void setNodataViewStub(ViewStub nodataViewStub) {
+        this.nodataViewStub = nodataViewStub;
+    }
+
+    public ViewStub getErrViewStub() {
+        return errViewStub;
+    }
+
+    public void setErrViewStub(ViewStub errViewStub) {
+        this.errViewStub = errViewStub;
+    }
+
+    public int getErrLayoutId() {
+        return errLayoutId;
+    }
+
+    public void setErrLayoutId(int errLayoutId) {
+        this.errLayoutId = errLayoutId;
+    }
+
+    public int getNodataLayoutId() {
+        return nodataLayoutId;
+    }
+
+    public void setNodataLayoutId(int nodataLayoutId) {
+        this.nodataLayoutId = nodataLayoutId;
+    }
+
+    public TextView getNodataTextView() {
+        return nodataTextView;
+    }
+
+    public void setNodataTextView(TextView nodataTextView) {
+        this.nodataTextView = nodataTextView;
+    }
+
+    public TextView getErrTextView() {
+        return errTextView;
+    }
+
+    public void setErrTextView(TextView errTextView) {
+        this.errTextView = errTextView;
+    }
+
+    public String getNodataString() {
+        return nodataString;
+    }
+
     public void setNodataString(String nodataString) {
         this.nodataString = nodataString;
+    }
+
+    public String getErrdataString() {
+        return errdataString;
+    }
+
+    public void setErrdataString(String errdataString) {
+        this.errdataString = errdataString;
+    }
+
+    public int getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public boolean isRefreshingFirst() {
+        return isRefreshingFirst;
+    }
+
+    public void setRefreshingFirst(boolean refreshingFirst) {
+        isRefreshingFirst = refreshingFirst;
+    }
+
+    public int getPageIndex() {
+        return pageIndex;
+    }
+
+    public void setPageIndex(int pageIndex) {
+        this.pageIndex = pageIndex;
     }
 }
