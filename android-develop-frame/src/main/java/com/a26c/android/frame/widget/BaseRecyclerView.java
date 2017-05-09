@@ -167,6 +167,9 @@ public class BaseRecyclerView extends FrameLayout {
      * 细节:如果网络异常并且当前无数据才显示errTextView,否则弹出dialog提示就行
      */
     public void showErrView(CharSequence err) {
+        if (adapter.getItemCount() - adapter.getHeaderLayoutCount() - adapter.getFooterLayoutCount() == 0) {
+            return;
+        }
         nodataViewStub.setVisibility(INVISIBLE);
         errViewStub.setVisibility(VISIBLE);
         if (errTextView != null) {
