@@ -168,15 +168,32 @@ public class BaseRecyclerView extends FrameLayout {
      */
     public void showErrView(CharSequence err) {
         if (adapter.getItemCount() - adapter.getHeaderLayoutCount() - adapter.getFooterLayoutCount() == 0) {
-            return;
-        }
-        nodataViewStub.setVisibility(INVISIBLE);
-        errViewStub.setVisibility(VISIBLE);
-        if (errTextView != null) {
-            errTextView.setText(err);
-
+            nodataViewStub.setVisibility(INVISIBLE);
+            errViewStub.setVisibility(VISIBLE);
+            if (errTextView != null) {
+                errTextView.setText(err);
+            }
         }
     }
+
+    public void showErrView() {
+        showErrView("");
+    }
+
+    public void showNodataView(CharSequence nodataString) {
+        if (adapter.getItemCount() - adapter.getHeaderLayoutCount() - adapter.getFooterLayoutCount() == 0) {
+            nodataViewStub.setVisibility(VISIBLE);
+            errViewStub.setVisibility(GONE);
+            if (nodataTextView != null) {
+                nodataTextView.setText(nodataString);
+            }
+        }
+    }
+
+    public void showNodataView() {
+        showNodataView("");
+    }
+
 
     private void initNodataView() {
         if (nodataLayoutId == 0) nodataLayoutId = R.layout.frame_layout_network_nodata;
