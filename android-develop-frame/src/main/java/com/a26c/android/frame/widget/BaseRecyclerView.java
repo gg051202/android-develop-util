@@ -42,6 +42,8 @@ public class BaseRecyclerView extends FrameLayout {
     private TextView errTextView;
     private String nodataString = "暂无数据";
     private String errdataString = "请求失败";
+    private View nodataView;
+    private View errdataView;
 
     /**
      * 初始值设置这么大表示不需要上拉加载，但是如果外部调用了baseRecyclerView.openLoadMore,将会改变这个值，
@@ -179,8 +181,8 @@ public class BaseRecyclerView extends FrameLayout {
 
         nodataViewStub.setLayoutResource(nodataLayoutId);
         errViewStub.setLayoutResource(errLayoutId);
-        View nodataView = nodataViewStub.inflate();
-        View errdataView = errViewStub.inflate();
+        nodataView = nodataViewStub.inflate();
+        errdataView = errViewStub.inflate();
         nodataViewStub.setVisibility(GONE);
         errViewStub.setVisibility(GONE);
 
@@ -401,5 +403,21 @@ public class BaseRecyclerView extends FrameLayout {
 
     public void setPageIndex(int pageIndex) {
         this.pageIndex = pageIndex;
+    }
+
+    public View getNodataView() {
+        return nodataView;
+    }
+
+    public void setNodataView(View nodataView) {
+        this.nodataView = nodataView;
+    }
+
+    public View getErrdataView() {
+        return errdataView;
+    }
+
+    public void setErrdataView(View errdataView) {
+        this.errdataView = errdataView;
     }
 }
