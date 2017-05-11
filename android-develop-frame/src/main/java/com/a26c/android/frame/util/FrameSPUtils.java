@@ -50,23 +50,20 @@ public class FrameSPUtils {
     /**
      * 得到保存数据的方法，我们根据默认值得到保存的数据的具体类型，然后调用相对于的方法获取值
      *
-     * @param context
-     * @param key
-     * @param defaultObject
      */
-    public static <T> T get(Context context, String key, T defaultObject) {
+    public static Object get(Context context, String key, Object defaultObject) {
         SharedPreferences sp = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
 
         if (defaultObject instanceof String) {
-            return (T) sp.getString(key, (String) defaultObject);
+            return sp.getString(key, (String) defaultObject);
         } else if (defaultObject instanceof Integer) {
-            return (T) new Integer(sp.getInt(key, (Integer) defaultObject));
+            return sp.getInt(key, (Integer) defaultObject);
         } else if (defaultObject instanceof Boolean) {
-            return (T) new Boolean(sp.getBoolean(key, (Boolean) defaultObject));
+            return sp.getBoolean(key, (Boolean) defaultObject);
         } else if (defaultObject instanceof Float) {
-            return (T) new Float(sp.getFloat(key, (Float) defaultObject));
+            return sp.getFloat(key, (Float) defaultObject);
         } else if (defaultObject instanceof Long) {
-            return (T) new Long(sp.getLong(key, (Long) defaultObject));
+            return sp.getLong(key, (Long) defaultObject);
         }
 
         return null;
