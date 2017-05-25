@@ -79,11 +79,11 @@ public class BaseRecyclerView extends FrameLayout {
     }
 
     public void init(BaseQuickAdapter baseQuickAdapter, final NetworkHandle networkHandle) {
-
-        if (networkHandle != null) networkHandle.init(this);
-        
         this.networkHandle = networkHandle;
         adapter = baseQuickAdapter;
+
+        if (networkHandle != null) networkHandle.init(this);
+
         onRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
