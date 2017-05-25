@@ -104,7 +104,6 @@ public class BaseRecyclerView extends FrameLayout {
             }
         });
 
-
         //初始化无数据的布局
         initNodataView();
 
@@ -278,6 +277,9 @@ public class BaseRecyclerView extends FrameLayout {
         refreshLayout.setRefreshing(true);
     }
 
+    public void addData(List data) {
+        adapter.addData(data);
+    }
 
     public RecyclerView getRecyclerView() {
         return recyclerView;
