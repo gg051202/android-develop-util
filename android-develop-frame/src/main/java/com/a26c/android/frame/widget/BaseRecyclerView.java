@@ -79,6 +79,9 @@ public class BaseRecyclerView extends FrameLayout {
     }
 
     public void init(BaseQuickAdapter baseQuickAdapter, final NetworkHandle networkHandle) {
+
+        if (networkHandle != null) networkHandle.init(this);
+        
         this.networkHandle = networkHandle;
         adapter = baseQuickAdapter;
         onRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {
@@ -101,7 +104,6 @@ public class BaseRecyclerView extends FrameLayout {
             }
         });
 
-        if (networkHandle != null) networkHandle.init(this);
 
         //初始化无数据的布局
         initNodataView();
