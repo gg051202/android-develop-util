@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="1px"
         android:background="#E3E3E3"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <RelativeLayout
         android:id="@+id/parentLayout"
@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"/>
+            android:layout_centerVertical="true" />
 
         <TextView
             android:id="@+id/leftTextView"
@@ -32,7 +32,7 @@
             android:layout_toEndOf="@id/leftImageView"
             android:layout_toRightOf="@id/leftImageView"
             android:ellipsize="end"
-            android:singleLine="true"/>
+            android:singleLine="true" />
 
         <ImageView
             android:id="@+id/rightImageView"
@@ -40,17 +40,19 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"/>
+            android:layout_centerVertical="true" />
 
         <TextView
             android:id="@+id/rightTextView"
             android:layout_width="wrap_content"
+            android:gravity="end"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/dp_10"
             android:layout_toLeftOf="@+id/rightImageView"
-            android:layout_toStartOf="@+id/rightImageView"
+            android:layout_toRightOf="@+id/leftTextView"
             android:ellipsize="end"
-            android:singleLine="true"/>
+            android:singleLine="true" />
     </RelativeLayout>
 
     <View
@@ -58,6 +60,6 @@
         android:layout_width="match_parent"
         android:layout_height="1px"
         android:background="#E3E3E3"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
 </LinearLayout>
