@@ -52,7 +52,7 @@ public class UploadPhotoDialog {
     private int type = PHOTO_AND_ALBUM;
 
     /**
-    * 想要获取图片的大小
+     * 想要获取图片的大小
      */
     private Integer imageSize = 100;
     /**
@@ -101,12 +101,13 @@ public class UploadPhotoDialog {
         photoLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                intent.putExtra(MediaStore.EXTRA_OUTPUT,
-                        Uri.fromFile(new File(Environment.getExternalStorageDirectory(), "temp.jpg")));
-                ((Activity) context).startActivityForResult(intent, RESULT_CAMERA);
                 if (listener != null) {
                     listener.photoClick();
+                } else {
+                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    intent.putExtra(MediaStore.EXTRA_OUTPUT,
+                            Uri.fromFile(new File(Environment.getExternalStorageDirectory(), "temp.jpg")));
+                    ((Activity) context).startActivityForResult(intent, RESULT_CAMERA);
                 }
                 dialog.dismiss();
             }
@@ -114,11 +115,12 @@ public class UploadPhotoDialog {
         albumLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_PICK, null);
-                intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
-                ((Activity) context).startActivityForResult(intent, RESULT_ALBUM);
                 if (listener != null) {
                     listener.albumClick();
+                } else {
+                    Intent intent = new Intent(Intent.ACTION_PICK, null);
+                    intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+                    ((Activity) context).startActivityForResult(intent, RESULT_ALBUM);
                 }
                 dialog.dismiss();
             }
