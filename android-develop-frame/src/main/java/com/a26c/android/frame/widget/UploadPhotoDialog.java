@@ -101,9 +101,7 @@ public class UploadPhotoDialog {
         photoLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (listener != null && listener.photoClick()) {
-                    listener.photoClick();
-                } else {
+                if (!(listener != null && listener.photoClick())) {
                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                     intent.putExtra(MediaStore.EXTRA_OUTPUT,
                             Uri.fromFile(new File(Environment.getExternalStorageDirectory(), "temp.jpg")));
@@ -115,9 +113,7 @@ public class UploadPhotoDialog {
         albumLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (listener != null && listener.albumClick()) {
-                    listener.albumClick();
-                } else {
+                if (!(listener != null && listener.albumClick())) {
                     Intent intent = new Intent(Intent.ACTION_PICK, null);
                     intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
                     ((Activity) context).startActivityForResult(intent, RESULT_ALBUM);
