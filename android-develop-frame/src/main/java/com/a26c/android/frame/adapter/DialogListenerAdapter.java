@@ -9,13 +9,13 @@ import com.a26c.android.frame.widget.UploadPhotoDialog;
 public class DialogListenerAdapter implements UploadPhotoDialog.DialogListener {
 
     @Override
-    public void photoClick() {
-
+    public boolean photoClick() {
+        return false;
     }
 
     @Override
-    public void albumClick() {
-
+    public boolean albumClick() {
+        return false;
     }
 
     @Override

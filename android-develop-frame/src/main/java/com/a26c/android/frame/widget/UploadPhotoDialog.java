@@ -101,7 +101,7 @@ public class UploadPhotoDialog {
         photoLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (listener != null) {
+                if (listener != null && listener.photoClick()) {
                     listener.photoClick();
                 } else {
                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -115,7 +115,7 @@ public class UploadPhotoDialog {
         albumLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (listener != null) {
+                if (listener != null && listener.albumClick()) {
                     listener.albumClick();
                 } else {
                     Intent intent = new Intent(Intent.ACTION_PICK, null);
@@ -141,9 +141,9 @@ public class UploadPhotoDialog {
 
 
     public interface DialogListener {
-        void photoClick();
+        boolean photoClick();
 
-        void albumClick();
+        boolean albumClick();
 
         /**
          * 从相册或者相机刚刚获取到图片时
