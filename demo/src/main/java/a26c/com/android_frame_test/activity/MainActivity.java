@@ -10,10 +10,12 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.GridLayoutManager;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.a26c.android.frame.adapter.DialogListenerAdapter;
@@ -28,6 +30,7 @@ import com.a26c.android.frame.widget.FrameRatingBar;
 import com.a26c.android.frame.widget.MutiItemDecoration;
 import com.a26c.android.frame.widget.RedPointTextView;
 import com.a26c.android.frame.widget.UploadPhotoDialog;
+import com.a26c.android.frame.widget.VerticalScrollView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,6 +75,8 @@ public class MainActivity extends CommonActivity {
     Button dialog;
     @BindView(R.id.viewPager)
     ViewPager viewPager;
+    @BindView(R.id.verticalView)
+    VerticalScrollView<String> verticalView;
     private int number5 = 1002;
 
     private UploadPhotoDialog uploadPhotoDialog;
@@ -125,6 +130,32 @@ public class MainActivity extends CommonActivity {
         adapter.addTab(TestLazyFragment.getInstance(4), "4");
         viewPager.setAdapter(adapter);
         viewPager.setOffscreenPageLimit(1);
+
+
+        verticalView.setInflateView(new VerticalScrollView.InflateView<String>() {
+            @Override
+            public View inflate(String s) {
+                View view = LayoutInflater.from(mContext).inflate(R.layout.layout_text2, null);
+
+                TextView textView = (TextView) view.findViewById(R.id.TextView);
+                textView.setText(s);
+                return view;
+            }
+        });
+        verticalView.setTime(2);
+        verticalView.setOnVerticalViewClickListener(new VerticalScrollView.OnVerticalViewClickListener<String>() {
+            @Override
+            public void itemClick(int position, String data) {
+                System.out.println(position);
+            }
+        });
+        List<String> list3 = new ArrayList<>();
+        list3.add("1");
+        list3.add("2");
+        list3.add("3");
+        list3.add("4");
+        verticalView.setmList(list3);
+        verticalView.start();
 
     }
 
@@ -229,7 +260,15 @@ public class MainActivity extends CommonActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        verticalView.stop();
+
     }
 
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // TODO: add setContentView(...) invocation
+        ButterKnife.bind(this);
+    }
 }

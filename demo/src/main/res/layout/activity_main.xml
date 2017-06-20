@@ -18,13 +18,19 @@
                   android:paddingTop="@dimen/activity_vertical_margin"
                   tools:context="a26c.com.android_frame_test.activity.MainActivity">
 
+        <com.a26c.android.frame.widget.VerticalScrollView
+            android:id="@+id/verticalView"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:background="#56FF0000" />
+
         <com.a26c.android.frame.widget.CommonItem
             android:layout_width="match_parent"
-            app:commonRightImage="@drawable/aa"
+            android:layout_height="wrap_content"
             app:commonLeftImage="@drawable/aa"
             app:commonLeftText="aaaa"
-            app:commonRightText="bbb222222222222222222222222222222222222222222222222222"
-            android:layout_height="wrap_content" />
+            app:commonRightImage="@drawable/aa"
+            app:commonRightText="bbb222222222222222222222222222222222222222222222222222" />
 
         <com.a26c.android.frame.widget.BaseRecyclerView
             android:id="@+id/baseRecyclerView"
