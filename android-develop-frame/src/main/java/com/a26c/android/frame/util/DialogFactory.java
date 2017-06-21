@@ -4,6 +4,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
+import android.widget.TextView;
+
+import com.a26c.android.frame.R;
 
 import java.util.List;
 
@@ -129,6 +132,28 @@ public class DialogFactory {
         alertDialog.show();
         return alertDialog;
 
+    }
+
+
+    /**
+     * 进度框dialog
+     */
+    public static AlertDialog getProgressDialog(Context context, boolean iscancel) {
+
+        return new AlertDialog.Builder(context)
+                .setView(R.layout.frame_layout_progressbar)
+                .setCancelable(iscancel)
+                .create();
+    }
+
+    public static AlertDialog showProgress(Context context, String msg, boolean iscancel) {
+        AlertDialog dialog = getProgressDialog(context, iscancel);
+        dialog.show();
+        TextView textView = (TextView) dialog.findViewById(R.id.text);
+        if (textView != null) {
+            textView.setText(msg);
+        }
+        return dialog;
     }
 
 

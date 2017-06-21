@@ -198,6 +198,10 @@ public class MainActivity extends CommonActivity {
     @OnClick({R.id.red5, R.id.uploadImageButton, R.id.gotoHtmlButton, R.id.reactNative})
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.reactNative:
+                DialogFactory.showProgress(this, "正在绑定", true);
+                break;
+
             case R.id.red5:
                 red5.setNumber(number5 /= 2);
                 break;
