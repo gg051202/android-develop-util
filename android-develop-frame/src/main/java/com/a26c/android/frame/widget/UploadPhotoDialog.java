@@ -38,9 +38,9 @@ import rx.schedulers.Schedulers;
  */
 public class UploadPhotoDialog {
 
-    private static final byte RESULT_CAMERA = 12;
-    private static final byte RESULT_ALBUM = 13;
-    private static final byte RESULT_ZOOM_PHOTO = 14;
+    public static final byte RESULT_CAMERA = 12;
+    public static final byte RESULT_ALBUM = 13;
+    public static final byte RESULT_ZOOM_PHOTO = 14;
 
     public static final byte PHOTO = 1;
     public static final byte ALBUM = 2;
@@ -79,6 +79,11 @@ public class UploadPhotoDialog {
     private File outFile;
 
     /**
+     * 拍照是相片保存的临时路径
+     */
+    private String photoCachePath;
+
+    /**
      * @param context
      * @param ratio_  想要获取图片的宽高比，必传！传0表示不进行压缩
      * @param l       点击按钮的监听 ，可以设为空，那么就默认打开相机和相册的操作
@@ -102,9 +107,9 @@ public class UploadPhotoDialog {
             @Override
             public void onClick(View view) {
                 if (!(listener != null && listener.photoClick())) {
+                    photoCachePath = String.format("%s/temp_%s.jpg", Environment.getExternalStorageDirectory(), System.currentTimeMillis());
                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    intent.putExtra(MediaStore.EXTRA_OUTPUT,
-                            Uri.fromFile(new File(Environment.getExternalStorageDirectory(), "temp.jpg")));
+                    intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(photoCachePath)));
                     ((Activity) context).startActivityForResult(intent, RESULT_CAMERA);
                 }
                 dialog.dismiss();
@@ -184,10 +189,10 @@ public class UploadPhotoDialog {
                             public HashMap<String, Object> call(Integer integer) {
                                 //如果需要压缩
                                 if (radio != 0) {
-                                    File picture2 = new File(Environment.getExternalStorageDirectory() + "/temp.jpg");
+                                    File picture2 = new File(photoCachePath);
                                     ZoomPhoto(Uri.fromFile(picture2));
                                 } else {
-                                    Bitmap bitmap = BitmapFactory.decodeFile(Environment.getExternalStorageDirectory() + "/temp.jpg");
+                                    Bitmap bitmap = BitmapFactory.decodeFile(photoCachePath);
                                     return saveBitmap(bitmap);
                                 }
                                 return null;
@@ -276,7 +281,7 @@ public class UploadPhotoDialog {
     }
 
     @NonNull
-    private HashMap<String, Object> saveBitmap(Bitmap bitmap) {
+    public HashMap<String, Object> saveBitmap(Bitmap bitmap) {
         String fileName = System.currentTimeMillis() + "life.jpg";
         String filePath = FrameBitmapUtil.savePicture(context, fileName, bitmap, imageSize);
         HashMap<String, Object> map = new HashMap<>();
@@ -327,5 +332,9 @@ public class UploadPhotoDialog {
 
     public void setType(int type) {
         this.type = type;
+    }
+
+    public String getPhotoCachePath() {
+        return photoCachePath;
     }
 }
