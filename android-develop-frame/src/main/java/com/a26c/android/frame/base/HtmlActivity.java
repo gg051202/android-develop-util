@@ -59,7 +59,6 @@ public class HtmlActivity extends CommonActivity {
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         webView = (WebView) findViewById(R.id.webView);
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
-        webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setUseWideViewPort(true);
         webView.getSettings().setLoadWithOverviewMode(true);
         webView.loadUrl(mUrl);

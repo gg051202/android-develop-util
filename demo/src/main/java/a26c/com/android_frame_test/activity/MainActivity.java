@@ -185,7 +185,6 @@ public class MainActivity extends CommonActivity {
         red2.setNumber(2);
         red3.setNumber(33);
         red4.setNumber(44);
-        red5.setNumber(number5);
     }
 
     @Override
