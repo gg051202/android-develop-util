@@ -60,6 +60,7 @@ public class HtmlActivity extends CommonActivity {
         webView = (WebView) findViewById(R.id.frame_webView);
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.frame_swipeRefreshLayout);
         webView.getSettings().setUseWideViewPort(true);
+        webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setLoadWithOverviewMode(true);
         webView.loadUrl(mUrl);
     }
