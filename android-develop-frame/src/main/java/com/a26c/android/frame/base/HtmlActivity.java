@@ -56,9 +56,9 @@ public class HtmlActivity extends CommonActivity {
         mUrl = getIntent().getStringExtra("url");
         mTitle = getIntent().getStringExtra("title");
         setTitle("正在加载...");
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        webView = (WebView) findViewById(R.id.webView);
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+        progressBar = (ProgressBar) findViewById(R.id.frame_progressBar);
+        webView = (WebView) findViewById(R.id.frame_webView);
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.frame_swipeRefreshLayout);
         webView.getSettings().setUseWideViewPort(true);
         webView.getSettings().setLoadWithOverviewMode(true);
         webView.loadUrl(mUrl);
