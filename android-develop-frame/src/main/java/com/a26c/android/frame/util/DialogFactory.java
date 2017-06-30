@@ -57,7 +57,7 @@ public class DialogFactory {
     /**
      * @param list map必须有  key和value两组键值对
      */
-    public static AlertDialog showSingle(Context context, final List<ChoiceData> list, String selectKey, final OnDialogSelectedListener listener) {
+    public static <T extends ChoiceData>  AlertDialog showSingle(Context context, final List<T> list, String selectKey, final OnDialogSelectedListener listener) {
         CharSequence[] scList = new CharSequence[list.size()];
         int select = -1;
         for (int i = 0; i < list.size(); i++) {
@@ -106,7 +106,7 @@ public class DialogFactory {
      *
      * @param list map必须有  key和value两组键值对
      */
-    public static AlertDialog showMulti(Context context, final List<ChoiceData> list, final OnDialogSelectedListener listener) {
+    public static <T extends ChoiceData> AlertDialog showMulti(Context context, final List<T> list, final OnDialogSelectedListener listener) {
         CharSequence[] valueList = new CharSequence[list.size()];
         boolean[] checkedItems = new boolean[list.size()];
         for (int i = 0; i < list.size(); i++) {

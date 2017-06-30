@@ -99,7 +99,7 @@ public class MainActivity extends CommonActivity {
 
         testBaseRecyclerView();
 
-        final List<DialogFactory.ChoiceData> list = new ArrayList<>();
+        final List<DialogSingleData> list = new ArrayList<>();
         for (int i = 0; i < 225; i++) {
             list.add(new DialogSingleData("key" + i, "value" + i));
         }
