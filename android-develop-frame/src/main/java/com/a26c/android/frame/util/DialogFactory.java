@@ -61,8 +61,8 @@ public class DialogFactory {
         CharSequence[] scList = new CharSequence[list.size()];
         int select = -1;
         for (int i = 0; i < list.size(); i++) {
-            scList[i] = list.get(i).value;
-            if (select == -1 && !TextUtils.isEmpty(selectKey) && selectKey.equals(list.get(i).key)) {
+            scList[i] = list.get(i).getValue();
+            if (select == -1 && !TextUtils.isEmpty(selectKey) && selectKey.equals(list.get(i).getKey())) {
                 select = i;
             }
         }
@@ -71,7 +71,7 @@ public class DialogFactory {
                 .setSingleChoiceItems(scList, select, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(final DialogInterface dialog, int which) {
-                        listener.onSelect(list.get(which).key.toString());
+                        listener.onSelect(list.get(which).getKey(), list.get(which).getValue());
                         Observable.just(1)
                                 .subscribeOn(Schedulers.io())
                                 .map(new Func1<Integer, Object>() {
@@ -110,21 +110,21 @@ public class DialogFactory {
         CharSequence[] valueList = new CharSequence[list.size()];
         boolean[] checkedItems = new boolean[list.size()];
         for (int i = 0; i < list.size(); i++) {
-            valueList[i] = list.get(i).value;
-            checkedItems[i] = list.get(i).isSelected;
+            valueList[i] = list.get(i).getValue();
+            checkedItems[i] = list.get(i).isSelected();
         }
 
         AlertDialog alertDialog = new AlertDialog.Builder(context)
                 .setMultiChoiceItems(valueList, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                        list.get(which).isSelected = isChecked;
+                        list.get(which).setSelected(isChecked);
                     }
                 })
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        listener.onSelect("");
+                        listener.onSelect("", "");
                     }
                 })
                 .setNegativeButton("取消", null)
@@ -161,18 +161,19 @@ public class DialogFactory {
         /**
          * 如果是单选key就是一个值，不然是逗号分隔
          */
-        void onSelect(String key);
+        void onSelect(String key, String value);
     }
 
-    public static class ChoiceData {
-        public CharSequence key;
-        public CharSequence value;
-        public boolean isSelected;
+    public interface ChoiceData {
 
-        public ChoiceData(CharSequence key, CharSequence value) {
-            this.key = key;
-            this.value = value;
-        }
+        String getKey();
+
+        String getValue();
+
+        boolean isSelected();
+
+        void setSelected(boolean isSecleted);
+
     }
 
 }

@@ -101,20 +101,26 @@ public class MainActivity extends CommonActivity {
 
         final List<DialogFactory.ChoiceData> list = new ArrayList<>();
         for (int i = 0; i < 225; i++) {
-            list.add(new DialogFactory.ChoiceData("key" + i, "value" + i));
+            list.add(new DialogSingleData("key" + i, "value" + i));
         }
 
         dialog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                DialogFactory.showSingle(MainActivity.this, list, key, new DialogFactory.OnDialogSelectedListener() {
+//                DialogFactory.showSingle(MainActivity.this, list, key, new DialogFactory.OnDialogSelectedListener() {
+//                    @Override
+//                    public void onSelect(String k, String value) {
+//                        key = k;
+//                        System.out.println(k + "." + value);
+//                    }
+//                });
+                DialogFactory.showMulti(MainActivity.this, list, new DialogFactory.OnDialogSelectedListener() {
                     @Override
-                    public void onSelect(String k) {
-                        key = k;
+                    public void onSelect(String key, String value) {
                         for (DialogFactory.ChoiceData choiceData : list) {
-                            if (choiceData.isSelected) {
-                                System.out.println(choiceData.value);
+                            if (choiceData.isSelected()) {
+                                System.out.println(choiceData.getKey() + "." + choiceData.getValue());
                             }
                         }
                     }
