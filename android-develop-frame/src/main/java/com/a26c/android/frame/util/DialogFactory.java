@@ -57,7 +57,7 @@ public class DialogFactory {
     /**
      * @param list map必须有  key和value两组键值对
      */
-    public static <T extends ChoiceData>  AlertDialog showSingle(Context context, final List<T> list, String selectKey, final OnDialogSelectedListener listener) {
+    public static <T extends ChoiceData> AlertDialog showSingle(Context context, final List<T> list, String selectKey, final OnDialogSelectedListener<T> listener) {
         CharSequence[] scList = new CharSequence[list.size()];
         int select = -1;
         for (int i = 0; i < list.size(); i++) {
@@ -71,7 +71,7 @@ public class DialogFactory {
                 .setSingleChoiceItems(scList, select, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(final DialogInterface dialog, int which) {
-                        listener.onSelect(list.get(which).getKey(), list.get(which).getValue());
+                        listener.onSelect(list.get(which), null);
                         Observable.just(1)
                                 .subscribeOn(Schedulers.io())
                                 .map(new Func1<Integer, Object>() {
@@ -106,7 +106,7 @@ public class DialogFactory {
      *
      * @param list map必须有  key和value两组键值对
      */
-    public static <T extends ChoiceData> AlertDialog showMulti(Context context, final List<T> list, final OnDialogSelectedListener listener) {
+    public static <T extends ChoiceData> AlertDialog showMulti(Context context, final List<T> list, final OnDialogSelectedListener<T> listener) {
         CharSequence[] valueList = new CharSequence[list.size()];
         boolean[] checkedItems = new boolean[list.size()];
         for (int i = 0; i < list.size(); i++) {
@@ -124,7 +124,7 @@ public class DialogFactory {
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        listener.onSelect("", "");
+                        listener.onSelect(null, list);
                     }
                 })
                 .setNegativeButton("取消", null)
@@ -157,11 +157,11 @@ public class DialogFactory {
     }
 
 
-    public interface OnDialogSelectedListener {
+    public interface OnDialogSelectedListener<T extends ChoiceData> {
         /**
          * 如果是单选key就是一个值，不然是逗号分隔
          */
-        void onSelect(String key, String value);
+        void onSelect(T data, List<T> list);
     }
 
     public interface ChoiceData {
