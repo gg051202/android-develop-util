@@ -176,7 +176,7 @@ public class DialogFactory {
 
     }
 
-    public class SimpleChoiceData implements ChoiceData {
+    public static class SimpleChoiceData implements ChoiceData {
         private String key;
         private CharSequence desc;
         private boolean isSelected;
