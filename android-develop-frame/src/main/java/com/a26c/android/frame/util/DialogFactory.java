@@ -61,7 +61,7 @@ public class DialogFactory {
         CharSequence[] scList = new CharSequence[list.size()];
         int select = -1;
         for (int i = 0; i < list.size(); i++) {
-            scList[i] = list.get(i).getValue();
+            scList[i] = list.get(i).getDesc();
             if (select == -1 && !TextUtils.isEmpty(selectKey) && selectKey.equals(list.get(i).getKey())) {
                 select = i;
             }
@@ -110,7 +110,7 @@ public class DialogFactory {
         CharSequence[] valueList = new CharSequence[list.size()];
         boolean[] checkedItems = new boolean[list.size()];
         for (int i = 0; i < list.size(); i++) {
-            valueList[i] = list.get(i).getValue();
+            valueList[i] = list.get(i).getDesc();
             checkedItems[i] = list.get(i).isSelected();
         }
 
@@ -168,12 +168,51 @@ public class DialogFactory {
 
         String getKey();
 
-        String getValue();
+        CharSequence getDesc();
 
         boolean isSelected();
 
-        void setSelected(boolean isSecleted);
+        void setSelected(boolean selected);
 
+    }
+
+    public class SimpleChoiceData implements ChoiceData {
+        private String key;
+        private CharSequence desc;
+        private boolean isSelected;
+
+        public SimpleChoiceData(String key, CharSequence desc) {
+            this.key = key;
+            this.desc = desc;
+        }
+
+        public void setKey(String key) {
+            this.key = key;
+        }
+
+        public void setDesc(CharSequence desc) {
+            this.desc = desc;
+        }
+
+        @Override
+        public String getKey() {
+            return key;
+        }
+
+        @Override
+        public CharSequence getDesc() {
+            return desc;
+        }
+
+        @Override
+        public boolean isSelected() {
+            return isSelected;
+        }
+
+        @Override
+        public void setSelected(boolean selected) {
+            isSelected = selected;
+        }
     }
 
 }
