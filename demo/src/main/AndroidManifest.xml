@@ -24,6 +24,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".activity.MainActivity">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -34,9 +35,8 @@
         <activity android:name=".activity.ReactTalkActivity" />
         <activity android:name=".activity.PressmissonActivity" />
         <activity android:name=".activity.StatusBarActivity" />
-        <activity android:name=".activity.RecyclerActivity">
-
-        </activity>
+        <activity android:name=".activity.RecyclerActivity"></activity>
+        <activity android:name=".activity.TestActivity"></activity>
     </application>
 
 </manifest>
