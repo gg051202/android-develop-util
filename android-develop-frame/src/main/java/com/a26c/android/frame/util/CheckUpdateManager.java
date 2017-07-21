@@ -475,7 +475,7 @@ public class CheckUpdateManager {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
             intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
-        } else {
+        } else {//修复7.0无法更新
             StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
             StrictMode.setVmPolicy(builder.build());
             intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
