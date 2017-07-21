@@ -9,6 +9,10 @@
         android:orientation="vertical"
         android:padding="20dp">
 
+        <Button
+            android:layout_width="wrap_content"
+            android:id="@+id/button"
+            android:layout_height="wrap_content" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerView"

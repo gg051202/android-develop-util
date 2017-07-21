@@ -10,6 +10,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.os.StrictMode;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
@@ -475,10 +476,9 @@ public class CheckUpdateManager {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
             intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
         } else {
-            Uri uri = Uri.fromFile(file);
-            intent.setDataAndType(uri, "application/vnd.android.package-archive");
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-
+            StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+            StrictMode.setVmPolicy(builder.build());
+            intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
         }
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
