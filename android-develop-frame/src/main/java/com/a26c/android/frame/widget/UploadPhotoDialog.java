@@ -163,7 +163,7 @@ public class UploadPhotoDialog {
          */
         void success(Bitmap bitmap, String imagePath);
 
-        void fail();
+        void fail(Throwable e);
 
     }
 
@@ -264,7 +264,7 @@ public class UploadPhotoDialog {
 
             @Override
             public void onError(Throwable e) {
-                if (l != null) l.fail();
+                if (l != null) l.fail(e);
             }
 
             @Override
@@ -273,7 +273,7 @@ public class UploadPhotoDialog {
                     if (map != null) {
                         l.success((Bitmap) map.get("bitmap"), (String) map.get("filePath"));
                     } else {
-                        l.fail();
+                        l.fail(new Throwable("获取图片为空"));
                     }
                 }
             }

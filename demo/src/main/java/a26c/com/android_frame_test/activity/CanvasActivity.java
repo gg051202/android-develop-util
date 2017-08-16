@@ -37,7 +37,7 @@ public class CanvasActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 List<DomainPriceData> list = new ArrayList<>();
-                for (int i = 0; i < 16; i++) {
+                for (int i = 0; i < 160; i++) {
                     list.add(new DomainPriceData(i * 50 * new Random().nextFloat(), "06-21"));
                 }
                 canvasView.setList(list);
