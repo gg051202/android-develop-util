@@ -1,4 +1,4 @@
-package a26c.com.android_frame_test.activity;
+package a26c.com.android_frame_test.adapter;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;

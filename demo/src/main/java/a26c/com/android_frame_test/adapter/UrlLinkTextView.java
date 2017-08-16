@@ -1,4 +1,4 @@
-package a26c.com.android_frame_test.activity;
+package a26c.com.android_frame_test.adapter;
 
 import android.content.Context;
 import android.graphics.Color;

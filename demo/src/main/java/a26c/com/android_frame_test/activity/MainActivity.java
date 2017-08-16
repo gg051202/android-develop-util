@@ -11,6 +11,8 @@ import com.a26c.android.frame.util.CheckUpdateManager;
 import com.a26c.android.frame.widget.MutiItemDecoration;
 
 import a26c.com.android_frame_test.R;
+import a26c.com.android_frame_test.adapter.TestAdapter;
+import a26c.com.android_frame_test.adapter.TestAdapterData;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
