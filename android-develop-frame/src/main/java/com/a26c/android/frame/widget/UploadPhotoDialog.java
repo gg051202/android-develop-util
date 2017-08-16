@@ -337,4 +337,60 @@ public class UploadPhotoDialog {
     public String getPhotoCachePath() {
         return photoCachePath;
     }
+
+    public int getType() {
+        return type;
+    }
+
+    public Integer getImageSize() {
+        return imageSize;
+    }
+
+    public void setImageSize(Integer imageSize) {
+        this.imageSize = imageSize;
+    }
+
+    public AlertDialog getDialog() {
+        return dialog;
+    }
+
+    public void setDialog(AlertDialog dialog) {
+        this.dialog = dialog;
+    }
+
+    public DialogListener getListener() {
+        return listener;
+    }
+
+    public void setListener(DialogListener listener) {
+        this.listener = listener;
+    }
+
+    public Context getContext() {
+        return context;
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
+    }
+
+    public float getRadio() {
+        return radio;
+    }
+
+    public void setRadio(float radio) {
+        this.radio = radio;
+    }
+
+    public File getOutFile() {
+        return outFile;
+    }
+
+    public void setOutFile(File outFile) {
+        this.outFile = outFile;
+    }
+
+    public void setPhotoCachePath(String photoCachePath) {
+        this.photoCachePath = photoCachePath;
+    }
 }
