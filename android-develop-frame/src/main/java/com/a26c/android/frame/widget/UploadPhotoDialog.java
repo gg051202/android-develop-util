@@ -64,7 +64,6 @@ public class UploadPhotoDialog {
      */
     public int WIDTH;
 
-
     private AlertDialog dialog;
     private DialogListener listener;
     private Context context;
