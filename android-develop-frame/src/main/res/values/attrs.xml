@@ -92,7 +92,6 @@
         <attr name="pointView_color" format="color" />
         <attr name="pointView_number" format="string" />
     </declare-styleable>
-
     <declare-styleable name="FakeBoldTextView">
         <attr name="fbt_color" format="color" />
         <attr name="fbt_boldSize" format="float" />
