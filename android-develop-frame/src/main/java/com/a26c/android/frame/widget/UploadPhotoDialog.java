@@ -146,17 +146,18 @@ public class UploadPhotoDialog {
 
         boolean albumClick();
 
-        /**
-         * 从相册或者相机刚刚获取到图片时
-         */
-        void receiveImage();
-
     }
 
     /**
      * 压缩图片后获取图片成功的接口
      */
     public interface OnGetImageSuccessListener {
+
+        /**
+         * 从相册或者相机刚刚获取到图片时
+         */
+        void onlyReceivedImage();
+
         /**
          * @param bitmap    拍照或者从图库拿到并且压缩过后的bitmap对象
          * @param imagePath 图像被保存到本地的地址
@@ -164,7 +165,6 @@ public class UploadPhotoDialog {
         void success(Bitmap bitmap, String imagePath);
 
         void fail(Throwable e);
-
     }
 
 
@@ -182,7 +182,7 @@ public class UploadPhotoDialog {
             return;
         switch (requestCode) {
             case RESULT_CAMERA:
-                if (listener != null) listener.receiveImage();
+                if (listener != null) l.onlyReceivedImage();
                 Observable.just(1)
                         .map(new Func1<Integer, HashMap<String, Object>>() {
                             @Override
@@ -206,7 +206,7 @@ public class UploadPhotoDialog {
                 break;
 
             case RESULT_ALBUM:
-                if (listener != null) listener.receiveImage();
+                if (listener != null) l.onlyReceivedImage();
                 Observable.just(1)
                         .map(new Func1<Integer, HashMap<String, Object>>() {
                             @Override
