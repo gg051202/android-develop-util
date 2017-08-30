@@ -18,8 +18,4 @@ public class DialogListenerAdapter implements UploadPhotoDialog.DialogListener {
         return false;
     }
 
-    @Override
-    public void receiveImage() {
-
-    }
 }

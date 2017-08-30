@@ -48,14 +48,20 @@ public class PressmissonActivity extends CommonActivity implements CommonActivit
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         dialog.onActivityResult(requestCode, resultCode, data, new UploadPhotoDialog.OnGetImageSuccessListener() {
             @Override
+            public void onlyReceivedImage() {
+
+            }
+
+            @Override
             public void success(Bitmap bitmap, String imagePath) {
                 image.setImageBitmap(bitmap);
             }
 
             @Override
-            public void fail() {
+            public void fail(Throwable e) {
 
             }
+
         });
 
     }
