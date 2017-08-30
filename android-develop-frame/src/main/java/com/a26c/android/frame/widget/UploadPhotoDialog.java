@@ -182,7 +182,7 @@ public class UploadPhotoDialog {
             return;
         switch (requestCode) {
             case RESULT_CAMERA:
-                if (listener != null) l.onlyReceivedImage();
+                if (l != null) l.onlyReceivedImage();
                 Observable.just(1)
                         .map(new Func1<Integer, HashMap<String, Object>>() {
                             @Override
@@ -206,7 +206,7 @@ public class UploadPhotoDialog {
                 break;
 
             case RESULT_ALBUM:
-                if (listener != null) l.onlyReceivedImage();
+                if (l != null) l.onlyReceivedImage();
                 Observable.just(1)
                         .map(new Func1<Integer, HashMap<String, Object>>() {
                             @Override
