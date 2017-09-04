@@ -156,6 +156,15 @@ public class DialogFactory {
         return dialog;
     }
 
+    public static AlertDialog getProgress(Context context, String msg, boolean iscancel) {
+        AlertDialog dialog = getProgressDialog(context, iscancel);
+        TextView textView = (TextView) dialog.findViewById(R.id.text);
+        if (textView != null) {
+            textView.setText(msg);
+        }
+        return dialog;
+    }
+
 
     public interface OnDialogSelectedListener<T extends ChoiceData> {
         /**
