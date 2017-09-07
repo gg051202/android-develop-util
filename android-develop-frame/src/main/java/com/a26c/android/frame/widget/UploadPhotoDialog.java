@@ -212,7 +212,9 @@ public class UploadPhotoDialog {
                             public HashMap<String, Object> call(Integer integer) {
                                 if (radio != 0) {
                                     ZoomPhoto(data.getData());
-                                    return new HashMap<>();
+                                    HashMap<String, Object> result = new HashMap<>();
+                                    result.put("code", -1);
+                                    return result;
                                 } else {
                                     Bitmap bitmap = FrameBitmapUtil.getBitmapFromUri(context, data.getData());
                                     if (bitmap == null) {
