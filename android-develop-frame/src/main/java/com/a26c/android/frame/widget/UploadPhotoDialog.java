@@ -212,15 +212,17 @@ public class UploadPhotoDialog {
                             public HashMap<String, Object> call(Integer integer) {
                                 if (radio != 0) {
                                     ZoomPhoto(data.getData());
+                                    return new HashMap<>();
                                 } else {
                                     Bitmap bitmap = FrameBitmapUtil.getBitmapFromUri(context, data.getData());
                                     if (bitmap == null) {
                                         DialogFactory.show(context, "提示", "未知错误类型", "确定", null);
                                         return null;
                                     }
-                                    return saveBitmap(bitmap);
+                                    HashMap<String, Object> result = saveBitmap(bitmap);
+                                    result.put("code", 1);
+                                    return result;
                                 }
-                                return null;
                             }
                         })
                         .observeOn(AndroidSchedulers.mainThread())
@@ -270,7 +272,9 @@ public class UploadPhotoDialog {
             public void onNext(HashMap<String, Object> map) {
                 if (l != null) {
                     if (map != null) {
-                        l.success((Bitmap) map.get("bitmap"), (String) map.get("filePath"));
+                        if ((int) map.get("code") == 1) {//不等于空，有可能是压缩图片，返回一个new,所以要判断==1
+                            l.success((Bitmap) map.get("bitmap"), (String) map.get("filePath"));
+                        }
                     } else {
                         l.fail(new Throwable("获取图片为空"));
                     }
