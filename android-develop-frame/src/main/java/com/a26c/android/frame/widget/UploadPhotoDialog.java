@@ -14,7 +14,6 @@ import android.support.v7.app.AlertDialog;
 import android.view.View;
 
 import com.a26c.android.frame.R;
-import com.a26c.android.frame.util.DialogFactory;
 import com.a26c.android.frame.util.FrameBitmapUtil;
 import com.a26c.android.frame.util.FrameCropUtils;
 
@@ -181,7 +180,7 @@ public class UploadPhotoDialog {
             return;
         switch (requestCode) {
             case RESULT_CAMERA:
-                if (l != null) l.onlyReceivedImage();
+                if (l != null && radio == 0) l.onlyReceivedImage();
                 Observable.just(1)
                         .map(new Func1<Integer, HashMap<String, Object>>() {
                             @Override
@@ -190,11 +189,15 @@ public class UploadPhotoDialog {
                                 if (radio != 0) {
                                     File picture2 = new File(photoCachePath);
                                     ZoomPhoto(Uri.fromFile(picture2));
+                                    return new HashMap<>();
                                 } else {
                                     Bitmap bitmap = BitmapFactory.decodeFile(photoCachePath);
-                                    return saveBitmap(bitmap);
+                                    if (bitmap != null) {
+                                        return saveBitmap(bitmap);
+                                    } else {
+                                        return null;
+                                    }
                                 }
-                                return null;
                             }
                         })
                         .observeOn(AndroidSchedulers.mainThread())
@@ -205,25 +208,23 @@ public class UploadPhotoDialog {
                 break;
 
             case RESULT_ALBUM:
-                if (l != null) l.onlyReceivedImage();
+                if (l != null && radio == 0) l.onlyReceivedImage();
                 Observable.just(1)
                         .map(new Func1<Integer, HashMap<String, Object>>() {
                             @Override
                             public HashMap<String, Object> call(Integer integer) {
                                 if (radio != 0) {
                                     ZoomPhoto(data.getData());
-                                    HashMap<String, Object> result = new HashMap<>();
-                                    result.put("code", -1);
-                                    return result;
+                                    return new HashMap<>();
                                 } else {
                                     Bitmap bitmap = FrameBitmapUtil.getBitmapFromUri(context, data.getData());
-                                    if (bitmap == null) {
-                                        DialogFactory.show(context, "提示", "未知错误类型", "确定", null);
+                                    if (bitmap != null) {
+                                        HashMap<String, Object> result = saveBitmap(bitmap);
+                                        result.put("code", 1);
+                                        return result;
+                                    } else {
                                         return null;
                                     }
-                                    HashMap<String, Object> result = saveBitmap(bitmap);
-                                    result.put("code", 1);
-                                    return result;
                                 }
                             }
                         })
@@ -234,16 +235,19 @@ public class UploadPhotoDialog {
 
             // 压缩并保存图片
             case RESULT_ZOOM_PHOTO:
+                if (l != null) l.onlyReceivedImage();
                 Observable.just(1)
                         .map(new Func1<Integer, HashMap<String, Object>>() {
                             @Override
                             public HashMap<String, Object> call(Integer integer) {
-                                Bitmap bitmap_Left = BitmapFactory.decodeFile(outFile.getAbsolutePath());
-                                if (bitmap_Left == null) {
-                                    DialogFactory.show(context, "提示", "获取图片失败,未获取操作文件权限", "确定", null);
+                                Bitmap bitmap = BitmapFactory.decodeFile(outFile.getAbsolutePath());
+                                if (bitmap != null) {
+                                    HashMap<String, Object> result = saveBitmap(bitmap);
+                                    result.put("code", 1);
+                                    return result;
+                                } else {
                                     return null;
                                 }
-                                return saveBitmap(bitmap_Left);
                             }
                         })
                         .observeOn(AndroidSchedulers.mainThread())
@@ -274,7 +278,7 @@ public class UploadPhotoDialog {
             public void onNext(HashMap<String, Object> map) {
                 if (l != null) {
                     if (map != null) {
-                        if ((int) map.get("code") == 1) {//不等于空，有可能是压缩图片，返回一个new,所以要判断==1
+                        if (map.get("code") != null) {//不等于空，有可能是压缩图片，返回一个new
                             l.success((Bitmap) map.get("bitmap"), (String) map.get("filePath"));
                         }
                     } else {
