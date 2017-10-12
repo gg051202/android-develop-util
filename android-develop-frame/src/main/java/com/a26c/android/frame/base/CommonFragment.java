@@ -19,7 +19,6 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
  * Created by guilinlin on 16/7/20 11:20.
  * email 973635949@qq.com
