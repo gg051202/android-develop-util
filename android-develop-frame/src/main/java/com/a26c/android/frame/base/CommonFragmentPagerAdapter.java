@@ -43,4 +43,19 @@ public class CommonFragmentPagerAdapter extends FragmentStatePagerAdapter {
         titles.add(title);
     }
 
+    public List<Fragment> getFragments() {
+        return fragments;
+    }
+
+    public void setFragments(List<Fragment> fragments) {
+        this.fragments = fragments;
+    }
+
+    public List<String> getTitles() {
+        return titles;
+    }
+
+    public void setTitles(List<String> titles) {
+        this.titles = titles;
+    }
 }
