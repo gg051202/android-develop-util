@@ -6,12 +6,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import com.a26c.android.frame.widget.FakeBoldTextView;
 
 import a26c.com.android_frame_test.DomainPriceChartView;
-import a26c.com.android_frame_test.DomainPriceData;
 import a26c.com.android_frame_test.R;
 
 /**
@@ -22,32 +19,25 @@ public class CanvasActivity extends AppCompatActivity {
     private a26c.com.android_frame_test.DomainPriceChartView canvasView;
     private android.widget.Button button;
     private android.widget.LinearLayout activityreacttalk;
+    private com.a26c.android.frame.widget.FakeBoldTextView t1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_react_talk);
+        this.t1 = (FakeBoldTextView) findViewById(R.id.t1);
         this.activityreacttalk = (LinearLayout) findViewById(R.id.activity_react_talk);
         this.button = (Button) findViewById(R.id.button);
         this.canvasView = (DomainPriceChartView) findViewById(R.id.canvasView);
 
-
-
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                List<DomainPriceData> list = new ArrayList<>();
-                for (int i = 0; i < 160; i++) {
-                    list.add(new DomainPriceData(i * 50 * new Random().nextFloat(), "06-21"));
-                }
-                canvasView.setList(list);
+
+                t1.setColor(0xffff0000);
             }
         });
 
-        List<DomainPriceData> list = new ArrayList<>();
-        for (int i = 0; i < 16; i++) {
-            list.add(new DomainPriceData(i * 50 * new Random().nextFloat(), "06-21"));
-        }
-        canvasView.setList(list);
+        t1.setBoldText("啊啊啊");
     }
 }

@@ -28,7 +28,10 @@ public class FakeBoldTextView extends AppCompatTextView {
         boldSize = array.getFloat(R.styleable.FakeBoldTextView_fbt_boldSize, 0.3f);
         array.recycle();
 
-        String text = getText().toString();
+        updateString(getText().toString());
+    }
+
+    private void updateString(String text) {
         SpannableString spannableString = new SpannableString(text);
         spannableString.setSpan(new FakeBoldSpan(boldSize, color), 0, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         super.setText(spannableString);
@@ -41,6 +44,7 @@ public class FakeBoldTextView extends AppCompatTextView {
 
     public void setColor(int color) {
         this.color = color;
+        updateString(getText().toString());
     }
 
     public float getBoldSize() {
@@ -49,5 +53,12 @@ public class FakeBoldTextView extends AppCompatTextView {
 
     public void setBoldSize(float boldSize) {
         this.boldSize = boldSize;
+        updateString(getText().toString());
     }
+
+    public void setBoldText(CharSequence charSequence) {
+        updateString(charSequence.toString());
+    }
+
+
 }
