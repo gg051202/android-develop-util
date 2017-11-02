@@ -7,7 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewStub;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,28 +22,26 @@ import java.util.List;
  * Created by guilinlin on 16/7/29 15:41.
  * email 973635949@qq.com
  */
+@SuppressWarnings("all")
 public class BaseRecyclerView extends FrameLayout {
 
     private Context context;
     private RecyclerView recyclerView;
     private SwipeRefreshLayout refreshLayout;
+    private FrameLayout noDataRelativeLayout;
     private BaseQuickAdapter adapter;
     private boolean firstLoadData = true;
+    /**
+     * 没有数据时，时候需要显示 没有数据的视图
+     */
     private boolean showNodataView = true;
     private MutiItemDecoration decor;
     private SwipeRefreshLayout.OnRefreshListener onRefreshListener;
     private NetworkHandle networkHandle;
 
-    private ViewStub nodataViewStub;
-    private ViewStub errViewStub;
-    private int errLayoutId = 0;
-    private int nodataLayoutId = 0;
-    private TextView nodataTextView;
-    private TextView errTextView;
-    private String nodataString = "暂无数据";
-    private String errdataString = "请求失败";
-    private View nodataView;
-    private View errdataView;
+    private ViewCreator viewCreator;
+    private CharSequence defaultNoDataString = "暂无数据";
+    private CharSequence defaultErrString = "请求失败";
 
     /**
      * 初始值设置这么大表示不需要上拉加载，但是如果外部调用了baseRecyclerView.openLoadMore,将会改变这个值，
@@ -60,15 +58,16 @@ public class BaseRecyclerView extends FrameLayout {
      * 表示分页数据的第几页
      */
     private int pageIndex = 1;
+    private View noDataView;
+    private View errView;
 
     public BaseRecyclerView(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
         LayoutInflater.from(context).inflate(R.layout.frame_layout_base_recycler_view, this, true);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        noDataRelativeLayout = (FrameLayout) findViewById(R.id.noDataRelativeLayout);
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.refreshLayout);
-        nodataViewStub = (ViewStub) findViewById(R.id.nodataViewStub);
-        errViewStub = (ViewStub) findViewById(R.id.errViewStub);
 
         //初始化recyclerView
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(context);
@@ -105,7 +104,7 @@ public class BaseRecyclerView extends FrameLayout {
         });
 
         //初始化无数据的布局
-        initNodataView();
+        initViewCreator();
 
         recyclerView.setAdapter(adapter);
         //baseRecyclerView刚显示时是否需要显示下拉刷新的dialog
@@ -116,13 +115,6 @@ public class BaseRecyclerView extends FrameLayout {
             if (networkHandle != null) networkHandle.loadData(true, "1");
         }
 
-    }
-
-    /**
-     * 设置recyclerView使用的layoutManager
-     */
-    public void setLayoutManager(RecyclerView.LayoutManager layoutManager) {
-        recyclerView.setLayoutManager(layoutManager);
     }
 
     /**
@@ -153,73 +145,76 @@ public class BaseRecyclerView extends FrameLayout {
         refreshLayout.setRefreshing(false);
         //如果listview没有数据,显示无数据的提示,否则隐藏
         if (adapter.getItemCount() - adapter.getHeaderLayoutCount() - adapter.getFooterLayoutCount() == 0) {
-            if (showNodataView) {
-                nodataViewStub.setVisibility(VISIBLE);
-                errViewStub.setVisibility(INVISIBLE);
-            }
+            noDataView.setVisibility(showNodataView ? VISIBLE : INVISIBLE);
+            errView.setVisibility(INVISIBLE);
         } else {
-            nodataViewStub.setVisibility(INVISIBLE);
-            errViewStub.setVisibility(INVISIBLE);
+            noDataView.setVisibility(INVISIBLE);
+            errView.setVisibility(INVISIBLE);
+        }
+    }
+
+    private void initViewCreator() {
+        if (viewCreator == null) {
+            viewCreator = new ViewCreator() {
+                @Override
+                public View getNoDataView() {
+                    View view = LayoutInflater.from(context).inflate(R.layout.frame_layout_network_nodata, null);
+                    return view;
+                }
+
+                @Override
+                public View getErrDataView() {
+                    View view = LayoutInflater.from(context).inflate(R.layout.frame_layout_network_err, null);
+                    return view;
+                }
+            };
+        }
+        if (viewCreator.getNoDataView() == null) {
+            noDataView = LayoutInflater.from(context).inflate(R.layout.frame_layout_network_nodata, null);
+        } else {
+            noDataView = viewCreator.getNoDataView();
+        }
+        if (viewCreator.getErrDataView() == null) {
+            errView = LayoutInflater.from(context).inflate(R.layout.frame_layout_network_err, null);
+        } else {
+            errView = viewCreator.getErrDataView();
+        }
+
+
+        noDataView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        noDataRelativeLayout.addView(noDataView);
+
+        errView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        noDataRelativeLayout.addView(errView);
+
+        setNoDataView(defaultNoDataString);
+        setErrView(defaultErrString);
+    }
+
+    /**
+     * 修改默认的无数据的视图,前提是数据长度是0
+     */
+    public void setNoDataView(CharSequence text) {
+        if (adapter.getItemCount() - adapter.getHeaderLayoutCount() - adapter.getFooterLayoutCount() == 0) {
+            if (noDataView instanceof TextView) {
+                ((TextView) noDataView).setText(text);
+            }
+            noDataView.setVisibility(VISIBLE);
+            errView.setVisibility(INVISIBLE);
         }
     }
 
     /**
-     * 显示网络异常的视图
-     * 细节:如果网络异常并且当前无数据才显示errTextView,否则弹出dialog提示就行
+     * 修改默认的显示网络异常的视图,前提是数据长度是0
      */
-    public void showErrView(CharSequence err) {
+    public void setErrView(CharSequence text) {
         if (adapter.getItemCount() - adapter.getHeaderLayoutCount() - adapter.getFooterLayoutCount() == 0) {
-            nodataViewStub.setVisibility(INVISIBLE);
-            errViewStub.setVisibility(VISIBLE);
-            if (errTextView != null) {
-                errTextView.setText(err);
+            if (errView instanceof TextView) {
+                ((TextView) errView).setText(text);
             }
+            noDataView.setVisibility(INVISIBLE);
+            errView.setVisibility(VISIBLE);
         }
-    }
-
-    public void showErrView() {
-        showErrView("");
-    }
-
-    public void showNodataView(CharSequence nodataString) {
-        if (adapter.getItemCount() - adapter.getHeaderLayoutCount() - adapter.getFooterLayoutCount() == 0) {
-            nodataViewStub.setVisibility(VISIBLE);
-            errViewStub.setVisibility(GONE);
-            if (nodataTextView != null) {
-                nodataTextView.setText(nodataString);
-            }
-        }
-    }
-
-    public void showNodataView() {
-        showNodataView("");
-    }
-
-
-    private void initNodataView() {
-        if (nodataLayoutId == 0) nodataLayoutId = R.layout.frame_layout_network_nodata;
-        if (errLayoutId == 0) errLayoutId = R.layout.frame_layout_network_err;
-
-        nodataViewStub.setLayoutResource(nodataLayoutId);
-        errViewStub.setLayoutResource(errLayoutId);
-        nodataView = nodataViewStub.inflate();
-        errdataView = errViewStub.inflate();
-        nodataViewStub.setVisibility(GONE);
-        errViewStub.setVisibility(GONE);
-
-        if (nodataLayoutId == 0) {
-            nodataTextView = (TextView) nodataView.findViewById(R.id.nodataTextView);
-            nodataTextView.setText(nodataString);
-        }
-        if (errLayoutId == 0) {
-            errTextView = (TextView) errdataView.findViewById(R.id.errTextView);
-            errTextView.setText(errdataString);
-        }
-
-    }
-
-    public void addOnItemTouchListener(OnItemClickListener listener) {
-        recyclerView.addOnItemTouchListener(listener);
     }
 
 
@@ -241,16 +236,17 @@ public class BaseRecyclerView extends FrameLayout {
         void loadData(boolean isRefresh, String pageIndex);
     }
 
-    public void loadComplete() {
-        adapter.loadComplete();
-    }
 
-    public void setIsRefreshing(boolean b) {
-        refreshLayout.setRefreshing(b);
-    }
+    public interface ViewCreator {
+        /**
+         * 返回没有数据的视图
+         */
+        View getNoDataView();
 
-    public void setAdapter(BaseQuickAdapter adapter) {
-        recyclerView.setAdapter(adapter);
+        /**
+         * 返回请求失败的视图
+         */
+        View getErrDataView();
     }
 
     public void openLoadMore(int pageSize) {
@@ -262,8 +258,8 @@ public class BaseRecyclerView extends FrameLayout {
         recyclerView.removeItemDecoration(decor);
     }
 
-    public void addDivider(RecyclerView.ItemDecoration itemDecoration) {
-        recyclerView.addItemDecoration(itemDecoration);
+    public void addOnItemTouchListener(OnItemClickListener listener) {
+        recyclerView.addOnItemTouchListener(listener);
     }
 
     /**
@@ -279,6 +275,14 @@ public class BaseRecyclerView extends FrameLayout {
 
     public void addData(List data) {
         adapter.addData(data);
+    }
+
+    public void setViewCreator(ViewCreator viewCreator) {
+        this.viewCreator = viewCreator;
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
     }
 
     public RecyclerView getRecyclerView() {
@@ -297,8 +301,20 @@ public class BaseRecyclerView extends FrameLayout {
         this.refreshLayout = refreshLayout;
     }
 
+    public FrameLayout getNoDataRelativeLayout() {
+        return noDataRelativeLayout;
+    }
+
+    public void setNoDataRelativeLayout(FrameLayout noDataRelativeLayout) {
+        this.noDataRelativeLayout = noDataRelativeLayout;
+    }
+
     public BaseQuickAdapter getAdapter() {
         return adapter;
+    }
+
+    public void setAdapter(BaseQuickAdapter adapter) {
+        this.adapter = adapter;
     }
 
     public boolean isFirstLoadData() {
@@ -341,68 +357,24 @@ public class BaseRecyclerView extends FrameLayout {
         this.networkHandle = networkHandle;
     }
 
-    public ViewStub getNodataViewStub() {
-        return nodataViewStub;
+    public ViewCreator getViewCreator() {
+        return viewCreator;
     }
 
-    public void setNodataViewStub(ViewStub nodataViewStub) {
-        this.nodataViewStub = nodataViewStub;
+    public CharSequence getDefaultNoDataString() {
+        return defaultNoDataString;
     }
 
-    public ViewStub getErrViewStub() {
-        return errViewStub;
+    public void setDefaultNoDataString(CharSequence defaultNoDataString) {
+        this.defaultNoDataString = defaultNoDataString;
     }
 
-    public void setErrViewStub(ViewStub errViewStub) {
-        this.errViewStub = errViewStub;
+    public CharSequence getDefaultErrString() {
+        return defaultErrString;
     }
 
-    public int getErrLayoutId() {
-        return errLayoutId;
-    }
-
-    public void setErrLayoutId(int errLayoutId) {
-        this.errLayoutId = errLayoutId;
-    }
-
-    public int getNodataLayoutId() {
-        return nodataLayoutId;
-    }
-
-    public void setNodataLayoutId(int nodataLayoutId) {
-        this.nodataLayoutId = nodataLayoutId;
-    }
-
-    public TextView getNodataTextView() {
-        return nodataTextView;
-    }
-
-    public void setNodataTextView(TextView nodataTextView) {
-        this.nodataTextView = nodataTextView;
-    }
-
-    public TextView getErrTextView() {
-        return errTextView;
-    }
-
-    public void setErrTextView(TextView errTextView) {
-        this.errTextView = errTextView;
-    }
-
-    public String getNodataString() {
-        return nodataString;
-    }
-
-    public void setNodataString(String nodataString) {
-        this.nodataString = nodataString;
-    }
-
-    public String getErrdataString() {
-        return errdataString;
-    }
-
-    public void setErrdataString(String errdataString) {
-        this.errdataString = errdataString;
+    public void setDefaultErrString(CharSequence defaultErrString) {
+        this.defaultErrString = defaultErrString;
     }
 
     public int getPageSize() {
@@ -427,21 +399,5 @@ public class BaseRecyclerView extends FrameLayout {
 
     public void setPageIndex(int pageIndex) {
         this.pageIndex = pageIndex;
-    }
-
-    public View getNodataView() {
-        return nodataView;
-    }
-
-    public void setNodataView(View nodataView) {
-        this.nodataView = nodataView;
-    }
-
-    public View getErrdataView() {
-        return errdataView;
-    }
-
-    public void setErrdataView(View errdataView) {
-        this.errdataView = errdataView;
     }
 }
