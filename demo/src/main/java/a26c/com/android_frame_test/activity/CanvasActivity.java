@@ -61,7 +61,7 @@ public class CanvasActivity extends AppCompatActivity {
 //                    list.add(new TestAdapterData());
 //                }
                 baseRecyclerView.onLoadDataComplete();
-                baseRecyclerView.setErrView("请求错误啦");
+                baseRecyclerView.showErrView("请求错误啦");
 
             }
         });
@@ -69,13 +69,13 @@ public class CanvasActivity extends AppCompatActivity {
         a1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                baseRecyclerView.setNoDataView("nodata");
+                baseRecyclerView.showNoDataView("nodata");
             }
         });
         a2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                baseRecyclerView.setErrView("err");
+                baseRecyclerView.showErrView("err");
             }
         });
     }

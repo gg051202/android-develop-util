@@ -187,14 +187,14 @@ public class BaseRecyclerView extends FrameLayout {
         errView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         noDataRelativeLayout.addView(errView);
 
-        setNoDataView(defaultNoDataString);
-        setErrView(defaultErrString);
+        showNoDataView(defaultNoDataString);
+        showErrView(defaultErrString);
     }
 
     /**
      * 修改默认的无数据的视图,前提是数据长度是0
      */
-    public void setNoDataView(CharSequence text) {
+    public void showNoDataView(CharSequence text) {
         if (adapter.getItemCount() - adapter.getHeaderLayoutCount() - adapter.getFooterLayoutCount() == 0) {
             if (noDataView instanceof TextView) {
                 ((TextView) noDataView).setText(text);
@@ -207,7 +207,7 @@ public class BaseRecyclerView extends FrameLayout {
     /**
      * 修改默认的显示网络异常的视图,前提是数据长度是0
      */
-    public void setErrView(CharSequence text) {
+    public void showErrView(CharSequence text) {
         if (adapter.getItemCount() - adapter.getHeaderLayoutCount() - adapter.getFooterLayoutCount() == 0) {
             if (errView instanceof TextView) {
                 ((TextView) errView).setText(text);
