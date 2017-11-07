@@ -261,10 +261,10 @@ public class BaseRecyclerView extends FrameLayout {
      */
     public void callRefreshListener() {
         pageIndex = 1;
+        refreshLayout.setRefreshing(true);
         if (networkHandle != null) {
             networkHandle.loadData(true, "1");
         }
-        refreshLayout.setRefreshing(true);
     }
 
     public void addData(List data) {

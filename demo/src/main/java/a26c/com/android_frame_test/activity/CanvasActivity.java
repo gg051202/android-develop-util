@@ -56,16 +56,12 @@ public class CanvasActivity extends AppCompatActivity {
 
             @Override
             public void loadData(boolean isRefresh, String pageIndex) {
-                baseRecyclerView.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        List<TestAdapterData> list = new ArrayList<>();
+                List<TestAdapterData> list = new ArrayList<>();
 //                for (int i = 20; i > 0; i--) {
 //                    list.add(new TestAdapterData());
 //                }
-                        baseRecyclerView.onLoadDataComplete();
-                    }
-                },2000 );
+                baseRecyclerView.setDefaultNoDataString("12aaa3123");
+                baseRecyclerView.onLoadDataComplete();
 
 
             }
