@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -135,6 +136,7 @@ public class BaseRecyclerView extends FrameLayout {
         }
         adapter.addData(data);
         onLoadDataComplete();
+
     }
 
     public void onLoadDataComplete() {
@@ -143,14 +145,8 @@ public class BaseRecyclerView extends FrameLayout {
         adapter.notifyDataSetChanged();
 
         refreshLayout.setRefreshing(false);
-        //如果listview没有数据,显示无数据的提示,否则隐藏
-        if (adapter.getItemCount() - adapter.getHeaderLayoutCount() - adapter.getFooterLayoutCount() == 0) {
-            noDataView.setVisibility(showNodataView ? VISIBLE : INVISIBLE);
-            errView.setVisibility(INVISIBLE);
-        } else {
-            noDataView.setVisibility(INVISIBLE);
-            errView.setVisibility(INVISIBLE);
-        }
+
+        showNoDataView(defaultNoDataString);
     }
 
     private void initViewCreator() {
@@ -187,8 +183,6 @@ public class BaseRecyclerView extends FrameLayout {
         errView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         noDataRelativeLayout.addView(errView);
 
-        showNoDataView(defaultNoDataString);
-        showErrView(defaultErrString);
     }
 
     /**
@@ -197,7 +191,7 @@ public class BaseRecyclerView extends FrameLayout {
     public void showNoDataView(CharSequence text) {
         if (adapter.getItemCount() - adapter.getHeaderLayoutCount() - adapter.getFooterLayoutCount() == 0) {
             if (noDataView instanceof TextView) {
-                ((TextView) noDataView).setText(text);
+                ((TextView) noDataView).setText(TextUtils.isEmpty(text) ? defaultNoDataString : text);
             }
             noDataView.setVisibility(VISIBLE);
             errView.setVisibility(INVISIBLE);
@@ -210,7 +204,7 @@ public class BaseRecyclerView extends FrameLayout {
     public void showErrView(CharSequence text) {
         if (adapter.getItemCount() - adapter.getHeaderLayoutCount() - adapter.getFooterLayoutCount() == 0) {
             if (errView instanceof TextView) {
-                ((TextView) errView).setText(text);
+                ((TextView) errView).setText(TextUtils.isEmpty(text) ? defaultErrString : text);
             }
             noDataView.setVisibility(INVISIBLE);
             errView.setVisibility(VISIBLE);

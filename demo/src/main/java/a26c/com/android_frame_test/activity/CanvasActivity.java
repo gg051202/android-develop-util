@@ -56,12 +56,17 @@ public class CanvasActivity extends AppCompatActivity {
 
             @Override
             public void loadData(boolean isRefresh, String pageIndex) {
-                List<TestAdapterData> list = new ArrayList<>();
+                baseRecyclerView.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        List<TestAdapterData> list = new ArrayList<>();
 //                for (int i = 20; i > 0; i--) {
 //                    list.add(new TestAdapterData());
 //                }
-                baseRecyclerView.onLoadDataComplete();
-                baseRecyclerView.showErrView("请求错误啦");
+                        baseRecyclerView.onLoadDataComplete();
+                    }
+                },2000 );
+
 
             }
         });
@@ -69,7 +74,8 @@ public class CanvasActivity extends AppCompatActivity {
         a1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                baseRecyclerView.showNoDataView("nodata");
+                baseRecyclerView.callRefreshListener();
+
             }
         });
         a2.setOnClickListener(new View.OnClickListener() {
