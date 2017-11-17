@@ -31,13 +31,17 @@
         <activity android:name=".activity.RecyclerActivity" />
         <activity android:name=".activity.TestActivity"></activity>
         <activity android:name=".activity.SmartRefreshLayoutActivity">
+        </activity>
+
+        <activity android:name=".socket.MinaTestActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SocketActivity"></activity>
+
+        <service android:name=".socket.MinaService"/>
     </application>
 
 </manifest>

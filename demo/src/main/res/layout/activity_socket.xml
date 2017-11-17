@@ -6,4 +6,10 @@
                                              android:layout_height="match_parent"
                                              tools:context="a26c.com.android_frame_test.SocketActivity">
 
+
+    <Button
+        android:id="@+id/send"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
 </android.support.constraint.ConstraintLayout>

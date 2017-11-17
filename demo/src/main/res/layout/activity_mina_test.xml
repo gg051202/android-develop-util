@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/receive_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="#ffffff"
+        android:background="#fa870a"
+        android:layout_margin="10dp"
+        android:padding="10dp"/>
+
+    <TextView
+        android:id="@+id/start_service_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="10dp"
+        android:textColor="#ffffff"
+        android:background="#fa870a"
+        android:layout_margin="10dp"
+        android:text="启动服务"/>
+
+    <TextView
+        android:id="@+id/send_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="10dp"
+        android:textColor="#ffffff"
+        android:background="#fa870a"
+        android:layout_margin="10dp"
+        android:text="发送信息"/>
+
+</LinearLayout>
