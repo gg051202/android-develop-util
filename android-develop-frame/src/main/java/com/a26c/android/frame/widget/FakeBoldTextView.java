@@ -31,6 +31,15 @@ public class FakeBoldTextView extends AppCompatTextView {
         updateString(getText().toString());
     }
 
+    public FakeBoldTextView(Context context ) {
+        super(context);
+
+        color = 0;
+        boldSize = 0.3f;
+
+        updateString(getText().toString());
+    }
+
     private void updateString(String text) {
         SpannableString spannableString = new SpannableString(text);
         spannableString.setSpan(new FakeBoldSpan(boldSize, color), 0, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
