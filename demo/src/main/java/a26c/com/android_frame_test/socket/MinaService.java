@@ -29,6 +29,7 @@ public class MinaService extends Service{
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        System.out.println("onStartCommand");
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -37,6 +38,8 @@ public class MinaService extends Service{
         super.onDestroy();
         thread.disConnect();
         thread=null;
+
+        Log.e("tag", "断开连接");
 
     }
 
@@ -48,16 +51,14 @@ public class MinaService extends Service{
 
     class ConnectionThread extends HandlerThread{
 
-        private Context context;
         boolean isConnection;
         ConnectionManager mManager;
         public ConnectionThread(String name, Context context){
             super(name);
-            this.context = context;
 
             ConnectionConfig config = new ConnectionConfig.Builder(context)
-                    .setIp("192.168.168.20")
-                    .setPort(9226)
+                    .setIp("47.94.217.160")
+                    .setPort(3000)
                     .setReadBufferSize(10240)
                     .setConnectionTimeout(10000).builder();
 
@@ -81,7 +82,7 @@ public class MinaService extends Service{
             }
         }
 
-        public void disConnect(){
+        void disConnect(){
             mManager.disContect();
         }
     }

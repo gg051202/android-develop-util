@@ -15,6 +15,8 @@
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
 
     <application
         android:name=".MyApplication"
@@ -30,8 +32,7 @@
         <activity android:name=".activity.StatusBarActivity" />
         <activity android:name=".activity.RecyclerActivity" />
         <activity android:name=".activity.TestActivity"></activity>
-        <activity android:name=".activity.SmartRefreshLayoutActivity">
-        </activity>
+        <activity android:name=".activity.SmartRefreshLayoutActivity"></activity>
 
         <activity android:name=".socket.MinaTestActivity">
             <intent-filter>
@@ -41,7 +42,7 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".socket.MinaService"/>
+        <service android:name=".socket.MinaService" />
     </application>
 
 </manifest>

@@ -9,6 +9,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import a26c.com.android_frame_test.R;
@@ -19,7 +20,7 @@ import a26c.com.android_frame_test.R;
  * Date: 2016/12/9 0009
  * Time: 18:01
  */
-public class MinaTestActivity extends AppCompatActivity implements View.OnClickListener{
+public class MinaTestActivity extends AppCompatActivity implements View.OnClickListener {
 
     private TextView start_service_tv, send_tv, receive_tv;
 
@@ -52,7 +53,8 @@ public class MinaTestActivity extends AppCompatActivity implements View.OnClickL
 
     @Override
     public void onClick(View v) {
-        switch(v.getId()){
+        String value = ((EditText) findViewById(R.id.editText)).getText().toString();
+        switch (v.getId()) {
             case R.id.start_service_tv:
                 Log.e("tag", "点击启动服务");
                 Intent intent = new Intent(this, MinaService.class);
@@ -60,12 +62,12 @@ public class MinaTestActivity extends AppCompatActivity implements View.OnClickL
                 break;
             case R.id.send_tv:
                 Log.e("tag", "点击发送消息");
-                SessionManager.getInstance().writeToServer("hello123");
+                SessionManager.getInstance().writeToServer(value);
                 break;
         }
     }
 
-    private void unregisterBroadcast(){
+    private void unregisterBroadcast() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
     }
 
@@ -77,7 +79,7 @@ public class MinaTestActivity extends AppCompatActivity implements View.OnClickL
 
     }
 
-    private class MessageBroadcastReceiver extends BroadcastReceiver{
+    private class MessageBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
 
