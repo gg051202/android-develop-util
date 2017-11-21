@@ -34,7 +34,7 @@
         <activity android:name=".activity.TestActivity"></activity>
         <activity android:name=".activity.SmartRefreshLayoutActivity"></activity>
 
-        <activity android:name=".socket.MinaTestActivity">
+        <activity android:name=".activity.MinaTestActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

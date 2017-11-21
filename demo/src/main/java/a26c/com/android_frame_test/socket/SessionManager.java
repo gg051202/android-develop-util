@@ -1,7 +1,5 @@
 package a26c.com.android_frame_test.socket;
 
-import android.util.Log;
-
 import org.apache.mina.core.session.IoSession;
 
 /**
@@ -33,19 +31,10 @@ public class SessionManager {
     }
 
     public void writeToServer(Object msg){
+        System.out.println("发送消息:"+  msg);
         if(mSession!=null){
-            Log.e("tag", "客户端准备发送消息");
             mSession.write(msg);
         }
     }
 
-    public void closeSession(){
-        if(mSession!=null){
-            mSession.closeOnFlush();
-        }
-    }
-
-    public void removeSession(){
-        this.mSession=null;
-    }
 }

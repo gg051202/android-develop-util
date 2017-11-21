@@ -1,7 +1,6 @@
 package a26c.com.android_frame_test.socket;
 
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.os.HandlerThread;
 import android.os.IBinder;
@@ -14,22 +13,28 @@ import android.util.Log;
  * Date: 2016/12/9 0009
  * Time: 17:17
  */
-public class MinaService extends Service{
+public class MinaService extends Service {
 
     private ConnectionThread thread;
+
+    ConnectionManager mManager;
 
 
     @Override
     public void onCreate() {
         super.onCreate();
-        thread = new ConnectionThread("mina", getApplicationContext());
+        thread = new ConnectionThread("mina");
         thread.start();
-        Log.e("tag", "启动线程尝试连接");
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        System.out.println("onStartCommand");
+        if (intent.getIntExtra("id", 0) == 2) {
+            stop();
+        }else if(intent.getIntExtra("id", 0) == 1){
+            thread = new ConnectionThread("mina");
+            thread.start();
+        }
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -37,10 +42,7 @@ public class MinaService extends Service{
     public void onDestroy() {
         super.onDestroy();
         thread.disConnect();
-        thread=null;
-
-        Log.e("tag", "断开连接");
-
+        thread = null;
     }
 
     @Nullable
@@ -49,32 +51,23 @@ public class MinaService extends Service{
         return null;
     }
 
-    class ConnectionThread extends HandlerThread{
+    class ConnectionThread extends HandlerThread {
 
-        boolean isConnection;
-        ConnectionManager mManager;
-        public ConnectionThread(String name, Context context){
+
+        ConnectionThread(String name) {
             super(name);
-
-            ConnectionConfig config = new ConnectionConfig.Builder(context)
-                    .setIp("47.94.217.160")
-                    .setPort(3000)
-                    .setReadBufferSize(10240)
-                    .setConnectionTimeout(10000).builder();
-
-            mManager = new ConnectionManager(config);
+            mManager = new ConnectionManager();
         }
 
         @Override
         protected void onLooperPrepared() {
-            while(true){
-                isConnection = mManager.connnect();
-                if(isConnection){
-                    Log.e("tag", "连接成功");
+            while (true) {
+                if (mManager.connnect()) {
+                    Log.i("tag", "连接成功");
                     break;
                 }
                 try {
-                    Log.e("tag", "尝试重新连接");
+                    Log.i("tag", "尝试重新连接");
                     Thread.sleep(3000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -82,8 +75,13 @@ public class MinaService extends Service{
             }
         }
 
-        void disConnect(){
+        void disConnect() {
             mManager.disContect();
         }
     }
+
+    public void stop() {
+        mManager.disContect();
+    }
+
 }

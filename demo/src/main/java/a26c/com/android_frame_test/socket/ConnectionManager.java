@@ -1,115 +1,105 @@
 package a26c.com.android_frame_test.socket;
 
-import android.content.Context;
-import android.content.Intent;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-import org.apache.mina.core.buffer.IoBuffer;
+import org.apache.mina.core.filterchain.IoFilterAdapter;
 import org.apache.mina.core.future.ConnectFuture;
 import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
-import org.apache.mina.filter.logging.LoggingFilter;
+import org.apache.mina.transport.socket.SocketSessionConfig;
 import org.apache.mina.transport.socket.nio.NioSocketConnector;
+import org.greenrobot.eventbus.EventBus;
 
-import java.lang.ref.WeakReference;
 import java.net.InetSocketAddress;
 
-/**
- * Description:
- * User: chenzheng
- * Date: 2016/12/9 0009
- * Time: 16:21
- */
 public class ConnectionManager {
 
-    private static final String BROADCAST_ACTION = "com.commonlibrary.mina.broadcast";
-    private static final String MESSAGE = "message";
-    private ConnectionConfig mConfig;
-    private WeakReference<Context> mContext;
 
     private NioSocketConnector mConnection;
     private IoSession mSession;
-    private InetSocketAddress mAddress;
 
-    public ConnectionManager(ConnectionConfig config){
+    public ConnectionManager() {
 
-        this.mConfig = config;
-        this.mContext = new WeakReference<Context>(config.getContext());
-        init();
-    }
-
-    private void init() {
-        mAddress = new InetSocketAddress(mConfig.getIp(), mConfig.getPort());
         mConnection = new NioSocketConnector();
-        mConnection.getSessionConfig().setReadBufferSize(mConfig.getReadBufferSize());
-        mConnection.getFilterChain().addLast("logging", new LoggingFilter());
-        mConnection.getFilterChain().addLast("codec", new ProtocolCodecFilter(new MyCodecFactory()));
-        mConnection.setHandler(new DefaultHandler(mContext.get()));
-        mConnection.setDefaultRemoteAddress(mAddress);
+
+
+        mConnection.setConnectTimeoutMillis(3000);//超时
+        mConnection.getFilterChain().addFirst("reconnection", new MyIoFilterAdapter());
+        mConnection.getFilterChain().addLast("codec",
+                new ProtocolCodecFilter(new MyDataEncoder(),new MyDataDecoder()));
+        mConnection.setHandler(new DefaultHandler());//添加回调
+
+
+        //设置多长时间没有进行读写操作进入空闲状态，会调用sessionIdle方法，单位（秒）
+        SocketSessionConfig sessionConfig = mConnection.getSessionConfig();
+        sessionConfig.setReadBufferSize(10240);
+        sessionConfig.setReaderIdleTime(60 * 5);
+        sessionConfig.setWriterIdleTime(60 * 5);
+        sessionConfig.setBothIdleTime(60 * 5);
     }
 
     /**
      * 与服务器连接
-     * @return
      */
-    public boolean connnect(){
-        Log.e("tag", "准备连接");
-        try{
-            ConnectFuture future = mConnection.connect();
+    public boolean connnect() {
+        Log.i("tag", "准备连接");
+        try {
+            ConnectFuture future = mConnection.connect(new InetSocketAddress("47.94.217.160", 3000));
             future.awaitUninterruptibly();
             mSession = future.getSession();
 
             SessionManager.getInstance().setSeesion(mSession);
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            Log.e("tag", "连接失败");
+            Log.i("tag", "连接失败");
             return false;
         }
 
-        return mSession == null ? false : true;
+        return mSession != null;
     }
 
     /**
      * 断开连接
      */
-    public void disContect(){
-        mConnection.dispose();
-        mConnection=null;
-        mSession=null;
-        mAddress=null;
-        mContext = null;
-        Log.e("tag", "断开连接");
+    public void disContect() {
+        if (mConnection != null) {
+            mConnection.dispose();
+        }
+        if (mSession != null) {
+            mSession.closeOnFlush();
+        }
+        mConnection = null;
+        mSession = null;
+        Log.i("tag", "断开连接");
     }
 
-    private static class DefaultHandler extends IoHandlerAdapter{
-
-        private Context mContext;
-        private DefaultHandler(Context context){
-            this.mContext = context;
-
-        }
-
-        @Override
-        public void sessionOpened(IoSession session) throws Exception {
-            super.sessionOpened(session);
-        }
+    private static class DefaultHandler extends IoHandlerAdapter {
 
         @Override
         public void messageReceived(IoSession session, Object message) throws Exception {
-
-            Log.e("tag", "接收到服务器端消息："+message.toString());
-            if(mContext!=null){
-                Intent intent = new Intent(BROADCAST_ACTION);
-                intent.putExtra(MESSAGE, message.toString());
-                LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
-            }
-
-            //todo
-            IoBuffer buf = (IoBuffer) message;
-//            HandlerEvent.getInstance().handle(buf);
+            Log.i("tag", "接收到服务器端消息：" + message.toString());
+            EventBus.getDefault().post(new ReceiveSocketMessageEventBus(message.toString()));
         }
+    }
+
+    private class MyIoFilterAdapter extends IoFilterAdapter {
+        @Override
+        public void sessionClosed(NextFilter nextFilter, IoSession session) throws Exception {
+            Log.i("", "连接关闭，每隔5秒进行重新连接");
+            for (; ; ) {
+                if (mConnection == null) {
+                    break;
+                }
+                if (ConnectionManager.this.connnect()) {
+                    Log.i("", "断线重连[" + mConnection.getDefaultRemoteAddress().getHostName() + ":" +
+                            mConnection.getDefaultRemoteAddress().getPort() + "]成功");
+                    break;
+                }
+                Thread.sleep(5000);
+            }
+        }
+
     }
 }
