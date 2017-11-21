@@ -14,7 +14,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import a26c.com.android_frame_test.R;
 import a26c.com.android_frame_test.socket.MinaService;
 import a26c.com.android_frame_test.socket.ReceiveSocketMessageEventBus;
-import a26c.com.android_frame_test.socket.SessionManager;
+import a26c.com.android_frame_test.socket.SocketManager;
 
 /**
  * Description:
@@ -61,7 +61,7 @@ public class MinaTestActivity extends AppCompatActivity implements View.OnClickL
                 startService(intent);
                 break;
             case R.id.send_tv:
-                SessionManager.getInstance().writeToServer(value);
+                SocketManager.sendMsg(value);
                 break;
         }
     }
