@@ -202,7 +202,7 @@ public class SocketManager {
             IoBuffer buffer = IoBuffer.allocate(100).setAutoExpand(true);
 
             while (ioBuffer.hasRemaining()) {
-                //读取包头
+                //读取长度
                 if (ioBuffer.limit() >= 2) {
                     byte b1 = ioBuffer.get();
                     byte b2 = ioBuffer.get();
