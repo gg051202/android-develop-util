@@ -35,6 +35,9 @@
         <activity android:name=".activity.SmartRefreshLayoutActivity"></activity>
 
         <activity android:name=".activity.MinaTestActivity">
+
+        </activity>
+        <activity android:name=".activity.PullToRefreshAcitivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

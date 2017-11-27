@@ -153,7 +153,7 @@ public class SocketManager {
      * 断开连接
      */
     public void disContect() {
-        System.out.println("断开连接...");
+        Log.i("tag","断开连接...");
         if (mSession == null || mSession.isClosing()) {
             return;
         }
