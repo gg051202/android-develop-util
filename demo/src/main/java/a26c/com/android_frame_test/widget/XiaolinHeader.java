@@ -18,6 +18,7 @@ public class XiaolinHeader extends RelativeLayout implements RefreshHeader {
     public static String REFRESH_HEADER_RELEASE = "释放立即刷新";
     public static String REFRESH_HEADER_FINISH = "刷新完成";
     public static String REFRESH_HEADER_FAILED = "刷新失败";
+    private TextView titleText;
 
     public XiaolinHeader(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -34,10 +35,10 @@ public class XiaolinHeader extends RelativeLayout implements RefreshHeader {
 
         LayoutParams titleLayoutParams = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         titleLayoutParams.addRule(CENTER_IN_PARENT);
-        TextView mTitleText = new TextView(context);
-        mTitleText.setText(REFRESH_HEADER_PULLDOWN);
-        mTitleText.setTextColor(0xff666666);
-        addView(mTitleText);
+        titleText = new TextView(context);
+        titleText.setText(REFRESH_HEADER_PULLDOWN);
+        titleText.setTextColor(0xff666666);
+        addView(titleText, titleLayoutParams);
 
 
     }
@@ -45,18 +46,23 @@ public class XiaolinHeader extends RelativeLayout implements RefreshHeader {
     @Override
     public void onPullDown(float distance, boolean reachToRefresh) {
         RelativeLayout.LayoutParams layoutParams = (LayoutParams) getLayoutParams();
-        layoutParams.height  = (int) distance;
+        layoutParams.height = (int) distance;
         requestLayout();
+        titleText.setText(reachToRefresh?REFRESH_HEADER_RELEASE:REFRESH_HEADER_PULLDOWN);
     }
 
     @Override
     public void onRefreshing() {
+        titleText.setText(REFRESH_HEADER_REFRESHING);
 
     }
 
     @Override
-    public void onRefreshComplete(int distance, boolean isRefreshed) {
-
+    public void onAutoScrollBack(int distance, boolean isRefreshed) {
+        RelativeLayout.LayoutParams layoutParams = (LayoutParams) getLayoutParams();
+        layoutParams.height = distance;
+        requestLayout();
+        titleText.setText(isRefreshed?REFRESH_HEADER_FINISH:REFRESH_HEADER_REFRESHING);
     }
 
     @Override

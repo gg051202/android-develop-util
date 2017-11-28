@@ -7,6 +7,7 @@
 
     <a26c.com.android_frame_test.widget.XiaolinHeader
         android:layout_width="match_parent"
+        android:background="#FF0000"
         android:layout_height="50dp" />
 
 
@@ -17,6 +18,7 @@
 
         <LinearLayout
             android:id="@+id/linearLayout"
+            android:background="@color/white"
             android:layout_width="match_parent"
             android:orientation="vertical"
             android:layout_height="wrap_content">

@@ -24,6 +24,11 @@ import rx.schedulers.Schedulers;
 
 public class XiaolinRefreshLayout extends RelativeLayout {
 
+    private static final int STATUS_RefreshComplete = 0;
+    private static final int STATUS_AutoBacking = 1;
+    private static final int STATUS_AutoBackingInterpt = 2;
+    private static final int STATUS_IsRefreshing = 3;
+
     private View childView;
     private LayoutParams childLayoutParams;
     private float dragRate = 0.6f;
@@ -35,9 +40,9 @@ public class XiaolinRefreshLayout extends RelativeLayout {
      * 2表示正在滑回去途中遭遇点击事件
      * 3表示正在显示刷新动画
      */
-    private int autoScrollStatus = 0;
+    private int autoScrollStatus = STATUS_RefreshComplete;
     private boolean triggerRefresh = false;
-    private int refreshHeight = 500;
+    private int refreshHeight = 150;
     /**
      * 已经滑动的距离
      */
@@ -64,9 +69,12 @@ public class XiaolinRefreshLayout extends RelativeLayout {
         }
         if (checkChildViewIsScoll()) {
             return super.dispatchTouchEvent(event);
-
         }
-        distance = (event.getY() - startY) * dragRate;
+
+        distance = (event.getY() - startY) * dragRate;//大于0表示向下滑动
+//        if (distance < 0 && autoScrollStatus == STATUS_IsRefreshing) {
+//            return super.dispatchTouchEvent(event);
+//        }
 
 
         switch (event.getAction()) {
@@ -74,24 +82,25 @@ public class XiaolinRefreshLayout extends RelativeLayout {
                 startY = event.getY();
                 break;
             case MotionEvent.ACTION_MOVE:
-                if (autoScrollStatus == 1) {//正在滑动过程中
-                    autoScrollStatus = 2;
+                if (autoScrollStatus == STATUS_AutoBacking) {//正在滑动过程中
+                    autoScrollStatus = STATUS_AutoBackingInterpt;
                     oldMarginTop = childLayoutParams.topMargin;
                     return true;
 
-                } else if (autoScrollStatus == 2) {//正在自动滑回去的途中，遭遇滑动事件
+                } else if (autoScrollStatus == STATUS_AutoBackingInterpt) {//正在自动滑回去的途中，遭遇滑动事件
                     int i = (int) distance + oldMarginTop;
                     childLayoutParams.topMargin = i < 0 ? 0 : i;
+                    refreshHeader.onPullDown(i, i >= refreshHeight);
                     childView.requestLayout();
                     return true;
-                } else if (autoScrollStatus == 3) {//正在刷新
+                } else if (autoScrollStatus == STATUS_IsRefreshing) {//正在刷新
                     if (autoScrollBacksubscriber != null) {
                         autoScrollBacksubscriber.unsubscribe();
                     }
-                    autoScrollStatus = 2;
+                    autoScrollStatus = STATUS_AutoBackingInterpt;
                     oldMarginTop = childLayoutParams.topMargin;
                     return true;
-                } else if (autoScrollStatus == 0) {//手动  向下滑动
+                } else if (autoScrollStatus == STATUS_RefreshComplete) {//手动  向下滑动
                     if (distance >= 0) {//向下滑动
                         refreshHeader.onPullDown(distance, distance >= refreshHeight);
                         childLayoutParams.topMargin = (int) distance;
@@ -111,7 +120,7 @@ public class XiaolinRefreshLayout extends RelativeLayout {
                     @Override
                     public void complete() {
                         refreshHeader.onRefreshing();
-                        autoScrollStatus = 3;
+                        autoScrollStatus = STATUS_IsRefreshing;
 
                         autoScrollBacksubscriber = new Subscriber<Boolean>() {
                             @Override
@@ -166,21 +175,21 @@ public class XiaolinRefreshLayout extends RelativeLayout {
      * @param d2 到Y轴距离
      */
     private void autoScrollBack(final float d1, float d2, int duration, final OnScrollbackCompleteListener listener) {
-        System.out.println("autoScrollBack");
-        autoScrollStatus = 1;
+        autoScrollStatus = STATUS_AutoBacking;
         if (autoScrollBackanimator == null) {
             autoScrollBackanimator = ObjectAnimator.ofFloat(d1, 0).setDuration(0);
             autoScrollBackanimator.setInterpolator(new IosScrollInterpolator());
             autoScrollBackanimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator animation) {
-                    if (autoScrollStatus == 1) {
+                    if (autoScrollStatus == STATUS_AutoBacking) {
                         int animatedValue = (int) (float) animation.getAnimatedValue();
                         childLayoutParams.topMargin = animatedValue <= 0 ? 0 : animatedValue;
                         childView.requestLayout();
-                    } else if (autoScrollStatus == 2) {
+                        refreshHeader.onAutoScrollBack(childLayoutParams.topMargin, childLayoutParams.topMargin < refreshHeight);
+                    } else if (autoScrollStatus == STATUS_AutoBackingInterpt) {
                         autoScrollBackanimator.cancel();
-                        autoScrollStatus = 2;
+                        autoScrollStatus = STATUS_AutoBackingInterpt;
                     }
                 }
             });
@@ -189,7 +198,7 @@ public class XiaolinRefreshLayout extends RelativeLayout {
 
                 @Override
                 public void onAnimationStart(Animator animation) {
-                    autoScrollStatus = 1;
+                    autoScrollStatus = STATUS_AutoBacking;
                     isCancel = false;
                 }
 
@@ -201,7 +210,7 @@ public class XiaolinRefreshLayout extends RelativeLayout {
                         }
                         triggerRefresh = false;
                     } else {
-                        autoScrollStatus = 0;
+                        autoScrollStatus = STATUS_RefreshComplete;
                     }
                 }
 

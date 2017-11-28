@@ -23,7 +23,7 @@ public interface RefreshHeader {
     /**
      * 刷新完成了，正在回弹
      */
-    void onRefreshComplete(int distance, boolean isRefreshed);
+    void onAutoScrollBack(int distance, boolean isRefreshed);
 
     /**
      * 刷新提示的停留事件
