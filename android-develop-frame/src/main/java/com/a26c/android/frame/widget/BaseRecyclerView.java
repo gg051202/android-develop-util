@@ -195,6 +195,9 @@ public class BaseRecyclerView extends FrameLayout {
             }
             noDataView.setVisibility(VISIBLE);
             errView.setVisibility(INVISIBLE);
+        }else{
+            noDataView.setVisibility(INVISIBLE);
+            errView.setVisibility(INVISIBLE);
         }
     }
 
@@ -208,6 +211,9 @@ public class BaseRecyclerView extends FrameLayout {
             }
             noDataView.setVisibility(INVISIBLE);
             errView.setVisibility(VISIBLE);
+        }else{
+            noDataView.setVisibility(INVISIBLE);
+            errView.setVisibility(INVISIBLE);
         }
     }
 
