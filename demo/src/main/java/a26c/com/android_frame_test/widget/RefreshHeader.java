@@ -22,6 +22,9 @@ public interface RefreshHeader {
 
     /**
      * 刷新完成了，正在回弹
+     *
+     * @param distance    回弹的距离
+     * @param isRefreshed 回弹时，是否完成了刷新
      */
     void onAutoScrollBack(int distance, boolean isRefreshed);
 

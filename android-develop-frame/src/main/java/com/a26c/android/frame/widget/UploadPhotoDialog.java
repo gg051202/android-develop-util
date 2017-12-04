@@ -7,7 +7,9 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
+import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
@@ -108,7 +110,15 @@ public class UploadPhotoDialog {
                     photoCachePath = String.format("%s/temp_%s.jpg", Environment.getExternalStorageDirectory(), System.currentTimeMillis());
                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                     intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(photoCachePath)));
-                    ((Activity) context).startActivityForResult(intent, RESULT_CAMERA);
+
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+                        ((Activity) context).startActivityForResult(intent, RESULT_CAMERA);
+                    } else {//修复7.0无法更新
+                        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+                        StrictMode.setVmPolicy(builder.build());
+                        ((Activity) context).startActivityForResult(intent, RESULT_CAMERA);
+                    }
+
                 }
                 dialog.dismiss();
             }
