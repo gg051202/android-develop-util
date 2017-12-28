@@ -41,7 +41,7 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 //        .title("更新提示")
 //        .downloadUrl(android.getDownUrl())
 //        .iconResourceId(R.drawable.jpush_notification_icon)
-//        .build().showDialog();
+//        .build().show();
 
 /**
  * Created by guilinlin on 2017/5/10 10:22.
@@ -249,7 +249,7 @@ public class CheckUpdateManager {
                 return;
             }
 
-            clearFile(downloadFile);
+            CommonUtils.clearFile(downloadFile);
 
             Log.i(TAG, "开始下载，将要保存到的文件路径：" + downloadFile.getAbsolutePath());
 
@@ -436,40 +436,6 @@ public class CheckUpdateManager {
         }
     }
 
-
-    /**
-     * 如果文件存在删除并重新创建，如果不存在创建
-     */
-    public static void clearFile(File file) {
-        if (file.isFile() && file.exists()) {
-            if (file.delete()) {
-                System.out.println("删除单个文件" + file.getAbsolutePath() + "成功！");
-                try {
-                    if (file.createNewFile()) {
-                        System.out.println("创建文件成功");
-                    } else {
-                        System.out.println("创建文件失败");
-                    }
-                } catch (IOException e) {
-                    System.out.println("创建文件失败");
-                    e.printStackTrace();
-                }
-            } else {
-                System.out.println("删除单个文件" + file.getAbsolutePath() + "失败！");
-            }
-        } else {
-            try {
-                if (file.createNewFile()) {
-                    System.out.println("创建文件成功");
-                } else {
-                    System.out.println("创建文件失败");
-                }
-            } catch (IOException e) {
-                System.out.println("创建文件失败");
-                e.printStackTrace();
-            }
-        }
-    }
 
     public static void install(Context context, File file, boolean force) {
         Intent intent = new Intent(Intent.ACTION_VIEW);

@@ -10,6 +10,7 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.support.v4.content.ContextCompat;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -18,6 +19,11 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ListView;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -395,5 +401,62 @@ public class CommonUtils {
         }
     }
 
+    /**
+     * 如果文件存在删除并重新创建，如果不存在创建
+     */
+    public static void clearFile(File file) {
+        if (file.isFile() && file.exists()) {
+            if (file.delete()) {
+                Log.i("", "删除单个文件" + file.getAbsolutePath() + "成功！");
+                try {
+                    if (file.createNewFile()) {
+                        Log.i("", "创建文件成功");
+                    } else {
+                        Log.i("", "创建文件失败");
+                    }
+                } catch (IOException e) {
+                    Log.i("", "创建文件失败");
+                    e.printStackTrace();
+                }
+            } else {
+                Log.i("", "删除单个文件" + file.getAbsolutePath() + "失败！");
+            }
+        } else {
+            try {
+                if (file.createNewFile()) {
+                    Log.i("", "创建文件成功");
+                } else {
+                    Log.i("", "创建文件失败");
+                }
+            } catch (IOException e) {
+                Log.i("", "创建文件失败");
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+    /**
+     * Glide对文件缓存时, 采用SHA-256加密算法, 所以如果需要获得图片, 需要将获得的文件copy一份
+     * oldPath: 图片缓存的路径
+     * newPath: 图片缓存copy的路径
+     */
+    public static void copyFile(String oldPath, String newPath) {
+        try {
+            int byteRead;
+            File oldFile = new File(oldPath);
+            if (oldFile.exists()) {
+                InputStream inStream = new FileInputStream(oldPath);
+                FileOutputStream fs = new FileOutputStream(newPath);
+                byte[] buffer = new byte[1024];
+                while ((byteRead = inStream.read(buffer)) != -1) {
+                    fs.write(buffer, 0, byteRead);
+                }
+                inStream.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 }

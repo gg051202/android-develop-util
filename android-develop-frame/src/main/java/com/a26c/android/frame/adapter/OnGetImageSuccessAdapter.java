@@ -1,27 +1,36 @@
 package com.a26c.android.frame.adapter;
 
-import android.graphics.Bitmap;
-
-import com.a26c.android.frame.widget.UploadPhotoDialog;
+import com.a26c.android.frame.widget.OnUploadPhotoListener;
 
 /**
  * Created by guilinlin on 2017/8/30 11:00.
  * email 973635949@qq.com
  */
 
-public class OnGetImageSuccessAdapter implements UploadPhotoDialog.OnGetImageSuccessListener {
+public class OnGetImageSuccessAdapter implements OnUploadPhotoListener {
+
     @Override
-    public void onlyReceivedImage() {
+    public boolean photoClick(int requestCode) {
+        return false;
+    }
+
+    @Override
+    public boolean albumClick(int requestCode) {
+        return false;
+    }
+
+    @Override
+    public void onlyReceivedImage(int requestCode) {
 
     }
 
     @Override
-    public void success(Bitmap bitmap, String imagePath) {
+    public void success(int requestCode, String imagePath) {
 
     }
 
     @Override
-    public void fail(Throwable e) {
+    public void fail(int requestCode, Throwable e) {
 
     }
 }

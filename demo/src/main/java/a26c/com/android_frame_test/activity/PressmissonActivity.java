@@ -2,13 +2,13 @@ package a26c.com.android_frame_test.activity;
 
 import android.Manifest;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageView;
 
 import com.a26c.android.frame.base.CommonActivity;
 import com.a26c.android.frame.util.DialogFactory;
+import com.a26c.android.frame.widget.OnUploadPhotoListener;
 import com.a26c.android.frame.widget.UploadPhotoDialog;
 
 import a26c.com.android_frame_test.R;
@@ -40,30 +40,38 @@ public class PressmissonActivity extends CommonActivity implements CommonActivit
     }
 
     private void takePhoto() {
-        dialog = new UploadPhotoDialog(this, 0, null);
-        dialog.showDialog();
+        dialog = new UploadPhotoDialog(this, new OnUploadPhotoListener() {
+            @Override
+            public boolean photoClick(int requestCode) {
+                return false;
+            }
+
+            @Override
+            public boolean albumClick(int requestCode) {
+                return false;
+            }
+
+            @Override
+            public void onlyReceivedImage(int requestCode) {
+
+            }
+
+            @Override
+            public void success(int requestCode, String imagePath) {
+
+            }
+
+            @Override
+            public void fail(int requestCode, Throwable e) {
+
+            }
+        });
+        dialog.show();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        dialog.onActivityResult(requestCode, resultCode, data, new UploadPhotoDialog.OnGetImageSuccessListener() {
-            @Override
-            public void onlyReceivedImage() {
-
-            }
-
-            @Override
-            public void success(Bitmap bitmap, String imagePath) {
-                image.setImageBitmap(bitmap);
-            }
-
-            @Override
-            public void fail(Throwable e) {
-
-            }
-
-        });
-
+        dialog.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
