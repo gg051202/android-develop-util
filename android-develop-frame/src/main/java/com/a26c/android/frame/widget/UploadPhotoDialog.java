@@ -83,8 +83,12 @@ public class UploadPhotoDialog implements View.OnClickListener {
         show(1, 0);
     }
 
-    public void show(final int requestCode) {
+    public void showForResult(int requestCode) {
         show(requestCode, 0);
+    }
+
+    public void showScale(float imageScaleSize) {
+        show(1, imageScaleSize);
     }
 
     /**
