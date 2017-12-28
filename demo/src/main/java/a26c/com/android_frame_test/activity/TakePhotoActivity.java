@@ -10,6 +10,9 @@ import com.a26c.android.frame.base.CommonActivity;
 import com.a26c.android.frame.util.DialogFactory;
 import com.a26c.android.frame.widget.OnUploadPhotoListener;
 import com.a26c.android.frame.widget.UploadPhotoDialog;
+import com.bumptech.glide.Glide;
+
+import java.io.File;
 
 import a26c.com.android_frame_test.R;
 import butterknife.BindView;
@@ -20,7 +23,7 @@ import butterknife.OnClick;
  * Created by guilinlin on 2017/1/16 11:57.
  * email 973635949@qq.com
  */
-public class PressmissonActivity extends CommonActivity implements CommonActivity.OnCheckPermissionListener {
+public class TakePhotoActivity extends CommonActivity implements CommonActivity.OnCheckPermissionListener {
 
 
     @BindView(R.id.button)
@@ -43,29 +46,35 @@ public class PressmissonActivity extends CommonActivity implements CommonActivit
         dialog = new UploadPhotoDialog(this, new OnUploadPhotoListener() {
             @Override
             public boolean photoClick(int requestCode) {
+                System.out.println("photoClick:" + Thread.currentThread().getName());
                 return false;
             }
 
             @Override
             public boolean albumClick(int requestCode) {
+                System.out.println("albumClick:" + Thread.currentThread().getName());
                 return false;
             }
 
             @Override
             public void onlyReceivedImage(int requestCode) {
 
+                System.out.println("onlyReceivedImage:" + Thread.currentThread().getName());
             }
 
             @Override
             public void success(int requestCode, String imagePath) {
-
+                System.out.println("success:" + Thread.currentThread().getName());
+                System.out.println(new File(imagePath).length());
+                Glide.with(TakePhotoActivity.this).load(imagePath).into(image);
             }
 
             @Override
             public void fail(int requestCode, Throwable e) {
-
+                System.out.println("fail:" + Thread.currentThread().getName());
             }
         });
+        dialog.setImageHeight(120);
         dialog.show();
     }
 
@@ -89,7 +98,7 @@ public class PressmissonActivity extends CommonActivity implements CommonActivit
                 Manifest.permission.RECORD_AUDIO,
                 Manifest.permission.CALL_PHONE,
                 Manifest.permission.SEND_SMS,
-                Manifest.permission.READ_EXTERNAL_STORAGE};
+                Manifest.permission.WRITE_EXTERNAL_STORAGE};
         checkPermission(this, permissions);
 
     }

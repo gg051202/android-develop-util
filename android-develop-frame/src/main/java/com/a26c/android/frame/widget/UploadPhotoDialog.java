@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
@@ -15,6 +16,7 @@ import android.view.View;
 
 import com.a26c.android.frame.R;
 import com.a26c.android.frame.util.CommonUtils;
+import com.a26c.android.frame.util.FrameBitmapUtil;
 import com.a26c.android.frame.util.FrameCropUtils;
 import com.bumptech.glide.Glide;
 
@@ -89,7 +91,7 @@ public class UploadPhotoDialog implements View.OnClickListener {
      * @param imageScaleSize 想要获取图片的宽高比，必传！传0表示不进行压缩
      */
     public void show(final int requestCode, float imageScaleSize) {
-        this.imageWidth = (int) (imageHeight * imageScaleSize);
+        this.imageWidth = imageScaleSize == 0 ? imageHeight : (int) (imageHeight * imageScaleSize);
         this.requestCode = requestCode;
         View view = View.inflate(context, R.layout.frame_layout_upload_photo_dialog, null);
         View photoLayout = view.findViewById(R.id.photoLayout);
@@ -108,7 +110,7 @@ public class UploadPhotoDialog implements View.OnClickListener {
     public void onClick(View v) {
         if (v.getId() == R.id.photoLayout) {
             if (!(listener != null && listener.photoClick(requestCode))) {
-                photoCachePath = String.format("%s/%sphoto.jpg", context.getCacheDir(), System.currentTimeMillis());
+                photoCachePath = String.format("%s/%sphoto.jpg", getFileDir(), System.currentTimeMillis());
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(photoCachePath)));
 
@@ -120,12 +122,14 @@ public class UploadPhotoDialog implements View.OnClickListener {
                     ((Activity) context).startActivityForResult(intent, RESULT_CAMERA);
                 }
             }
+            alertDialog.dismiss();
         } else if (v.getId() == R.id.albumLayout) {
             if (!(listener != null && listener.albumClick(requestCode))) {
                 Intent intent = new Intent(Intent.ACTION_PICK, null);
                 intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
                 ((Activity) context).startActivityForResult(intent, RESULT_ALBUM);
             }
+            alertDialog.dismiss();
         }
     }
 
@@ -134,67 +138,31 @@ public class UploadPhotoDialog implements View.OnClickListener {
         if (resultCode != Activity.RESULT_OK) {
             return;
         }
-
         Observable
                 .create(new Observable.OnSubscribe<String>() {
                     @Override
                     public void call(Subscriber<? super String> subscriber) {
                         if (requestCode == RESULT_CAMERA) {
                             //如果需要压缩
-                            if (imageHeight != 0) {
+                            if (imageHeight != imageWidth) {
                                 File picture2 = new File(photoCachePath);
                                 ZoomPhoto(Uri.fromFile(picture2));
                                 subscriber.onNext("isCrop");
                             } else {
-                                subscriber.onNext("onlyReceivedImage");
-                                try {
-                                    File file = Glide.with(context).load(photoCachePath).downloadOnly(imageWidth, imageHeight).get();
-                                    String newFilePath = String.format("%s/saved_%s.jpg",
-                                            context.getCacheDir().getAbsolutePath(), System.currentTimeMillis());
-                                    CommonUtils.copyFile(file.getPath(), newFilePath);
-                                    subscriber.onNext(newFilePath);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                } catch (ExecutionException e) {
-                                    e.printStackTrace();
-                                }
-                                subscriber.onNext(null);
+                                zipImage(subscriber, photoCachePath);
                             }
 
                         } else if (requestCode == RESULT_ALBUM) {
-                            if (imageHeight != 0) {
+                            //如果需要压缩
+                            if (imageHeight != imageWidth) {
                                 ZoomPhoto(data.getData());
                                 subscriber.onNext("isCrop");
                             } else {
-                                subscriber.onNext("onlyReceivedImage");
-                                try {
-                                    File file = Glide.with(context).load(data.getData()).downloadOnly(imageWidth, imageHeight).get();
-                                    String newFilePath = String.format("%s/saved_%s.jpg",
-                                            context.getCacheDir().getAbsolutePath(), System.currentTimeMillis());
-                                    CommonUtils.copyFile(file.getPath(), newFilePath);
-                                    subscriber.onNext(newFilePath);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                } catch (ExecutionException e) {
-                                    e.printStackTrace();
-                                }
-                                subscriber.onNext(null);
+                                zipImage(subscriber, data.getData());
                             }
 
                         } else if (requestCode == RESULT_ZOOM_PHOTO) {
-                            subscriber.onNext("onlyReceivedImage");
-                            try {
-                                File file = Glide.with(context).load(cropFile).downloadOnly(imageWidth, imageHeight).get();
-                                String newFilePath = String.format("%s/saved_%s.jpg",
-                                        context.getCacheDir().getAbsolutePath(), System.currentTimeMillis());
-                                CommonUtils.copyFile(file.getPath(), newFilePath);
-                                subscriber.onNext(newFilePath);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            } catch (ExecutionException e) {
-                                e.printStackTrace();
-                            }
-                            subscriber.onNext(null);
+                            zipImage(subscriber, cropFile);
                         }
 
                     }
@@ -240,6 +208,31 @@ public class UploadPhotoDialog implements View.OnClickListener {
     }
 
     /**
+     * 压缩下载图片
+     */
+    private void zipImage(Subscriber<? super String> subscriber, Object data) {
+        subscriber.onNext("onlyReceivedImage");
+        try {
+            Bitmap bitmap = Glide.with(context).load(data).asBitmap().override(imageWidth, imageHeight)
+                    .into(imageWidth, imageHeight).get();
+            System.out.println(bitmap.getWidth());
+            System.out.println(bitmap.getHeight());
+            String newFilePath = String.format("%s/saved_%s.jpg", getFileDir(), System.currentTimeMillis());
+            if (FrameBitmapUtil.savePicture(newFilePath, bitmap)) {
+                subscriber.onNext(newFilePath);
+            } else {
+                subscriber.onNext(null);
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            subscriber.onNext(null);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+            subscriber.onNext(null);
+        }
+    }
+
+    /**
      * 调用系统的裁剪
      */
     private void ZoomPhoto(Uri uri) {
@@ -252,13 +245,17 @@ public class UploadPhotoDialog implements View.OnClickListener {
         intent.putExtra("outputX", imageWidth);//裁剪图片宽高
         intent.putExtra("outputY", imageHeight);
         intent.putExtra("scale", true);
-        cropFile = new File(context.getCacheDir(), System.currentTimeMillis() + "crop.jpg");
+        cropFile = new File(getFileDir(), System.currentTimeMillis() + "crop.jpg");
         CommonUtils.clearFile(cropFile);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(cropFile));
         intent.putExtra("return-data", false);
         intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
         intent.putExtra("noFaceDetection", true);
         ((Activity) context).startActivityForResult(intent, RESULT_ZOOM_PHOTO);
+    }
+
+    private String getFileDir() {
+        return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
     }
 
     /**
@@ -294,10 +291,6 @@ public class UploadPhotoDialog implements View.OnClickListener {
 
     public int getImageWidth() {
         return imageWidth;
-    }
-
-    public void setImageWidth(int imageWidth) {
-        this.imageWidth = imageWidth;
     }
 
     public String getPhotoCachePath() {

@@ -28,7 +28,7 @@
         <activity android:name=".activity.MainActivity" />
         <activity android:name="com.a26c.android.frame.base.HtmlActivity" />
         <activity android:name=".activity.CanvasActivity" />
-        <activity android:name=".activity.PressmissonActivity" >
+        <activity android:name=".activity.TakePhotoActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

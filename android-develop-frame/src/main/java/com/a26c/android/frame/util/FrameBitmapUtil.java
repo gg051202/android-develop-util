@@ -8,6 +8,7 @@ import android.net.Uri;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -77,6 +78,35 @@ public final class FrameBitmapUtil {
         }
 
         return context.getFilesDir() + "/" + fileName;
+    }
+
+
+    public static boolean savePicture(String fileName, Bitmap bitmap) {
+
+        FileOutputStream fos = null;
+        try {
+            // 直接写入名称即可，没有会被自动创建；私有：只有本应用才能访问，重新内容写入会被覆盖
+            fos = new FileOutputStream(fileName);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);// 把图片写入指定文件夹中
+            try {
+                fos.close();
+                fos = null;
+                return true;
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (null != fos) {
+                try {
+                    fos.close();
+                    fos = null;
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }
+        return false;
     }
 
     /**

@@ -42,9 +42,7 @@ public class UrlLinkTextView extends android.support.v7.widget.AppCompatTextView
         }
         Matcher matcher = urlPattern.matcher(text);
         SpannableString ss = new SpannableString(text);
-        System.out.println(0);
         while (matcher.find()) {
-            System.out.println(1);
             int start = matcher.start(1);
             int end = matcher.end();
             ss.setSpan(new UrlLinkSpan(context, text.substring(start, end)), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
