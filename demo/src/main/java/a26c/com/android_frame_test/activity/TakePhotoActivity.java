@@ -74,8 +74,8 @@ public class TakePhotoActivity extends CommonActivity implements CommonActivity.
                 System.out.println("fail:" + Thread.currentThread().getName());
             }
         });
-        dialog.setImageHeight(120);
-        dialog.show();
+        dialog.setImageHeight(1000);
+        dialog.show(500);
     }
 
     @Override

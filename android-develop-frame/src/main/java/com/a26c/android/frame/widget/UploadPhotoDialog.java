@@ -56,7 +56,7 @@ public class UploadPhotoDialog implements View.OnClickListener {
     /**
      * 裁剪出来的图片的高
      */
-    private int imageHeight = 400;
+    private int imageHeight = 200;
     /**
      * 图片的高
      */
