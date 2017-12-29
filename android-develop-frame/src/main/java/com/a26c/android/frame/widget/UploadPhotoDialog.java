@@ -216,8 +216,9 @@ public class UploadPhotoDialog implements View.OnClickListener {
      */
     private void zipImage(Subscriber<? super String> subscriber, Object data) {
         subscriber.onNext("onlyReceivedImage");
+        Bitmap bitmap = null;
         try {
-            Bitmap bitmap = Glide.with(context).load(data).asBitmap().override(imageWidth, imageHeight)
+            bitmap = Glide.with(context).load(data).asBitmap().override(imageWidth, imageHeight)
                     .into(imageWidth, imageHeight).get();
             String newFilePath = String.format("%s/saved_%s.jpg", getFileDir(), System.currentTimeMillis());
             if (FrameBitmapUtil.savePicture(newFilePath, bitmap)) {
@@ -231,6 +232,12 @@ public class UploadPhotoDialog implements View.OnClickListener {
         } catch (ExecutionException e) {
             e.printStackTrace();
             subscriber.onNext(null);
+        } finally {
+            if (bitmap != null) {
+                bitmap.recycle();
+                bitmap = null;
+
+            }
         }
     }
 
