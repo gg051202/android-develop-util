@@ -138,7 +138,7 @@ public class UploadPhotoDialog implements View.OnClickListener {
     }
 
     // 拍完照片的回调方法
-    public void onActivityResult(final int requestCode, int resultCode, final Intent data) {
+    public void onActivityResult(final int request, int resultCode, final Intent data) {
         if (resultCode != Activity.RESULT_OK) {
             return;
         }
@@ -146,7 +146,7 @@ public class UploadPhotoDialog implements View.OnClickListener {
                 .create(new Observable.OnSubscribe<String>() {
                     @Override
                     public void call(Subscriber<? super String> subscriber) {
-                        if (requestCode == RESULT_CAMERA) {
+                        if (request == RESULT_CAMERA) {
                             //如果需要压缩
                             if (imageHeight != imageWidth) {
                                 File picture2 = new File(photoCachePath);
@@ -156,7 +156,7 @@ public class UploadPhotoDialog implements View.OnClickListener {
                                 zipImage(subscriber, photoCachePath);
                             }
 
-                        } else if (requestCode == RESULT_ALBUM) {
+                        } else if (request == RESULT_ALBUM) {
                             //如果需要压缩
                             if (imageHeight != imageWidth) {
                                 ZoomPhoto(data.getData());
@@ -165,7 +165,7 @@ public class UploadPhotoDialog implements View.OnClickListener {
                                 zipImage(subscriber, data.getData());
                             }
 
-                        } else if (requestCode == RESULT_ZOOM_PHOTO) {
+                        } else if (request == RESULT_ZOOM_PHOTO) {
                             zipImage(subscriber, cropFile);
                         }
 
@@ -219,8 +219,6 @@ public class UploadPhotoDialog implements View.OnClickListener {
         try {
             Bitmap bitmap = Glide.with(context).load(data).asBitmap().override(imageWidth, imageHeight)
                     .into(imageWidth, imageHeight).get();
-            System.out.println(bitmap.getWidth());
-            System.out.println(bitmap.getHeight());
             String newFilePath = String.format("%s/saved_%s.jpg", getFileDir(), System.currentTimeMillis());
             if (FrameBitmapUtil.savePicture(newFilePath, bitmap)) {
                 subscriber.onNext(newFilePath);

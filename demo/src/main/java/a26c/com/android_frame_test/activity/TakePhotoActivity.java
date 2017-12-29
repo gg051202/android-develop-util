@@ -67,6 +67,7 @@ public class TakePhotoActivity extends CommonActivity implements CommonActivity.
                 System.out.println("success:" + Thread.currentThread().getName());
                 System.out.println(new File(imagePath).length());
                 Glide.with(TakePhotoActivity.this).load(imagePath).into(image);
+                System.out.println("Request code:" + requestCode);
             }
 
             @Override
@@ -75,7 +76,7 @@ public class TakePhotoActivity extends CommonActivity implements CommonActivity.
             }
         });
         dialog.setImageHeight(1000);
-        dialog.show(500);
+        dialog.showForResult(500);
     }
 
     @Override
