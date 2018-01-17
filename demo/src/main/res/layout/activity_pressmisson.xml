@@ -15,4 +15,12 @@
         android:layout_width="300dp"
         android:layout_height="300dp"
         android:background="#ff0000" />
+
+    <com.a26c.android.frame.widget.ClearEditText
+        android:layout_width="wrap_content"
+        android:paddingTop="10dp"
+        android:paddingBottom="30dp"
+        android:layout_height="wrap_content"
+        android:paddingLeft="30dp"
+        android:paddingRight="100dp" />
 </LinearLayout>
