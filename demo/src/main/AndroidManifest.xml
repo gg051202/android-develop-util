@@ -27,13 +27,15 @@
         android:theme="@style/AppTheme">
         <activity android:name=".activity.MainActivity" />
         <activity android:name="com.a26c.android.frame.base.HtmlActivity" />
-        <activity android:name=".activity.CanvasActivity" />
-        <activity android:name=".activity.TakePhotoActivity" >
+        <activity android:name=".activity.CanvasActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name=".activity.TakePhotoActivity" >
+
         </activity>
         <activity android:name=".activity.StatusBarActivity" />
         <activity android:name=".activity.RecyclerActivity" />

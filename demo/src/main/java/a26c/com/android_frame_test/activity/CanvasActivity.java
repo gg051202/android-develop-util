@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.a26c.android.frame.widget.BaseRecyclerView;
 
@@ -44,7 +45,15 @@ public class CanvasActivity extends AppCompatActivity {
 
             @Override
             public View getErrDataView() {
-                return null;
+                TextView textView =  new TextView(CanvasActivity.this);
+                textView.setText("123");
+                textView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        System.out.println(123);
+                    }
+                });
+                return textView;
             }
         });
         baseRecyclerView.init(testAdapter, new BaseRecyclerView.NetworkHandle() {
