@@ -178,9 +178,11 @@ public class BaseRecyclerView extends FrameLayout {
 
 
         noDataView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        noDataView.setVisibility(INVISIBLE);
         noDataRelativeLayout.addView(noDataView);
 
         errView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        errView.setVisibility(INVISIBLE);
         noDataRelativeLayout.addView(errView);
 
     }
@@ -195,7 +197,7 @@ public class BaseRecyclerView extends FrameLayout {
             }
             noDataView.setVisibility(VISIBLE);
             errView.setVisibility(INVISIBLE);
-        }else{
+        } else {
             noDataView.setVisibility(INVISIBLE);
             errView.setVisibility(INVISIBLE);
         }
@@ -211,7 +213,7 @@ public class BaseRecyclerView extends FrameLayout {
             }
             noDataView.setVisibility(INVISIBLE);
             errView.setVisibility(VISIBLE);
-        }else{
+        } else {
             noDataView.setVisibility(INVISIBLE);
             errView.setVisibility(INVISIBLE);
         }
