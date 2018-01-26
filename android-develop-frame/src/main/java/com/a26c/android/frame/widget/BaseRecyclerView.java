@@ -146,6 +146,7 @@ public class BaseRecyclerView extends FrameLayout {
             @Override
             public void run() {
                 adapter.notifyDataSetChanged();
+                adapter.loadComplete();
             }
         });
         refreshLayout.setRefreshing(false);
