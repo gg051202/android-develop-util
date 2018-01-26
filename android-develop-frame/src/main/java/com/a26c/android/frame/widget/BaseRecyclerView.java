@@ -100,6 +100,7 @@ public class BaseRecyclerView extends FrameLayout {
         adapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
+                adapter.loadComplete();
                 if (networkHandle != null) networkHandle.loadData(false, String.valueOf(pageIndex));
             }
         });
