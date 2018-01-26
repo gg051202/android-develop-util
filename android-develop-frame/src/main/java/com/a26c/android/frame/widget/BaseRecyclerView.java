@@ -142,9 +142,11 @@ public class BaseRecyclerView extends FrameLayout {
     public void onLoadDataComplete() {
         //数据加载成功pageIndex+1
         pageIndex++;
-        adapter.notifyDataSetChanged();
-
         refreshLayout.setRefreshing(false);
+        if (recyclerView.getScrollState() == RecyclerView.SCROLL_STATE_IDLE ||
+                (recyclerView.isComputingLayout() == false)) {
+            adapter.notifyDataSetChanged();
+        }
 
         showNoDataView(defaultNoDataString);
     }
