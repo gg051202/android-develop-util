@@ -100,7 +100,6 @@ public class BaseRecyclerView extends FrameLayout {
         adapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
-                adapter.loadComplete();
                 if (networkHandle != null) networkHandle.loadData(false, String.valueOf(pageIndex));
             }
         });
@@ -143,11 +142,13 @@ public class BaseRecyclerView extends FrameLayout {
     public void onLoadDataComplete() {
         //数据加载成功pageIndex+1
         pageIndex++;
+        recyclerView.post(new Runnable() {
+            @Override
+            public void run() {
+                adapter.notifyDataSetChanged();
+            }
+        });
         refreshLayout.setRefreshing(false);
-        if (recyclerView.getScrollState() == RecyclerView.SCROLL_STATE_IDLE ||
-                (recyclerView.isComputingLayout() == false)) {
-            adapter.notifyDataSetChanged();
-        }
 
         showNoDataView(defaultNoDataString);
     }
