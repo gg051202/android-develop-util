@@ -95,7 +95,7 @@ public class BaseRecyclerView extends FrameLayout {
         mRecyclerView.setAdapter(mAdapter);
 
         if (mNeedLoadDataAtOnce) {
-            mRefreshLayout.autoRefresh(0, 0, 1);
+            mRefreshLayout.autoRefresh(1, 0, 1);
         }
 
     }
