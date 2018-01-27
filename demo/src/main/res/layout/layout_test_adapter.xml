@@ -8,11 +8,21 @@
 
     <TextView
         android:id="@+id/TextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/dp100"
+        android:layout_height="@dimen/dp30"
+        android:gravity="center"
         android:text="aaaaa"
         android:textSize="20sp"
+        android:background="@drawable/frame_bg_common_item_pressed"
         android:textStyle="bold"
         android:textColor="@color/default_black" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="bbbb"
+        android:textColor="@color/default_black"
+        android:textSize="@dimen/sp15" />
+
 
 </LinearLayout>

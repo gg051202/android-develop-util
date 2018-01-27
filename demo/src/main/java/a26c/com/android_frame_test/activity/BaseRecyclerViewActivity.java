@@ -7,6 +7,8 @@ import android.widget.Button;
 import android.widget.CheckBox;
 
 import com.a26c.android.frame.widget.BaseRecyclerView;
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.listener.OnItemClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,10 +33,13 @@ public class BaseRecyclerViewActivity extends AppCompatActivity {
     BaseRecyclerView mBaseRecyclerView;
     @BindView(R.id.checkbox)
     CheckBox mCheckbox;
+    @BindView(R.id.checkbox2)
+    CheckBox checkbox2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_base_recycler_view_acitivity);
         ButterKnife.bind(this);
 
@@ -82,6 +87,22 @@ public class BaseRecyclerViewActivity extends AppCompatActivity {
 
             }
         });
+
+        mBaseRecyclerView.addOnItemTouchListener(new OnItemClickListener() {
+            @Override
+            public void onSimpleItemClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
+                System.out.println(44);
+            }
+
+            @Override
+            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                super.onItemChildClick(adapter, view, position);
+                if (view.getId() == R.id.TextView) {
+                    System.out.println(33);
+
+                }
+            }
+        });
     }
 
 
@@ -90,7 +111,13 @@ public class BaseRecyclerViewActivity extends AppCompatActivity {
     }
 
     private void fail() {
-        mBaseRecyclerView.onLoadDataCompleteErr();
+        if (checkbox2.isChecked()) {
+            mBaseRecyclerView.onLoadDataCompleteErr();
+            mBaseRecyclerView.showErrView("断网啦");
+        } else {
+            mBaseRecyclerView.onLoadDataComplete();
+            mBaseRecyclerView.showNoDataView("aaaaaassss");
+        }
     }
 
 

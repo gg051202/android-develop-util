@@ -190,8 +190,6 @@ public class BaseRecyclerView extends FrameLayout {
         mErrView.setVisibility(INVISIBLE);
         noDataRelativeLayout.addView(mErrView);
 
-        mRefreshLayout.setRefreshContent();
-
     }
 
 
@@ -207,7 +205,7 @@ public class BaseRecyclerView extends FrameLayout {
             return;
         }
         if (mAdapter.getItemCount() - mAdapter.getHeaderLayoutCount() - mAdapter.getFooterLayoutCount() == 0) {
-            if (mNoDataView instanceof TextView) {
+            if (mNoDataView.getId() == R.id.frame_nodataTextView) {
                 ((TextView) mNoDataView).setText(TextUtils.isEmpty(text) ? mDefaultNoDataString : text);
             }
             mNoDataView.setVisibility(VISIBLE);
@@ -230,7 +228,7 @@ public class BaseRecyclerView extends FrameLayout {
             return;
         }
         if (mAdapter.getItemCount() - mAdapter.getHeaderLayoutCount() - mAdapter.getFooterLayoutCount() == 0) {
-            if (mErrView instanceof TextView) {
+            if (mErrView.getId()==R.id.frame_errTextView) {
                 ((TextView) mErrView).setText(TextUtils.isEmpty(text) ? mDefaultErrString : text);
             }
             mNoDataView.setVisibility(INVISIBLE);

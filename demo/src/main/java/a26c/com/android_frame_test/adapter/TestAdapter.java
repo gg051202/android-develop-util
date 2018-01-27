@@ -13,6 +13,7 @@ public class TestAdapter extends BaseQuickAdapter<TestAdapterData, BaseViewHolde
     @Override
     protected void convert(BaseViewHolder holder, TestAdapterData data) {
         holder.setText(R.id.TextView, data.getI() + "");
+        holder.addOnClickListener(R.id.TextView);
 
     }
 }
