@@ -91,10 +91,11 @@ public class BaseRecyclerView extends FrameLayout {
         //初始化无数据的布局,如果init中没有初始化ViewCreator，会自动设置一个默认的
         initViewCreator();
 
+        mAdapter.setEnableLoadMore(false);
         mRecyclerView.setAdapter(mAdapter);
 
         if (mNeedLoadDataAtOnce) {
-            mRefreshLayout.autoRefresh(0, 200, 1);
+            mRefreshLayout.autoRefresh(0, 0, 1);
         }
 
     }
