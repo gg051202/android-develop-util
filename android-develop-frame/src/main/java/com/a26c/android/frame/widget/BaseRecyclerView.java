@@ -124,14 +124,11 @@ public class BaseRecyclerView extends FrameLayout {
      */
     public void onLoadDataComplete(List data) {
         //获取到数据后，如果当前页数是1，肯定是下拉刷新，所以清空数据
-        if (mPageIndex == 1) {
+        if (mCurrentIsRefresh) {
             mAdapter.getData().clear();
         }
         if (data.size() < mPageSize) {
             mRefreshLayout.setEnableLoadmore(false);
-            if (mPageIndex != 1) {
-                mRefreshLayout.finishLoadmoreWithNoMoreData();
-            }
         }
         mAdapter.addData(data);
         onLoadDataComplete();
@@ -192,6 +189,8 @@ public class BaseRecyclerView extends FrameLayout {
         mErrView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         mErrView.setVisibility(INVISIBLE);
         noDataRelativeLayout.addView(mErrView);
+
+        mRefreshLayout.setRefreshContent();
 
     }
 

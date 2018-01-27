@@ -98,6 +98,7 @@ public class BaseRecyclerViewActivity extends AppCompatActivity {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.refresh:
+                mBaseRecyclerView.getAdapter().getData().clear();
                 mBaseRecyclerView.callRefreshListener();
                 break;
             case R.id.refresh2:
