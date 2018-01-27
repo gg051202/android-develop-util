@@ -9,7 +9,7 @@ import java.util.List;
 import a26c.com.android_frame_test.R;
 import a26c.com.android_frame_test.model.TestRecylerData;
 
-public class TestBaseAdapter extends BaseMultiItemQuickAdapter<TestRecylerData> {
+public class TestBaseAdapter extends BaseMultiItemQuickAdapter<TestRecylerData, BaseViewHolder> {
 
 
     public TestBaseAdapter(List<TestRecylerData> data) {

@@ -1,28 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.SwipeRefreshLayout android:id="@+id/refreshLayout"
-                                              xmlns:android="http://schemas.android.com/apk/res/android"
-                                              android:layout_width="match_parent"
-                                              android:layout_height="match_parent">
+<com.scwang.smartrefresh.layout.SmartRefreshLayout android:id="@+id/refreshLayout"
+                                                   xmlns:android="http://schemas.android.com/apk/res/android"
+                                                   android:layout_width="match_parent"
+                                                   android:layout_height="match_parent">
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbars="vertical" />
+            android:overScrollMode="never"
+            android:scrollbars="none" />
 
         <FrameLayout
             android:id="@+id/noDataRelativeLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clickable="false"
-            android:focusable="false"
-            android:focusableInTouchMode="false" />
+            android:layout_height="match_parent" />
 
     </FrameLayout>
 
-</android.support.v4.widget.SwipeRefreshLayout>
+</com.scwang.smartrefresh.layout.SmartRefreshLayout>

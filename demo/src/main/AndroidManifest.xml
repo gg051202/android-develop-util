@@ -26,20 +26,20 @@
         android:theme="@style/AppTheme">
         <activity android:name=".activity.MainActivity" />
         <activity android:name="com.a26c.android.frame.base.HtmlActivity" />
-        <activity android:name=".activity.CanvasActivity">
-
-        </activity>
-        <activity android:name=".activity.TakePhotoActivity"></activity>
+        <activity android:name=".activity.TakePhotoActivity" />
         <activity android:name=".activity.StatusBarActivity" />
         <activity android:name=".activity.RecyclerActivity" />
         <activity android:name=".activity.TestActivity" />
         <activity android:name=".activity.SmartRefreshLayoutActivity" />
-        <activity android:name=".activity.MinaTestActivity"></activity>
-        <activity android:name=".activity.PullToRefreshAcitivity"></activity>
+        <activity android:name=".activity.MinaTestActivity" />
+        <activity android:name=".activity.PullToRefreshAcitivity" />
 
         <service android:name=".socket.MinaService" />
 
         <activity android:name=".activity.DataBindingActivity">
+
+        </activity>
+        <activity android:name=".activity.BaseRecyclerViewActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -7,7 +7,6 @@ import android.widget.ScrollView;
 import com.a26c.android.frame.base.CommonActivity;
 
 import a26c.com.android_frame_test.R;
-import a26c.com.android_frame_test.widget.XiaolinRefreshLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -18,8 +17,6 @@ public class PullToRefreshAcitivity extends CommonActivity {
     LinearLayout linearLayout;
     @BindView(R.id.scrollView)
     ScrollView scrollView;
-    @BindView(R.id.refreshLayout)
-    XiaolinRefreshLayout refreshLayout;
 
     @Override
     public int getContainLayout() {

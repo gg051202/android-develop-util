@@ -33,7 +33,7 @@ public class MainActivity extends CommonActivity {
 
         TestAdapter testAdapter = new TestAdapter();
         for (int i = 20; i > 0; i--) {
-            testAdapter.add(0, new TestAdapterData());
+            testAdapter.addData(new TestAdapterData(i));
         }
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         recyclerView.addItemDecoration(new MutiItemDecoration(MutiItemDecoration.Type.ALL));

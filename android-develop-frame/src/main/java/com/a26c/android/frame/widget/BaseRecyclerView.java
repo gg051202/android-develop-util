@@ -1,7 +1,6 @@
 package com.a26c.android.frame.widget;
 
 import android.content.Context;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -11,11 +10,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.a26c.android.frame.R;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshLoadmoreListener;
 
 import java.util.List;
 
@@ -26,97 +27,95 @@ import java.util.List;
 @SuppressWarnings("all")
 public class BaseRecyclerView extends FrameLayout {
 
-    private Context context;
-    private RecyclerView recyclerView;
-    private SwipeRefreshLayout refreshLayout;
+    private Context mContext;
+    private BaseQuickAdapter mAdapter;
+    private RecyclerView mRecyclerView;
+    private SmartRefreshLayout mRefreshLayout;
     private FrameLayout noDataRelativeLayout;
-    private BaseQuickAdapter adapter;
-    private boolean firstLoadData = true;
+    private MutiItemDecoration mMutiItemDecoration;
+    private NetworkHandle mNetworkHandle;
+    private ViewCreator mViewCreator;
+    private CharSequence mDefaultNoDataString = "暂无数据";
+    private CharSequence mDefaultErrString = "请求失败";
+    private View mNoDataView;
+    private View mErrView;
+
     /**
      * 没有数据时，时候需要显示 没有数据的视图
      */
-    private boolean showNodataView = true;
-    private MutiItemDecoration decor;
-    private SwipeRefreshLayout.OnRefreshListener onRefreshListener;
-    private NetworkHandle networkHandle;
-
-    private ViewCreator viewCreator;
-    private CharSequence defaultNoDataString = "暂无数据";
-    private CharSequence defaultErrString = "请求失败";
-
+    private boolean mNeedShowNodataView = true;
     /**
-     * 初始值设置这么大表示不需要上拉加载，但是如果外部调用了baseRecyclerView.openLoadMore,将会改变这个值，
-     * 每次下拉刷新会重新开启上拉加载，避免出现上拉加载后没有数据后，再下拉刷新反而无法上拉加载的情况
+     * PageSize用于判断，获取到数据之后，判断是否需要开上拉加载
      */
-    private int pageSize = 10000;
+    private int mPageSize = 20;
     /**
-     * recyclerView第一次加载时,是否显示dialog,默认显示
+     * 是否需要立即加载数据，如果设置为false，表示init方法中不会自动加载数据
      */
-    private boolean isRefreshingFirst = true;
-
-
+    private boolean mNeedLoadDataAtOnce = true;
     /**
      * 表示分页数据的第几页
      */
-    private int pageIndex = 1;
-    private View noDataView;
-    private View errView;
+    private int mPageIndex = 1;
+    /**
+     * 标记当前操作，暂时只用来判断，请求数据失败后，是否需要将pageIndex-1
+     */
+    private boolean mCurrentIsRefresh;
 
     public BaseRecyclerView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        this.context = context;
+        this.mContext = context;
         LayoutInflater.from(context).inflate(R.layout.frame_layout_base_recycler_view, this, true);
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         noDataRelativeLayout = (FrameLayout) findViewById(R.id.noDataRelativeLayout);
-        refreshLayout = (SwipeRefreshLayout) findViewById(R.id.refreshLayout);
+        mRefreshLayout = (SmartRefreshLayout) findViewById(R.id.refreshLayout);
 
         //初始化recyclerView
+        mMutiItemDecoration = new MutiItemDecoration(MutiItemDecoration.Type.ALL);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(context);
-        recyclerView.setLayoutManager(layoutManager);
-        refreshLayout.setColorSchemeColors(0xffff8400);
-        decor = new MutiItemDecoration(MutiItemDecoration.Type.ALL);
-        recyclerView.addItemDecoration(decor);
+        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.addItemDecoration(mMutiItemDecoration);
+
+        mRefreshLayout.setEnableLoadmore(true);
+        mRefreshLayout.setEnableLoadmoreWhenContentNotFull(false);
+        mRefreshLayout.setOnRefreshLoadmoreListener(mOnRefreshLoadmoreListener);
     }
 
-    public void init(BaseQuickAdapter baseQuickAdapter, final NetworkHandle networkHandle) {
-        this.networkHandle = networkHandle;
-        adapter = baseQuickAdapter;
+    public void init(BaseQuickAdapter baseQuickAdapter, NetworkHandle networkHandle) {
+        this.mNetworkHandle = networkHandle;
+        this.mAdapter = baseQuickAdapter;
 
-        if (networkHandle != null) networkHandle.init(this);
+        if (mNetworkHandle != null) {
+            mNetworkHandle.init(this);
+        }
 
-        onRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                pageIndex = 1;
-                if (networkHandle != null) networkHandle.loadData(true, "1");
-            }
-        };
-        refreshLayout.setOnRefreshListener(onRefreshListener);
-
-
-        //初始化baseAdapter
-        adapter.openLoadMore(pageSize);//设置这么大表示不需要加载更多
-        adapter.openLoadAnimation();
-        adapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
-            @Override
-            public void onLoadMoreRequested() {
-                if (networkHandle != null) networkHandle.loadData(false, String.valueOf(pageIndex));
-            }
-        });
-
-        //初始化无数据的布局
+        //初始化无数据的布局,如果init中没有初始化ViewCreator，会自动设置一个默认的
         initViewCreator();
 
-        recyclerView.setAdapter(adapter);
-        //baseRecyclerView刚显示时是否需要显示下拉刷新的dialog
-        refreshLayout.setRefreshing(isRefreshingFirst);
+        mRecyclerView.setAdapter(mAdapter);
 
-        //如果需要第一次加载baseRecyclerView就加载数据,设置firstLoadData为true,默认为true
-        if (firstLoadData) {
-            if (networkHandle != null) networkHandle.loadData(true, "1");
+        if (mNeedLoadDataAtOnce) {
+            mRefreshLayout.autoRefresh(0, 200, 1);
         }
 
     }
+
+    private OnRefreshLoadmoreListener mOnRefreshLoadmoreListener = new OnRefreshLoadmoreListener() {
+        @Override
+        public void onRefresh(RefreshLayout refreshLayout) {
+            mCurrentIsRefresh = true;
+            if (mNetworkHandle != null) {
+                mNetworkHandle.loadData(mCurrentIsRefresh, "1");
+            }
+        }
+
+        @Override
+        public void onLoadmore(RefreshLayout refreshLayout) {
+            mCurrentIsRefresh = false;
+            if (mNetworkHandle != null) {
+                mNetworkHandle.loadData(mCurrentIsRefresh, String.valueOf(mPageIndex + 1));
+            }
+        }
+    };
 
     /**
      * 数据加载完成之后的统一操作,关闭下拉刷新,关闭上拉加载的进度条,显示空数据的界面等等
@@ -124,97 +123,122 @@ public class BaseRecyclerView extends FrameLayout {
      * @param data 网络请求到的数据
      */
     public void onLoadDataComplete(List data) {
-        if (pageIndex == 1) {//获取到数据后，如果当前页数是1，肯定是下拉刷新，所以清空数据
-            adapter.getData().clear();
-            adapter.openLoadMore(pageSize);
+        //获取到数据后，如果当前页数是1，肯定是下拉刷新，所以清空数据
+        if (mPageIndex == 1) {
+            mAdapter.getData().clear();
         }
-        if (data.size() < pageSize) {//如果上拉加载没有获取到数据设置上拉加载已完成
-            adapter.loadComplete();
-            if (pageIndex != 1) {
-                Toast.makeText(context, "已到最后", Toast.LENGTH_LONG).show();
+        if (data.size() < mPageSize) {
+            mRefreshLayout.setEnableLoadmore(false);
+            if (mPageIndex != 1) {
+                mRefreshLayout.finishLoadmoreWithNoMoreData();
             }
         }
-        adapter.addData(data);
+        mAdapter.addData(data);
         onLoadDataComplete();
 
     }
 
-    public void onLoadDataComplete() {
-        //数据加载成功pageIndex+1
-        pageIndex++;
-        adapter.notifyDataSetChanged();
-        refreshLayout.setRefreshing(false);
 
-        showNoDataView(defaultNoDataString);
+    public void onLoadDataCompleteErr() {
+        mAdapter.notifyDataSetChanged();
+        mRefreshLayout.finishRefresh(false);
+        mRefreshLayout.finishLoadmore(false);
+
+        showErrView();
+    }
+
+    public void onLoadDataComplete() {
+        if (mCurrentIsRefresh) {
+            mPageIndex = 1;
+        } else {
+            mPageIndex++;
+        }
+        mAdapter.notifyDataSetChanged();
+        mRefreshLayout.finishRefresh();
+        mRefreshLayout.finishLoadmore();
+
+        showNoDataView();
     }
 
     private void initViewCreator() {
-        if (viewCreator == null) {
-            viewCreator = new ViewCreator() {
+        if (mViewCreator == null) {
+            mViewCreator = new ViewCreator() {
                 @Override
                 public View getNoDataView() {
-                    View view = LayoutInflater.from(context).inflate(R.layout.frame_layout_network_nodata, null);
-                    return view;
+                    return LayoutInflater.from(mContext).inflate(R.layout.frame_layout_network_nodata, null);
                 }
 
                 @Override
                 public View getErrDataView() {
-                    View view = LayoutInflater.from(context).inflate(R.layout.frame_layout_network_err, null);
-                    return view;
+                    return LayoutInflater.from(mContext).inflate(R.layout.frame_layout_network_err, null);
                 }
             };
         }
-        if (viewCreator.getNoDataView() == null) {
-            noDataView = LayoutInflater.from(context).inflate(R.layout.frame_layout_network_nodata, null);
+        if (mViewCreator.getNoDataView() == null) {
+            mNoDataView = LayoutInflater.from(mContext).inflate(R.layout.frame_layout_network_nodata, null);
         } else {
-            noDataView = viewCreator.getNoDataView();
+            mNoDataView = mViewCreator.getNoDataView();
         }
-        if (viewCreator.getErrDataView() == null) {
-            errView = LayoutInflater.from(context).inflate(R.layout.frame_layout_network_err, null);
+        if (mViewCreator.getErrDataView() == null) {
+            mErrView = LayoutInflater.from(mContext).inflate(R.layout.frame_layout_network_err, null);
         } else {
-            errView = viewCreator.getErrDataView();
+            mErrView = mViewCreator.getErrDataView();
         }
 
+        mNoDataView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        mNoDataView.setVisibility(INVISIBLE);
+        noDataRelativeLayout.addView(mNoDataView);
 
-        noDataView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        noDataView.setVisibility(INVISIBLE);
-        noDataRelativeLayout.addView(noDataView);
+        mErrView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        mErrView.setVisibility(INVISIBLE);
+        noDataRelativeLayout.addView(mErrView);
 
-        errView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        errView.setVisibility(INVISIBLE);
-        noDataRelativeLayout.addView(errView);
+    }
 
+
+    public void showNoDataView() {
+        showNoDataView(mDefaultNoDataString);
     }
 
     /**
      * 修改默认的无数据的视图,前提是数据长度是0
      */
     public void showNoDataView(CharSequence text) {
-        if (adapter.getItemCount() - adapter.getHeaderLayoutCount() - adapter.getFooterLayoutCount() == 0) {
-            if (noDataView instanceof TextView) {
-                ((TextView) noDataView).setText(TextUtils.isEmpty(text) ? defaultNoDataString : text);
-            }
-            noDataView.setVisibility(VISIBLE);
-            errView.setVisibility(INVISIBLE);
-        } else {
-            noDataView.setVisibility(INVISIBLE);
-            errView.setVisibility(INVISIBLE);
+        if (!mNeedShowNodataView) {
+            return;
         }
+        if (mAdapter.getItemCount() - mAdapter.getHeaderLayoutCount() - mAdapter.getFooterLayoutCount() == 0) {
+            if (mNoDataView instanceof TextView) {
+                ((TextView) mNoDataView).setText(TextUtils.isEmpty(text) ? mDefaultNoDataString : text);
+            }
+            mNoDataView.setVisibility(VISIBLE);
+            mErrView.setVisibility(INVISIBLE);
+        } else {
+            mNoDataView.setVisibility(INVISIBLE);
+            mErrView.setVisibility(INVISIBLE);
+        }
+    }
+
+    public void showErrView() {
+        showErrView(mDefaultErrString);
     }
 
     /**
      * 修改默认的显示网络异常的视图,前提是数据长度是0
      */
     public void showErrView(CharSequence text) {
-        if (adapter.getItemCount() - adapter.getHeaderLayoutCount() - adapter.getFooterLayoutCount() == 0) {
-            if (errView instanceof TextView) {
-                ((TextView) errView).setText(TextUtils.isEmpty(text) ? defaultErrString : text);
+        if (!mNeedShowNodataView) {
+            return;
+        }
+        if (mAdapter.getItemCount() - mAdapter.getHeaderLayoutCount() - mAdapter.getFooterLayoutCount() == 0) {
+            if (mErrView instanceof TextView) {
+                ((TextView) mErrView).setText(TextUtils.isEmpty(text) ? mDefaultErrString : text);
             }
-            noDataView.setVisibility(INVISIBLE);
-            errView.setVisibility(VISIBLE);
+            mNoDataView.setVisibility(INVISIBLE);
+            mErrView.setVisibility(VISIBLE);
         } else {
-            noDataView.setVisibility(INVISIBLE);
-            errView.setVisibility(INVISIBLE);
+            mNoDataView.setVisibility(INVISIBLE);
+            mErrView.setVisibility(INVISIBLE);
         }
     }
 
@@ -250,56 +274,50 @@ public class BaseRecyclerView extends FrameLayout {
         View getErrDataView();
     }
 
-    public void openLoadMore(int pageSize) {
-        this.pageSize = pageSize;
-        adapter.openLoadMore(pageSize);
-    }
-
     public void removeDivider() {
-        recyclerView.removeItemDecoration(decor);
+        mRecyclerView.removeItemDecoration(mMutiItemDecoration);
     }
 
     public void addOnItemTouchListener(OnItemClickListener listener) {
-        recyclerView.addOnItemTouchListener(listener);
+        mRecyclerView.addOnItemTouchListener(listener);
     }
 
-    /**
-     * 点击按钮触发下拉刷新事件
-     */
     public void callRefreshListener() {
-        pageIndex = 1;
-        refreshLayout.setRefreshing(true);
-        if (networkHandle != null) {
-            networkHandle.loadData(true, "1");
-        }
+        mPageIndex = 1;
+        mRefreshLayout.autoRefresh(0, 200, 1);
     }
 
     public void addData(List data) {
-        adapter.addData(data);
+        mAdapter.addData(data);
     }
 
-    public void setViewCreator(ViewCreator viewCreator) {
-        this.viewCreator = viewCreator;
-    }
 
     public void setContext(Context context) {
-        this.context = context;
+        mContext = context;
+    }
+
+    public BaseQuickAdapter getAdapter() {
+        return mAdapter;
+    }
+
+    public void setAdapter(BaseQuickAdapter adapter) {
+        mAdapter = adapter;
     }
 
     public RecyclerView getRecyclerView() {
-        return recyclerView;
+        return mRecyclerView;
     }
 
     public void setRecyclerView(RecyclerView recyclerView) {
-        this.recyclerView = recyclerView;
+        mRecyclerView = recyclerView;
     }
 
-    public SwipeRefreshLayout getRefreshLayout() {
-        return refreshLayout;
+    public SmartRefreshLayout getRefreshLayout() {
+        return mRefreshLayout;
     }
 
-    public void setRefreshLayout(SwipeRefreshLayout refreshLayout) {
-        this.refreshLayout = refreshLayout;
+    public void setRefreshLayout(SmartRefreshLayout refreshLayout) {
+        mRefreshLayout = refreshLayout;
     }
 
     public FrameLayout getNoDataRelativeLayout() {
@@ -310,95 +328,95 @@ public class BaseRecyclerView extends FrameLayout {
         this.noDataRelativeLayout = noDataRelativeLayout;
     }
 
-    public BaseQuickAdapter getAdapter() {
-        return adapter;
+    public MutiItemDecoration getMutiItemDecoration() {
+        return mMutiItemDecoration;
     }
 
-    public void setAdapter(BaseQuickAdapter adapter) {
-        this.adapter = adapter;
-    }
-
-    public boolean isFirstLoadData() {
-        return firstLoadData;
-    }
-
-    public void setFirstLoadData(boolean firstLoadData) {
-        this.firstLoadData = firstLoadData;
-    }
-
-    public boolean isShowNodataView() {
-        return showNodataView;
-    }
-
-    public void setShowNodataView(boolean showNodataView) {
-        this.showNodataView = showNodataView;
-    }
-
-    public MutiItemDecoration getDecor() {
-        return decor;
-    }
-
-    public void setDecor(MutiItemDecoration decor) {
-        this.decor = decor;
-    }
-
-    public SwipeRefreshLayout.OnRefreshListener getOnRefreshListener() {
-        return onRefreshListener;
-    }
-
-    public void setOnRefreshListener(SwipeRefreshLayout.OnRefreshListener onRefreshListener) {
-        this.onRefreshListener = onRefreshListener;
+    public void setMutiItemDecoration(MutiItemDecoration mutiItemDecoration) {
+        mMutiItemDecoration = mutiItemDecoration;
     }
 
     public NetworkHandle getNetworkHandle() {
-        return networkHandle;
+        return mNetworkHandle;
     }
 
     public void setNetworkHandle(NetworkHandle networkHandle) {
-        this.networkHandle = networkHandle;
+        mNetworkHandle = networkHandle;
     }
 
     public ViewCreator getViewCreator() {
-        return viewCreator;
+        return mViewCreator;
+    }
+
+    public void setViewCreator(ViewCreator viewCreator) {
+        mViewCreator = viewCreator;
     }
 
     public CharSequence getDefaultNoDataString() {
-        return defaultNoDataString;
+        return mDefaultNoDataString;
     }
 
     public void setDefaultNoDataString(CharSequence defaultNoDataString) {
-        this.defaultNoDataString = defaultNoDataString;
+        mDefaultNoDataString = defaultNoDataString;
     }
 
     public CharSequence getDefaultErrString() {
-        return defaultErrString;
+        return mDefaultErrString;
     }
 
     public void setDefaultErrString(CharSequence defaultErrString) {
-        this.defaultErrString = defaultErrString;
+        mDefaultErrString = defaultErrString;
+    }
+
+    public View getNoDataView() {
+        return mNoDataView;
+    }
+
+    public void setNoDataView(View noDataView) {
+        mNoDataView = noDataView;
+    }
+
+    public View getErrView() {
+        return mErrView;
+    }
+
+    public void setErrView(View errView) {
+        mErrView = errView;
+    }
+
+    public boolean isNeedShowNodataView() {
+        return mNeedShowNodataView;
+    }
+
+    public void setNeedShowNodataView(boolean needShowNodataView) {
+        mNeedShowNodataView = needShowNodataView;
     }
 
     public int getPageSize() {
-        return pageSize;
+        return mPageSize;
     }
 
     public void setPageSize(int pageSize) {
-        this.pageSize = pageSize;
+        mPageSize = pageSize;
     }
 
-    public boolean isRefreshingFirst() {
-        return isRefreshingFirst;
+    public boolean isNeedLoadDataAtOnce() {
+        return mNeedLoadDataAtOnce;
     }
 
-    public void setRefreshingFirst(boolean refreshingFirst) {
-        isRefreshingFirst = refreshingFirst;
+    public void setNeedLoadDataAtOnce(boolean needLoadDataAtOnce) {
+        mNeedLoadDataAtOnce = needLoadDataAtOnce;
     }
 
     public int getPageIndex() {
-        return pageIndex;
+        return mPageIndex;
     }
 
-    public void setPageIndex(int pageIndex) {
-        this.pageIndex = pageIndex;
+    public OnRefreshLoadmoreListener getOnRefreshLoadmoreListener() {
+        return mOnRefreshLoadmoreListener;
+    }
+
+    public void setOnRefreshLoadmoreListener(OnRefreshLoadmoreListener onRefreshLoadmoreListener) {
+        mOnRefreshLoadmoreListener = onRefreshLoadmoreListener;
     }
 }
