@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 
 import com.a26c.android.frame.widget.BaseRecyclerView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -35,6 +36,7 @@ public class BaseRecyclerViewActivity extends AppCompatActivity {
     CheckBox mCheckbox;
     @BindView(R.id.checkbox2)
     CheckBox checkbox2;
+    private TestAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,8 +45,8 @@ public class BaseRecyclerViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_base_recycler_view_acitivity);
         ButterKnife.bind(this);
 
-        final TestAdapter adapter = new TestAdapter();
-        mBaseRecyclerView.init(adapter, new BaseRecyclerView.NetworkHandle() {
+        mAdapter = new TestAdapter();
+        mBaseRecyclerView.init(mAdapter, new BaseRecyclerView.NetworkHandle() {
             @Override
             public void init(BaseRecyclerView baseRecyclerView) {
                 baseRecyclerView.setPageSize(20);
@@ -116,7 +118,7 @@ public class BaseRecyclerViewActivity extends AppCompatActivity {
             mBaseRecyclerView.showErrView("断网啦");
         } else {
             mBaseRecyclerView.onLoadDataComplete();
-            mBaseRecyclerView.showNoDataView("aaaaaassss");
+            mBaseRecyclerView.showNoDataView("暂无数据");
         }
     }
 
@@ -129,6 +131,12 @@ public class BaseRecyclerViewActivity extends AppCompatActivity {
                 mBaseRecyclerView.callRefreshListener();
                 break;
             case R.id.refresh2:
+                ImageView img = new ImageView(this);
+                img.setImageResource(R.mipmap.icon_refresh_header_arrow);
+                mAdapter.setHeaderAndEmpty(true);
+                mAdapter.setHeaderView(img);
+                mAdapter.notifyDataSetChanged();
+
                 break;
             case R.id.refresh3:
                 break;

@@ -31,7 +31,6 @@ public class BaseRecyclerView extends FrameLayout {
     private BaseQuickAdapter mAdapter;
     private RecyclerView mRecyclerView;
     private SmartRefreshLayout mRefreshLayout;
-    private FrameLayout noDataRelativeLayout;
     private MutiItemDecoration mMutiItemDecoration;
     private NetworkHandle mNetworkHandle;
     private ViewCreator mViewCreator;
@@ -66,7 +65,6 @@ public class BaseRecyclerView extends FrameLayout {
         this.mContext = context;
         LayoutInflater.from(context).inflate(R.layout.frame_layout_base_recycler_view, this, true);
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        noDataRelativeLayout = (FrameLayout) findViewById(R.id.noDataRelativeLayout);
         mRefreshLayout = (SmartRefreshLayout) findViewById(R.id.refreshLayout);
 
         //初始化recyclerView
@@ -88,9 +86,6 @@ public class BaseRecyclerView extends FrameLayout {
         if (mNetworkHandle != null) {
             mNetworkHandle.init(this);
         }
-
-        //初始化无数据的布局,如果init中没有初始化ViewCreator，会自动设置一个默认的
-        initViewCreator();
 
         mAdapter.setEnableLoadMore(false);
         mRecyclerView.setAdapter(mAdapter);
@@ -137,15 +132,6 @@ public class BaseRecyclerView extends FrameLayout {
 
     }
 
-
-    public void onLoadDataCompleteErr() {
-        mAdapter.notifyDataSetChanged();
-        mRefreshLayout.finishRefresh(false);
-        mRefreshLayout.finishLoadmore(false);
-
-        showErrView();
-    }
-
     public void onLoadDataComplete() {
         if (mCurrentIsRefresh) {
             mPageIndex = 1;
@@ -157,6 +143,15 @@ public class BaseRecyclerView extends FrameLayout {
         mRefreshLayout.finishLoadmore();
 
         showNoDataView();
+    }
+
+
+    public void onLoadDataCompleteErr() {
+        mAdapter.notifyDataSetChanged();
+        mRefreshLayout.finishRefresh(false);
+        mRefreshLayout.finishLoadmore(false);
+
+        showErrView();
     }
 
     private void initViewCreator() {
@@ -185,12 +180,8 @@ public class BaseRecyclerView extends FrameLayout {
         }
 
         mNoDataView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        mNoDataView.setVisibility(INVISIBLE);
-        noDataRelativeLayout.addView(mNoDataView);
 
         mErrView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        mErrView.setVisibility(INVISIBLE);
-        noDataRelativeLayout.addView(mErrView);
 
     }
 
@@ -203,19 +194,14 @@ public class BaseRecyclerView extends FrameLayout {
      * 修改默认的无数据的视图,前提是数据长度是0
      */
     public void showNoDataView(CharSequence text) {
+        initViewCreator();
         if (!mNeedShowNodataView) {
             return;
         }
-        if (mAdapter.getItemCount() - mAdapter.getHeaderLayoutCount() - mAdapter.getFooterLayoutCount() == 0) {
-            if (mNoDataView.getId() == R.id.frame_nodataTextView) {
-                ((TextView) mNoDataView).setText(TextUtils.isEmpty(text) ? mDefaultNoDataString : text);
-            }
-            mNoDataView.setVisibility(VISIBLE);
-            mErrView.setVisibility(INVISIBLE);
-        } else {
-            mNoDataView.setVisibility(INVISIBLE);
-            mErrView.setVisibility(INVISIBLE);
+        if (mNoDataView.getId() == R.id.frame_nodataTextView) {
+            ((TextView) mNoDataView).setText(TextUtils.isEmpty(text) ? mDefaultNoDataString : text);
         }
+        mAdapter.setEmptyView(mNoDataView);
     }
 
     public void showErrView() {
@@ -226,19 +212,14 @@ public class BaseRecyclerView extends FrameLayout {
      * 修改默认的显示网络异常的视图,前提是数据长度是0
      */
     public void showErrView(CharSequence text) {
+        initViewCreator();
         if (!mNeedShowNodataView) {
             return;
         }
-        if (mAdapter.getItemCount() - mAdapter.getHeaderLayoutCount() - mAdapter.getFooterLayoutCount() == 0) {
-            if (mErrView.getId()==R.id.frame_errTextView) {
-                ((TextView) mErrView).setText(TextUtils.isEmpty(text) ? mDefaultErrString : text);
-            }
-            mNoDataView.setVisibility(INVISIBLE);
-            mErrView.setVisibility(VISIBLE);
-        } else {
-            mNoDataView.setVisibility(INVISIBLE);
-            mErrView.setVisibility(INVISIBLE);
+        if (mErrView.getId() == R.id.frame_errTextView) {
+            ((TextView) mErrView).setText(TextUtils.isEmpty(text) ? mDefaultErrString : text);
         }
+        mAdapter.setEmptyView(mErrView);
     }
 
 
@@ -317,14 +298,6 @@ public class BaseRecyclerView extends FrameLayout {
 
     public void setRefreshLayout(SmartRefreshLayout refreshLayout) {
         mRefreshLayout = refreshLayout;
-    }
-
-    public FrameLayout getNoDataRelativeLayout() {
-        return noDataRelativeLayout;
-    }
-
-    public void setNoDataRelativeLayout(FrameLayout noDataRelativeLayout) {
-        this.noDataRelativeLayout = noDataRelativeLayout;
     }
 
     public MutiItemDecoration getMutiItemDecoration() {

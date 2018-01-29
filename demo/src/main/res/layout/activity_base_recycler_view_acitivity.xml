@@ -17,7 +17,6 @@
 
         <CheckBox
             android:id="@+id/checkbox"
-            android:checked="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="成功" />
@@ -33,7 +32,7 @@
             android:id="@+id/refresh2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="refresh" />
+            android:text="header" />
 
         <Button
             android:id="@+id/refresh3"

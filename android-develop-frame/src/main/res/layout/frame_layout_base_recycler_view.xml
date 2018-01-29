@@ -4,22 +4,11 @@
                                                    android:layout_width="match_parent"
                                                    android:layout_height="match_parent">
 
-    <FrameLayout
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:overScrollMode="never"
-            android:scrollbars="none" />
-
-        <FrameLayout
-            android:id="@+id/noDataRelativeLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-    </FrameLayout>
+        android:layout_height="match_parent"
+        android:overScrollMode="never"
+        android:scrollbars="none" />
 
 </com.scwang.smartrefresh.layout.SmartRefreshLayout>
