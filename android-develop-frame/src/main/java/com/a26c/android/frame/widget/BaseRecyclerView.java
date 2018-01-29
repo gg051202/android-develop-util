@@ -27,6 +27,11 @@ import java.util.List;
 @SuppressWarnings("all")
 public class BaseRecyclerView extends FrameLayout {
 
+    /**
+     * 默认的分页大小，一个APP可以看需要，初始化一次
+     */
+    public static int DEFAULT_PAGE_SIZE = 10;
+
     private Context mContext;
     private BaseQuickAdapter mAdapter;
     private RecyclerView mRecyclerView;
@@ -46,7 +51,7 @@ public class BaseRecyclerView extends FrameLayout {
     /**
      * PageSize用于判断，获取到数据之后，判断是否需要开上拉加载
      */
-    private int mPageSize = 20;
+    private int mPageSize;
     /**
      * 是否需要立即加载数据，如果设置为false，表示init方法中不会自动加载数据
      */
@@ -66,6 +71,7 @@ public class BaseRecyclerView extends FrameLayout {
         LayoutInflater.from(context).inflate(R.layout.frame_layout_base_recycler_view, this, true);
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         mRefreshLayout = (SmartRefreshLayout) findViewById(R.id.refreshLayout);
+        mPageSize = DEFAULT_PAGE_SIZE;
 
         //初始化recyclerView
         mMutiItemDecoration = new MutiItemDecoration(MutiItemDecoration.Type.ALL);
