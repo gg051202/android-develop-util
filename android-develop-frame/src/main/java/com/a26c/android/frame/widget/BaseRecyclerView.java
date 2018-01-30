@@ -149,6 +149,15 @@ public class BaseRecyclerView extends FrameLayout {
         mRefreshLayout.finishLoadmore();
 
         showNoDataView();
+
+        if (mCurrentIsRefresh) {
+            post(new Runnable() {
+                @Override
+                public void run() {
+                    mRecyclerView.smoothScrollToPosition(0);
+                }
+            });
+        }
     }
 
 
