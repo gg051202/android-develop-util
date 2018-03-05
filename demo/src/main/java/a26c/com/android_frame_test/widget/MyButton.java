@@ -1,4 +1,4 @@
-package a26c.com.android_frame_test.activity;
+package a26c.com.android_frame_test.widget;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;

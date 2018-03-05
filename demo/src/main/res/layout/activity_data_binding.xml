@@ -5,19 +5,8 @@
 
         <variable
             name="user"
-            type="a26c.com.android_frame_test.model.UserData" />
+            type="a26c.com.android_frame_test.model.DataBindingTestData"/>
 
-        <variable
-            name="handler"
-            type="a26c.com.android_frame_test.util.EventHandler" />
-
-        <variable
-            name="task"
-            type="a26c.com.android_frame_test.util.Task" />
-
-        <variable
-            name="img"
-            type="android.graphics.drawable.Drawable" />
     </data>
 
     <LinearLayout
@@ -25,36 +14,18 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <TextView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:background="@drawable/grey_star"
-            android:onClick="@{()->handler.onTaskClick(task)}"
-            android:text="@{user.getAihao}" />
-
-        <TextView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:background="@drawable/grey_star"
-            android:text="@{user.age+`岁`}" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{user.sex>=3?`男`:`女`}" />
+            android:text="@{user.name}"
+            android:textColor="@color/default_black"
+            android:textSize="@dimen/sp25" />
 
-        <TextView
+        <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{user.isBoy?`男`:`女`}" />
+            android:onClick="showName" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@{img}" />
     </LinearLayout>
 </layout>
