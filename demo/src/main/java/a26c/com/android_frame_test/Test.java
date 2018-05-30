@@ -1,6 +1,6 @@
 package a26c.com.android_frame_test;
 
-import com.a26c.android.frame.util.CommonUtils;
+import java.util.HashMap;
 
 /**
  * Created by guilinlin on 2016/12/14 08:54.
@@ -8,15 +8,11 @@ import com.a26c.android.frame.util.CommonUtils;
  */
 public class Test {
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
+        HashMap<String, String> map = new HashMap<>();
+        map.put(null, "1");
+        System.out.println(map.get(null));
 
-        System.out.println(CommonUtils.getHhMmSs(1481676652));
-        System.out.println(CommonUtils.getYyyyMmDd(1481676652));
-        System.out.println(CommonUtils.getYyyyMmDdHhMm(1481676652));
-        System.out.println(CommonUtils.getYyyyMmDdHhMmSs(1481676652));
-        System.out.println(CommonUtils.getOnePointNumber(12.23131));
-        System.out.println(CommonUtils.getTwoPointNumber(12f));
-        System.out.println();
     }
 
 }

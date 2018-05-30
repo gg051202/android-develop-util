@@ -1,7 +1,9 @@
 package com.a26c.android.frame.util;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
@@ -9,11 +11,14 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
 import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +27,7 @@ import android.widget.Adapter;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -83,6 +89,7 @@ public class CommonUtils {
      *
      * @param context
      */
+    @SuppressLint("MissingPermission")
     public static String getDeviceId(Context context) {
         TelephonyManager TelephonyMgr = (TelephonyManager) context
                 .getSystemService(Context.TELEPHONY_SERVICE);
@@ -524,4 +531,17 @@ public class CommonUtils {
         return inSampleSize;
     }
 
+
+    /**
+     * 保存图片到系统相册
+     */
+    public static void savePictureToAlbum(Context context, Bitmap bitmap, String title, String desc) {
+        String filePath = MediaStore.Images.Media.insertImage(context.getContentResolver(), bitmap, title, desc);
+        if (!TextUtils.isEmpty(filePath)) {
+            context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(new File(filePath))));
+            Toast.makeText(context, "已保存，请在相册中查看", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(context, "保存图片失败", Toast.LENGTH_LONG).show();
+        }
+    }
 }

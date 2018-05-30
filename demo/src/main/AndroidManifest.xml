@@ -26,28 +26,31 @@
         android:theme="@style/AppTheme">
         <activity android:name=".activity.MainActivity" >
 
-        </activity>
-        <activity android:name="com.a26c.android.frame.base.HtmlActivity" />
-        <activity android:name=".activity.TakePhotoActivity" />
-        <activity android:name=".activity.StatusBarActivity" />
-        <activity android:name=".activity.RecyclerActivity" />
-        <activity android:name=".activity.TestActivity" />
-        <activity android:name=".activity.SmartRefreshLayoutActivity" />
-        <activity android:name=".activity.MinaTestActivity" />
-        <activity android:name=".activity.PullToRefreshAcitivity" />
-
-        <service android:name=".socket.MinaService" />
-
-        <activity android:name=".activity.DataBindingTestActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.BaseRecyclerViewActivity">
+        <activity android:name="com.a26c.android.frame.base.HtmlActivity" />
+        <activity android:name=".activity.TakePhotoActivity" />
+        <activity android:name=".activity.MinaTestActivity" />
+
+        <service android:name=".socket.MinaService" />
+
+        <activity android:name=".activity.DataBindingTestActivity" />
+        <activity android:name=".activity.BaseRecyclerViewActivity" />
+        <activity android:name=".activity.LruCacheAcitivity" />
+        <activity android:name=".activity.KeepServiceAliveActivity">
 
         </activity>
+
+        <service
+            android:name=".activity.KeepAliveService"
+            android:enabled="true"
+            android:process=":alive"
+            android:exported="true" />
+        <service android:name=".activity.KeepAliveService$GrayInnerService" />
     </application>
 
 </manifest>

@@ -26,6 +26,7 @@ android {
     dataBinding {
         enabled = true
     }
+
 }
 
 dependencies {
@@ -37,5 +38,7 @@ dependencies {
     compile 'com.github.githubwing:DragPhotoView:1.0.1'
     compile 'com.android.support.constraint:constraint-layout:1.1.0-beta4'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+
+    compile 'com.airbnb.android:lottie:1.0.1'
 
 }
