@@ -130,9 +130,7 @@ public class BaseRecyclerView extends FrameLayout {
         if (mCurrentIsRefresh) {
             mAdapter.getData().clear();
         }
-        if (data.size() < mPageSize) {
-            mRefreshLayout.setEnableLoadmore(false);
-        }
+        mRefreshLayout.setEnableLoadmore(data.size() >= mPageSize);
         mAdapter.addData(data);
         onLoadDataComplete();
 
