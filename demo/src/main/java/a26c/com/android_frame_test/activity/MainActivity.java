@@ -1,11 +1,13 @@
 package a26c.com.android_frame_test.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.a26c.android.frame.base.CommonActivity;
 
 import a26c.com.android_frame_test.R;
 import butterknife.ButterKnife;
+
 
 public class MainActivity extends CommonActivity {
 
@@ -18,10 +20,12 @@ public class MainActivity extends CommonActivity {
     protected void init(Bundle savedInstanceState) {
         ButterKnife.bind(this);
 
+
     }
 
     @Override
     protected void setEvent() {
 
+        startActivity(new Intent(android.provider.Settings.ACTION_WIFI_SETTINGS));
     }
 }
