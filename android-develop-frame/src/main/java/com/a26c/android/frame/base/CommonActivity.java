@@ -75,6 +75,7 @@ public abstract class CommonActivity extends AppCompatActivity {
         initTitleBar();
         init(savedInstanceState);
         setEvent();
+
     }
 
 

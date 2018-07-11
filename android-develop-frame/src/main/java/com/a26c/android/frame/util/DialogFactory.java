@@ -11,7 +11,6 @@ import com.a26c.android.frame.R;
 import java.util.List;
 
 import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
@@ -85,7 +84,7 @@ public class DialogFactory {
                                         return null;
                                     }
                                 })
-                                .observeOn(AndroidSchedulers.mainThread())
+                                .observeOn(AndroidScheduler.mainThread())
                                 .subscribe(new Action1<Object>() {
                                     @Override
                                     public void call(Object o) {

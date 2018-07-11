@@ -8,8 +8,6 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
 import android.graphics.Shader;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -29,7 +27,7 @@ public class DomainPriceChartView extends FrameLayout {
     private final CurveView curveView;
     private final OverFloatView overView;
 
-    public DomainPriceChartView(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public DomainPriceChartView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         backgroundView = new BackGroundView(context);

@@ -11,13 +11,13 @@ import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 
 import com.a26c.android.frame.R;
+import com.a26c.android.frame.util.AndroidScheduler;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
 import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Created by guilinlin on 2017/6/9 08:44.
@@ -86,7 +86,7 @@ public class VerticalScrollView<T> extends FrameLayout {
 
     public void start() {
         Observable.interval(time, TimeUnit.SECONDS)
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidScheduler.mainThread())
                 .subscribe(subscriber);
     }
 

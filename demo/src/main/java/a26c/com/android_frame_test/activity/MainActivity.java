@@ -1,6 +1,5 @@
 package a26c.com.android_frame_test.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 
 import com.a26c.android.frame.base.CommonActivity;
@@ -25,7 +24,5 @@ public class MainActivity extends CommonActivity {
 
     @Override
     protected void setEvent() {
-
-        startActivity(new Intent(android.provider.Settings.ACTION_WIFI_SETTINGS));
     }
 }

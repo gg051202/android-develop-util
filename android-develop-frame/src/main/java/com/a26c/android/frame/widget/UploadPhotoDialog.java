@@ -15,17 +15,18 @@ import android.util.Log;
 import android.view.View;
 
 import com.a26c.android.frame.R;
+import com.a26c.android.frame.util.AndroidScheduler;
 import com.a26c.android.frame.util.CommonUtils;
 import com.a26c.android.frame.util.FrameBitmapUtil;
 import com.a26c.android.frame.util.FrameCropUtils;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 
 import java.io.File;
 import java.util.concurrent.ExecutionException;
 
 import rx.Observable;
 import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 
@@ -172,7 +173,7 @@ public class UploadPhotoDialog implements View.OnClickListener {
                     }
                 })
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidScheduler.mainThread())
                 .subscribe(new Subscriber<String>() {
                     @Override
                     public void onNext(String imageSavedPath) {
@@ -218,7 +219,8 @@ public class UploadPhotoDialog implements View.OnClickListener {
         subscriber.onNext("onlyReceivedImage");
         Bitmap bitmap = null;
         try {
-            bitmap = Glide.with(context).load(data).asBitmap().override(imageWidth, imageHeight)
+            RequestOptions requestOptions = new RequestOptions().override(imageWidth, imageHeight);
+            bitmap = Glide.with(context).asBitmap().load(data).apply(requestOptions)
                     .into(imageWidth, imageHeight).get();
             String newFilePath = String.format("%s/saved_%s.jpg", getFileDir(), System.currentTimeMillis());
             if (FrameBitmapUtil.savePicture(newFilePath, bitmap)) {

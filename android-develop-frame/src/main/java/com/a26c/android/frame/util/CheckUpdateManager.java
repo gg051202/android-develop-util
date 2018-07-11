@@ -29,7 +29,6 @@ import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
 import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
@@ -175,7 +174,7 @@ public class CheckUpdateManager {
                 })
                 .sample(1, TimeUnit.SECONDS)//过滤 1秒只能更新一次
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidScheduler.mainThread())
                 .subscribe(new Subscriber<Integer>() {
                     @Override
                     public void onStart() {
