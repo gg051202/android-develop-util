@@ -10,68 +10,11 @@
         android:orientation="vertical"
         android:padding="20dp">
 
-        <com.a26c.android.frame.widget.FakeBoldTextView
-            style="@style/a1"
-            app:fbt_boldSize="0.1" />
+        <Button
+            android:layout_width="wrap_content"
+            android:id="@+id/button"
+            android:layout_height="wrap_content" />
 
-        <com.a26c.android.frame.widget.FakeBoldTextView
-            style="@style/a1"
-            app:fbt_boldSize="0.2" />
-
-        <com.a26c.android.frame.widget.FakeBoldTextView
-            style="@style/a1"
-            app:fbt_boldSize="0.3" />
-
-        <com.a26c.android.frame.widget.FakeBoldTextView
-            style="@style/a1"
-            app:fbt_boldSize="0.4" />
-
-        <com.a26c.android.frame.widget.FakeBoldTextView
-            style="@style/a1"
-            app:fbt_boldSize="0.5" />
-
-        <com.a26c.android.frame.widget.FakeBoldTextView
-            style="@style/a1"
-            app:fbt_boldSize="0.6" />
-
-        <com.a26c.android.frame.widget.FakeBoldTextView
-            style="@style/a1"
-            app:fbt_boldSize="0.7" />
-
-        <com.a26c.android.frame.widget.FakeBoldTextView
-            style="@style/a1"
-            app:fbt_boldSize="0.8" />
-
-        <com.a26c.android.frame.widget.FakeBoldTextView
-            style="@style/a1"
-            app:fbt_boldSize="0.9" />
-
-        <com.a26c.android.frame.widget.FakeBoldTextView
-            style="@style/a1"
-            app:fbt_boldSize="1" />
-
-        <com.a26c.android.frame.widget.FakeBoldTextView
-            style="@style/a1"
-            app:fbt_boldSize="1.1" />
-
-        <com.a26c.android.frame.widget.FakeBoldTextView
-            style="@style/a1"
-            app:fbt_boldSize="1.2" />
-
-        <com.a26c.android.frame.widget.FakeBoldTextView
-            style="@style/a1"
-            app:fbt_boldSize="1.3" />
-
-        <com.a26c.android.frame.widget.FakeBoldTextView
-            style="@style/a1"
-            app:fbt_boldSize="3.3" />
-
-        <com.a26c.android.frame.widget.FakeBoldTextView
-            style="@style/a1"
-            app:fbt_boldSize="5.3" />
-        <com.a26c.android.frame.widget.FakeBoldTextView
-            style="@style/a1"
-            app:fbt_boldSize="15.3" />
     </LinearLayout>
 
 
