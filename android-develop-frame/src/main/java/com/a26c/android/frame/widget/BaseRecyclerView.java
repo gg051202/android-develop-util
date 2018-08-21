@@ -85,7 +85,7 @@ public class BaseRecyclerView extends FrameLayout {
         mRefreshLayout.setEnableLoadMoreWhenContentNotFull(false);
         mRefreshLayout.setOnRefreshLoadMoreListener(mOnRefreshLoadmoreListener);
         mRefreshLayout.setNestedScrollingEnabled(true);
-        mRefreshLayout.setEnableAutoLoadMore(false);
+        mRefreshLayout.setEnableAutoLoadMore(true);
     }
 
     public void init(BaseQuickAdapter baseQuickAdapter, NetworkHandle networkHandle) {
@@ -146,7 +146,15 @@ public class BaseRecyclerView extends FrameLayout {
         if (data.size() >= mPageSize) {
             mRefreshLayout.setEnableLoadMore(true);
         } else {
-            mRefreshLayout.finishLoadMoreWithNoMoreData();
+            getHandler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (mRefreshLayout != null) {
+                        mRefreshLayout.finishLoadMoreWithNoMoreData();
+                    }
+                }
+            }, 500);
+
         }
     }
 
@@ -206,8 +214,6 @@ public class BaseRecyclerView extends FrameLayout {
         } else {
             mAdapter.setEmptyView(mNoDataView);
         }
-
-
     }
 
     /**

@@ -52,12 +52,12 @@ public class MyApplication extends Application {
                 ClassicsFooter.REFRESH_FOOTER_RELEASE = "释放已加载";
                 ClassicsFooter.REFRESH_FOOTER_REFRESHING = "正在刷新";
                 ClassicsFooter.REFRESH_FOOTER_LOADING = "正在加载";
-                ClassicsFooter.REFRESH_FOOTER_FINISH = "加载完成";
+                ClassicsFooter.REFRESH_FOOTER_FINISH = "";
                 ClassicsFooter.REFRESH_FOOTER_FAILED = "加载失败";
                 ClassicsFooter.REFRESH_FOOTER_NOTHING = "没有更多数据了";
                 ClassicsFooter classicsFooter = new ClassicsFooter(context);
                 classicsFooter.setBackgroundColor(0xffffffff);
-                classicsFooter.setFinishDuration(500);
+                classicsFooter.setFinishDuration(1);
                 classicsFooter.setTextSizeTitle(13);
                 classicsFooter.setDrawableSize(13);
                 classicsFooter.setDrawableMarginRight(10);
