@@ -114,11 +114,9 @@ public class BaseRecyclerViewActivity extends AppCompatActivity {
 
     private void fail() {
         if (checkbox2.isChecked()) {
-            mBaseRecyclerView.onLoadDataCompleteErr();
-            mBaseRecyclerView.showErrView("断网啦");
+            mBaseRecyclerView.onLoadDataCompleteErr("断网啦");
         } else {
-            mBaseRecyclerView.onLoadDataComplete();
-            mBaseRecyclerView.showNoDataView("暂无数据");
+            mBaseRecyclerView.onLoadDataComplete("没有数据哦");
         }
     }
 
@@ -127,7 +125,6 @@ public class BaseRecyclerViewActivity extends AppCompatActivity {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.refresh:
-                mBaseRecyclerView.getAdapter().getData().clear();
                 mBaseRecyclerView.callRefreshListener();
                 break;
             case R.id.refresh2:

@@ -11,8 +11,4 @@
         android:overScrollMode="never"
         android:scrollbars="none" />
 
-    <View
-        android:layout_width="@dimen/dp100"
-        android:layout_height="@dimen/dp100" />
-
 </com.scwang.smartrefresh.layout.SmartRefreshLayout>

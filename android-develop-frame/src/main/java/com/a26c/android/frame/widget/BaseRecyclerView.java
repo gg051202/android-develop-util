@@ -1,9 +1,9 @@
 package com.a26c.android.frame.widget;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,18 +31,20 @@ public class BaseRecyclerView extends FrameLayout {
      * 默认的分页大小，一个APP可以看需要，初始化一次
      */
     public static int DEFAULT_PAGE_SIZE = 10;
+    private final Context mContext;
 
-    private Context mContext;
     private BaseQuickAdapter mAdapter;
     private RecyclerView mRecyclerView;
     private SmartRefreshLayout mRefreshLayout;
     private MutiItemDecoration mMutiItemDecoration;
     private NetworkHandle mNetworkHandle;
     private ViewCreator mViewCreator;
-    private CharSequence mDefaultNoDataString = "暂无数据";
-    private CharSequence mDefaultErrString = "请求失败";
     private View mNoDataView;
     private View mErrView;
+    /**
+     * 默认的占位视图，比如没有数据显示"无数据"，请求失败显示"请求失败"
+     */
+    private TextView mDefaultHintTextView;
 
     /**
      * 没有数据时，时候需要显示 没有数据的视图
@@ -67,10 +69,10 @@ public class BaseRecyclerView extends FrameLayout {
 
     public BaseRecyclerView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        this.mContext = context;
+        mContext = context;
         LayoutInflater.from(context).inflate(R.layout.frame_layout_base_recycler_view, this, true);
-        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        mRefreshLayout = (SmartRefreshLayout) findViewById(R.id.refreshLayout);
+        mRecyclerView = findViewById(R.id.recyclerView);
+        mRefreshLayout = findViewById(R.id.refreshLayout);
         mPageSize = DEFAULT_PAGE_SIZE;
 
         //初始化recyclerView
@@ -79,10 +81,11 @@ public class BaseRecyclerView extends FrameLayout {
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.addItemDecoration(mMutiItemDecoration);
 
-        mRefreshLayout.setEnableLoadMore(true);
+        mRefreshLayout.setEnableLoadMore(false);
         mRefreshLayout.setEnableLoadMoreWhenContentNotFull(false);
         mRefreshLayout.setOnRefreshLoadMoreListener(mOnRefreshLoadmoreListener);
         mRefreshLayout.setNestedScrollingEnabled(true);
+        mRefreshLayout.setEnableAutoLoadMore(false);
     }
 
     public void init(BaseQuickAdapter baseQuickAdapter, NetworkHandle networkHandle) {
@@ -104,15 +107,16 @@ public class BaseRecyclerView extends FrameLayout {
 
     private OnRefreshLoadMoreListener mOnRefreshLoadmoreListener = new OnRefreshLoadMoreListener() {
         @Override
-        public void onRefresh(RefreshLayout refreshLayout) {
+        public void onRefresh(@NonNull RefreshLayout refreshLayout) {
             mCurrentIsRefresh = true;
+            mAdapter.getData().clear();
             if (mNetworkHandle != null) {
                 mNetworkHandle.loadData(mCurrentIsRefresh, "1");
             }
         }
 
         @Override
-        public void onLoadMore(RefreshLayout refreshLayout) {
+        public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
             mCurrentIsRefresh = false;
             if (mNetworkHandle != null) {
                 mNetworkHandle.loadData(mCurrentIsRefresh, String.valueOf(mPageIndex + 1));
@@ -125,30 +129,36 @@ public class BaseRecyclerView extends FrameLayout {
      *
      * @param data 网络请求到的数据
      */
-    public void onLoadDataComplete(List data) {
+    public void onLoadDataComplete(List data, String hint) {
+        onLoadDataComplete(hint);
         //获取到数据后，如果当前页数是1，肯定是下拉刷新，所以清空数据
         if (mCurrentIsRefresh) {
             mAdapter.getData().clear();
         }
-        mRefreshLayout.setEnableLoadMore(data.size() >= mPageSize);
         mAdapter.addData(data);
-        onLoadDataComplete();
 
-    }
-
-    public void onLoadDataComplete() {
         if (mCurrentIsRefresh) {
             mPageIndex = 1;
         } else {
             mPageIndex++;
         }
+
+        if (data.size() >= mPageSize) {
+            mRefreshLayout.setEnableLoadMore(true);
+        } else {
+            mRefreshLayout.finishLoadMoreWithNoMoreData();
+        }
+    }
+
+    /**
+     * 无数据显示的数据
+     */
+    public void onLoadDataComplete(@NonNull String noDataText) {
         mAdapter.notifyDataSetChanged();
-        mRefreshLayout.finishRefresh(0);
+        mRefreshLayout.finishRefresh();
         mRefreshLayout.finishLoadMore();
 
-        showNoDataView();
-
-        if (mCurrentIsRefresh) {
+        if (mAdapter.getData().size() > 0 && mCurrentIsRefresh) {
             post(new Runnable() {
                 @Override
                 public void run() {
@@ -156,83 +166,97 @@ public class BaseRecyclerView extends FrameLayout {
                 }
             });
         }
+
+        if (mAdapter.getData().size() <= 0) {
+            showNoDataView(noDataText);
+        }
     }
 
 
-    public void onLoadDataCompleteErr() {
+    public void onLoadDataCompleteErr(String errText) {
         mAdapter.notifyDataSetChanged();
         mRefreshLayout.finishRefresh(false);
         mRefreshLayout.finishLoadMore(false);
 
-        showErrView();
+        showErrView(errText);
     }
 
-    private void initViewCreator() {
-        if (mViewCreator == null) {
-            mViewCreator = new ViewCreator() {
-                @Override
-                public View getNoDataView() {
-                    return LayoutInflater.from(mContext).inflate(R.layout.frame_layout_network_nodata, null);
-                }
+    public void onLoadDataComplete(List data) {
+        onLoadDataComplete(data, "暂无数据");
+    }
 
-                @Override
-                public View getErrDataView() {
-                    return LayoutInflater.from(mContext).inflate(R.layout.frame_layout_network_err, null);
-                }
-            };
+    public void onLoadDataComplete() {
+        onLoadDataComplete("暂无数据");
+    }
+
+    public void onLoadDataCompleteErr() {
+        onLoadDataCompleteErr("请求失败");
+    }
+
+    /**
+     * 显示没有数据的视图
+     */
+    private void showNoDataView(String hint) {
+        if (!mNeedShowNodataView) {
+            return;
         }
-        if (mViewCreator.getNoDataView() == null) {
-            mNoDataView = LayoutInflater.from(mContext).inflate(R.layout.frame_layout_network_nodata, null);
+        initViewCreator();
+        if (mNoDataView == null) {
+            showDefaultHintTextView(hint);
         } else {
-            mNoDataView = mViewCreator.getNoDataView();
+            mAdapter.setEmptyView(mNoDataView);
         }
-        if (mViewCreator.getErrDataView() == null) {
-            mErrView = LayoutInflater.from(mContext).inflate(R.layout.frame_layout_network_err, null);
+
+
+    }
+
+    /**
+     * 显示网络加载错误的视图
+     */
+    private void showErrView(String hint) {
+        if (!mNeedShowNodataView) {
+            return;
+        }
+        initViewCreator();
+        if (mErrView == null) {
+            showDefaultHintTextView(hint);
         } else {
-            mErrView = mViewCreator.getErrDataView();
+            mAdapter.setEmptyView(mErrView);
         }
 
-        mNoDataView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-
-        mErrView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-
     }
 
-
-    public void showNoDataView() {
-        showNoDataView(mDefaultNoDataString);
-    }
 
     /**
      * 修改默认的无数据的视图,前提是数据长度是0
      */
-    public void showNoDataView(CharSequence text) {
-        initViewCreator();
+    private void showDefaultHintTextView(CharSequence hint) {
         if (!mNeedShowNodataView) {
             return;
         }
-        if (mNoDataView.getId() == R.id.frame_nodataTextView) {
-            ((TextView) mNoDataView).setText(TextUtils.isEmpty(text) ? mDefaultNoDataString : text);
-        }
-        mAdapter.setEmptyView(mNoDataView);
-    }
-
-    public void showErrView() {
-        showErrView(mDefaultErrString);
+        mDefaultHintTextView.setText(hint);
+        mAdapter.setEmptyView(mDefaultHintTextView);
     }
 
     /**
-     * 修改默认的显示网络异常的视图,前提是数据长度是0
+     * 初始化空数据和无数据视图
      */
-    public void showErrView(CharSequence text) {
-        initViewCreator();
-        if (!mNeedShowNodataView) {
-            return;
+    private void initViewCreator() {
+        if (mViewCreator != null && mViewCreator.getNoDataView() != null) {
+            mNoDataView = mViewCreator.getNoDataView();
+            mNoDataView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         }
-        if (mErrView.getId() == R.id.frame_errTextView) {
-            ((TextView) mErrView).setText(TextUtils.isEmpty(text) ? mDefaultErrString : text);
+
+        if (mViewCreator != null && mViewCreator.getErrDataView() != null) {
+            mErrView = mViewCreator.getErrDataView();
+            mErrView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         }
-        mAdapter.setEmptyView(mErrView);
+
+        //如果在没有设置两种视图，那么就创建一个默认的 view，用来显示错误信息
+        if (mErrView == null || mNoDataView == null) {
+            mDefaultHintTextView = (TextView) LayoutInflater.from(mContext).inflate(R.layout.frame_layout_network_nodata, null);
+            mDefaultHintTextView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        }
     }
 
 
@@ -276,25 +300,13 @@ public class BaseRecyclerView extends FrameLayout {
     }
 
     public void callRefreshListener() {
+        mAdapter.getData().clear();
         mPageIndex = 1;
         mRefreshLayout.autoRefresh(0, 200, 1);
     }
 
-    public void addData(List data) {
-        mAdapter.addData(data);
-    }
-
-
-    public void setContext(Context context) {
-        mContext = context;
-    }
-
     public BaseQuickAdapter getAdapter() {
         return mAdapter;
-    }
-
-    public void setAdapter(BaseQuickAdapter adapter) {
-        mAdapter = adapter;
     }
 
     public RecyclerView getRecyclerView() {
@@ -335,22 +347,6 @@ public class BaseRecyclerView extends FrameLayout {
 
     public void setViewCreator(ViewCreator viewCreator) {
         mViewCreator = viewCreator;
-    }
-
-    public CharSequence getDefaultNoDataString() {
-        return mDefaultNoDataString;
-    }
-
-    public void setDefaultNoDataString(CharSequence defaultNoDataString) {
-        mDefaultNoDataString = defaultNoDataString;
-    }
-
-    public CharSequence getDefaultErrString() {
-        return mDefaultErrString;
-    }
-
-    public void setDefaultErrString(CharSequence defaultErrString) {
-        mDefaultErrString = defaultErrString;
     }
 
     public View getNoDataView() {
@@ -403,5 +399,13 @@ public class BaseRecyclerView extends FrameLayout {
 
     public void setOnRefreshLoadmoreListener(OnRefreshLoadMoreListener onRefreshLoadmoreListener) {
         mOnRefreshLoadmoreListener = onRefreshLoadmoreListener;
+    }
+
+    public TextView getDefaultHintTextView() {
+        return mDefaultHintTextView;
+    }
+
+    public void setDefaultHintTextView(TextView defaultHintTextView) {
+        this.mDefaultHintTextView = defaultHintTextView;
     }
 }

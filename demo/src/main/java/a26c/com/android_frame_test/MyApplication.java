@@ -30,12 +30,12 @@ public class MyApplication extends Application {
                 ClassicsHeader.REFRESH_HEADER_REFRESHING = "正在刷新";
                 ClassicsHeader.REFRESH_HEADER_LOADING = "正在加载";
                 ClassicsHeader.REFRESH_HEADER_RELEASE = "释放以刷新";
-                ClassicsHeader.REFRESH_HEADER_FINISH = "刷新完成";
-                ClassicsHeader.REFRESH_HEADER_FAILED = "刷新失败";
+                ClassicsHeader.REFRESH_HEADER_FINISH = "";
+                ClassicsHeader.REFRESH_HEADER_FAILED = "";
                 ClassicsHeader classicsHeader = new ClassicsHeader(context);
                 classicsHeader.setBackgroundColor(0xffffffff);
                 classicsHeader.setEnableLastTime(false);
-                classicsHeader.setFinishDuration(500);
+                classicsHeader.setFinishDuration(1);
                 classicsHeader.setTextSizeTitle(13);
                 classicsHeader.setDrawableSize(13);
                 classicsHeader.setDrawableMarginRight(10);
