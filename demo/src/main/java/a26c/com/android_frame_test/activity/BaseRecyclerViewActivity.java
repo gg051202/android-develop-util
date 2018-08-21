@@ -67,7 +67,7 @@ public class BaseRecyclerViewActivity extends AppCompatActivity {
                             }
                             success(list);
                         }
-                    }, 1000);
+                    }, 500);
                 } else {
                     if (new Random().nextBoolean()) {
                         mBaseRecyclerView.postDelayed(new Runnable() {
@@ -77,7 +77,7 @@ public class BaseRecyclerViewActivity extends AppCompatActivity {
                                 System.out.println(" ");
                                 fail();
                             }
-                        }, 1000);
+                        }, 1);
                     } else {
                         System.out.println("获取数据失败\n");
                         System.out.println(" ");

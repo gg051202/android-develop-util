@@ -100,7 +100,10 @@ public class BaseRecyclerView extends FrameLayout {
         mRecyclerView.setAdapter(mAdapter);
 
         if (mNeedLoadDataAtOnce) {
-            mRefreshLayout.autoRefresh(1, 0, 1);
+            View view = LayoutInflater.from(mContext).inflate(R.layout.frame_layout_baserecycler_default_loading_view, null);
+            view.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            mAdapter.setEmptyView(view);
+            loadData();
         }
 
     }
@@ -108,11 +111,7 @@ public class BaseRecyclerView extends FrameLayout {
     private OnRefreshLoadMoreListener mOnRefreshLoadmoreListener = new OnRefreshLoadMoreListener() {
         @Override
         public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-            mCurrentIsRefresh = true;
-            mAdapter.getData().clear();
-            if (mNetworkHandle != null) {
-                mNetworkHandle.loadData(mCurrentIsRefresh, "1");
-            }
+            loadData();
         }
 
         @Override
@@ -123,6 +122,17 @@ public class BaseRecyclerView extends FrameLayout {
             }
         }
     };
+
+    /**
+     * 第一次加载数据
+     */
+    private void loadData() {
+        mCurrentIsRefresh = true;
+        mAdapter.getData().clear();
+        if (mNetworkHandle != null) {
+            mNetworkHandle.loadData(mCurrentIsRefresh, "1");
+        }
+    }
 
     /**
      * 数据加载完成之后的统一操作,关闭下拉刷新,关闭上拉加载的进度条,显示空数据的界面等等
