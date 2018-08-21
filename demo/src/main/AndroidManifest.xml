@@ -44,6 +44,7 @@
         <activity android:name=".activity.KeepServiceAliveActivity">
 
         </activity>
+        <activity android:name=".activity.RecylerViewAcitivity" />
 
         <service
             android:name=".activity.KeepAliveService"

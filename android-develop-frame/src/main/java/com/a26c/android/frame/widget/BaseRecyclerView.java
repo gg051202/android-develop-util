@@ -16,7 +16,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnRefreshLoadmoreListener;
+import com.scwang.smartrefresh.layout.listener.OnRefreshLoadMoreListener;
 
 import java.util.List;
 
@@ -79,9 +79,9 @@ public class BaseRecyclerView extends FrameLayout {
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.addItemDecoration(mMutiItemDecoration);
 
-        mRefreshLayout.setEnableLoadmore(true);
-        mRefreshLayout.setEnableLoadmoreWhenContentNotFull(false);
-        mRefreshLayout.setOnRefreshLoadmoreListener(mOnRefreshLoadmoreListener);
+        mRefreshLayout.setEnableLoadMore(true);
+        mRefreshLayout.setEnableLoadMoreWhenContentNotFull(false);
+        mRefreshLayout.setOnRefreshLoadMoreListener(mOnRefreshLoadmoreListener);
         mRefreshLayout.setNestedScrollingEnabled(true);
     }
 
@@ -102,7 +102,7 @@ public class BaseRecyclerView extends FrameLayout {
 
     }
 
-    private OnRefreshLoadmoreListener mOnRefreshLoadmoreListener = new OnRefreshLoadmoreListener() {
+    private OnRefreshLoadMoreListener mOnRefreshLoadmoreListener = new OnRefreshLoadMoreListener() {
         @Override
         public void onRefresh(RefreshLayout refreshLayout) {
             mCurrentIsRefresh = true;
@@ -112,7 +112,7 @@ public class BaseRecyclerView extends FrameLayout {
         }
 
         @Override
-        public void onLoadmore(RefreshLayout refreshLayout) {
+        public void onLoadMore(RefreshLayout refreshLayout) {
             mCurrentIsRefresh = false;
             if (mNetworkHandle != null) {
                 mNetworkHandle.loadData(mCurrentIsRefresh, String.valueOf(mPageIndex + 1));
@@ -130,7 +130,7 @@ public class BaseRecyclerView extends FrameLayout {
         if (mCurrentIsRefresh) {
             mAdapter.getData().clear();
         }
-        mRefreshLayout.setEnableLoadmore(data.size() >= mPageSize);
+        mRefreshLayout.setEnableLoadMore(data.size() >= mPageSize);
         mAdapter.addData(data);
         onLoadDataComplete();
 
@@ -143,8 +143,8 @@ public class BaseRecyclerView extends FrameLayout {
             mPageIndex++;
         }
         mAdapter.notifyDataSetChanged();
-        mRefreshLayout.finishRefresh();
-        mRefreshLayout.finishLoadmore();
+        mRefreshLayout.finishRefresh(0);
+        mRefreshLayout.finishLoadMore();
 
         showNoDataView();
 
@@ -162,7 +162,7 @@ public class BaseRecyclerView extends FrameLayout {
     public void onLoadDataCompleteErr() {
         mAdapter.notifyDataSetChanged();
         mRefreshLayout.finishRefresh(false);
-        mRefreshLayout.finishLoadmore(false);
+        mRefreshLayout.finishLoadMore(false);
 
         showErrView();
     }
@@ -397,11 +397,11 @@ public class BaseRecyclerView extends FrameLayout {
         return mPageIndex;
     }
 
-    public OnRefreshLoadmoreListener getOnRefreshLoadmoreListener() {
+    public OnRefreshLoadMoreListener getOnRefreshLoadmoreListener() {
         return mOnRefreshLoadmoreListener;
     }
 
-    public void setOnRefreshLoadmoreListener(OnRefreshLoadmoreListener onRefreshLoadmoreListener) {
+    public void setOnRefreshLoadmoreListener(OnRefreshLoadMoreListener onRefreshLoadmoreListener) {
         mOnRefreshLoadmoreListener = onRefreshLoadmoreListener;
     }
 }

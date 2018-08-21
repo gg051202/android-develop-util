@@ -2,17 +2,17 @@ package a26c.com.android_frame_test.adapter;
 
 public class TestAdapterData {
 
-    private int i;
+    private String i;
 
-    public TestAdapterData(int i) {
+    public TestAdapterData(String i) {
         this.i = i;
     }
 
-    public int getI() {
+    public String getI() {
         return i;
     }
 
-    public void setI(int i) {
+    public void setI(String i) {
         this.i = i;
     }
 }

@@ -53,7 +53,7 @@ public class BaseRecyclerViewActivity extends AppCompatActivity {
             }
 
             @Override
-            public void loadData(boolean isRefresh, String pageIndex) {
+            public void loadData(boolean isRefresh, final String pageIndex) {
                 System.out.println(String.format("isRefresh:%s , pageIndex:%s", isRefresh, pageIndex));
                 final List<TestAdapterData> list = new ArrayList<>();
                 if (mCheckbox.isChecked()) {
@@ -62,8 +62,8 @@ public class BaseRecyclerViewActivity extends AppCompatActivity {
                         public void run() {
                             System.out.println("获取数据成功\n");
                             System.out.println(" ");
-                            for (int i = 0; i < 20; i++) {
-                                list.add(new TestAdapterData(i));
+                            for (int i = 0; i < (Integer.parseInt(pageIndex) < 3 ? 20 : 10); i++) {
+                                list.add(new TestAdapterData(pageIndex + "页，" + i));
                             }
                             success(list);
                         }
@@ -139,6 +139,8 @@ public class BaseRecyclerViewActivity extends AppCompatActivity {
 
                 break;
             case R.id.refresh3:
+                mAdapter.getData().clear();
+                mAdapter.notifyDataSetChanged();
                 break;
         }
     }

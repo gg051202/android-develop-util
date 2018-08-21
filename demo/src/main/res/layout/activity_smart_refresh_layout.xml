@@ -9,7 +9,6 @@
                                                        xmlns:tools="http://schemas.android.com/tools"
                                                        android:layout_width="match_parent"
                                                        android:layout_height="match_parent"
-                                                       app:srlEnableLoadmoreWhenContentNotFull="false"
                                                        app:srlReboundDuration="400"
                                                        tools:context="a26c.com.android_frame_test.activity.SmartRefreshLayoutActivity">
 

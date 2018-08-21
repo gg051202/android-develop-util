@@ -1,7 +1,15 @@
 package a26c.com.android_frame_test.model;
 
+import com.a26c.android.frame.util.AndroidScheduler;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import a26c.com.android_frame_test.adapter.TestAdapterData;
+import rx.Observable;
+import rx.Subscriber;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by guilinlin on 2017/1/4 17:22.
@@ -9,37 +17,48 @@ import java.util.List;
  */
 public class TestModel {
 
-    public static List<TestRecylerData> getTestList() {
-        List<TestRecylerData> list = new ArrayList<>();
-        list.add(new TestRecylerData(TestRecylerData.TITLE, "title0"));
-        list.add(new TestRecylerData(TestRecylerData.ITEM, "item1"));
-        list.add(new TestRecylerData(TestRecylerData.ITEM, "item2"));
-        list.add(new TestRecylerData(TestRecylerData.ITEM, "item3"));
-        list.add(new TestRecylerData(TestRecylerData.ITEM, "item4"));
-        list.add(new TestRecylerData(TestRecylerData.ITEM, "item5"));
-        list.add(new TestRecylerData(TestRecylerData.ITEM, "item6"));
-        list.add(new TestRecylerData(TestRecylerData.ITEM, "item7"));
-        list.add(new TestRecylerData(TestRecylerData.ITEM, "item8"));
-        list.add(new TestRecylerData(TestRecylerData.ITEM, "item9"));
-        list.add(new TestRecylerData(TestRecylerData.TITLE, "title10"));
-        list.add(new TestRecylerData(TestRecylerData.ITEM, "item11"));
-        list.add(new TestRecylerData(TestRecylerData.ITEM, "item12"));
-        list.add(new TestRecylerData(TestRecylerData.ITEM, "item13"));
-        list.add(new TestRecylerData(TestRecylerData.ITEM, "item14"));
-        list.add(new TestRecylerData(TestRecylerData.ITEM, "item15"));
-        list.add(new TestRecylerData(TestRecylerData.ITEM, "item2"));
-        list.add(new TestRecylerData(TestRecylerData.ITEM, "item2"));
-        list.add(new TestRecylerData(TestRecylerData.ITEM, "item2"));
-        list.add(new TestRecylerData(TestRecylerData.TITLE, "title3"));
-        list.add(new TestRecylerData(TestRecylerData.ITEM, "item3"));
-        list.add(new TestRecylerData(TestRecylerData.ITEM, "item3"));
-        list.add(new TestRecylerData(TestRecylerData.ITEM, "item3"));
-        list.add(new TestRecylerData(TestRecylerData.ITEM, "item3"));
-        list.add(new TestRecylerData(TestRecylerData.ITEM, "item3"));
-        list.add(new TestRecylerData(TestRecylerData.ITEM, "item3"));
-        list.add(new TestRecylerData(TestRecylerData.ITEM, "item3"));
-        list.add(new TestRecylerData(TestRecylerData.ITEM, "item3"));
-        return list;
+    public void getTestList(final int pageIndex, final OnGetDataListener onGetDataListener) {
+
+        Observable.just(1)
+                .subscribeOn(Schedulers.io())
+                .map(new Func1<Integer, List<TestAdapterData>>() {
+                    @Override
+                    public List<TestAdapterData> call(Integer integer) {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        List<TestAdapterData> list = new ArrayList<>();
+                        for (int i = 0; i < (pageIndex < 3 ? 20 : 10); i++) {
+                            list.add(new TestAdapterData(pageIndex + "页，" + i));
+                        }
+                        return list;
+                    }
+                })
+                .observeOn(AndroidScheduler.mainThread())
+                .subscribe(new Subscriber<List<TestAdapterData>>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(List<TestAdapterData> list) {
+                        if (onGetDataListener != null) {
+                            onGetDataListener.success(list);
+                        }
+                    }
+                });
+    }
+
+    public interface OnGetDataListener {
+        void success(List<TestAdapterData> testRecylerData);
     }
 
 
