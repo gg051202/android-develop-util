@@ -15,7 +15,9 @@ import com.a26c.android.frame.R;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshFooter;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
 import com.scwang.smartrefresh.layout.listener.OnRefreshLoadMoreListener;
 
 import java.util.List;
@@ -26,6 +28,24 @@ import java.util.List;
  */
 @SuppressWarnings("all")
 public class BaseRecyclerView extends FrameLayout {
+
+    /**
+     * 无操作状态
+     */
+    public static final int STATUS_NONE = 101;
+    /**
+     * 第一次进来加载数据
+     */
+    public static final int STATUS_FIRST_LOAD_DATA = 102;
+    /**
+     * 下拉刷新中
+     */
+    public static final int STATUS_REFRESHING = 102;
+    /**
+     * 正在上拉加载
+     */
+    public static final int STATUS_LOADMORE = 103;
+
 
     /**
      * 默认的分页大小，一个APP可以看需要，初始化一次
@@ -63,9 +83,10 @@ public class BaseRecyclerView extends FrameLayout {
      */
     private int mPageIndex = 1;
     /**
-     * 标记当前操作，暂时只用来判断，请求数据失败后，是否需要将pageIndex-1
+     * 当前的状态
      */
-    private boolean mCurrentIsRefresh;
+    private int mStatus;
+    private View mProgressView;
 
     public BaseRecyclerView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -85,12 +106,12 @@ public class BaseRecyclerView extends FrameLayout {
         mRefreshLayout.setEnableLoadMoreWhenContentNotFull(false);
         mRefreshLayout.setOnRefreshLoadMoreListener(mOnRefreshLoadmoreListener);
         mRefreshLayout.setNestedScrollingEnabled(true);
-        mRefreshLayout.setEnableAutoLoadMore(true);
+        mRefreshLayout.setEnableFooterFollowWhenLoadFinished(true);
     }
 
     public void init(BaseQuickAdapter baseQuickAdapter, NetworkHandle networkHandle) {
-        this.mNetworkHandle = networkHandle;
-        this.mAdapter = baseQuickAdapter;
+        mNetworkHandle = networkHandle;
+        mAdapter = baseQuickAdapter;
 
         if (mNetworkHandle != null) {
             mNetworkHandle.init(this);
@@ -100,39 +121,46 @@ public class BaseRecyclerView extends FrameLayout {
         mRecyclerView.setAdapter(mAdapter);
 
         if (mNeedLoadDataAtOnce) {
-            View view = LayoutInflater.from(mContext).inflate(R.layout.frame_layout_baserecycler_default_loading_view, null);
-            view.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-            mAdapter.setEmptyView(view);
-            loadData();
+            mPageIndex = 1;
+            mStatus = STATUS_FIRST_LOAD_DATA;
+            mAdapter.setEmptyView(getProgressView());
+            if (mNetworkHandle != null) {
+                mNetworkHandle.loadData(true, String.valueOf(mPageIndex));
+            }
         }
-
     }
+
 
     private OnRefreshLoadMoreListener mOnRefreshLoadmoreListener = new OnRefreshLoadMoreListener() {
         @Override
         public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-            loadData();
+            mStatus = STATUS_REFRESHING;
+            mPageIndex = 1;
+            if (mNetworkHandle != null) {
+                mNetworkHandle.loadData(true, String.valueOf(mPageIndex));
+            }
         }
 
         @Override
         public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
-            mCurrentIsRefresh = false;
+            mStatus = STATUS_LOADMORE;
             if (mNetworkHandle != null) {
-                mNetworkHandle.loadData(mCurrentIsRefresh, String.valueOf(mPageIndex + 1));
+                mNetworkHandle.loadData(false, String.valueOf(mPageIndex));
             }
         }
     };
 
-    /**
-     * 第一次加载数据
-     */
-    private void loadData() {
-        mCurrentIsRefresh = true;
+    public void callRefreshListener() {
+        mPageIndex = 1;
+        mStatus = STATUS_FIRST_LOAD_DATA;
         mAdapter.getData().clear();
+        mAdapter.notifyDataSetChanged();
+        mAdapter.setEmptyView(getProgressView());
         if (mNetworkHandle != null) {
-            mNetworkHandle.loadData(mCurrentIsRefresh, "1");
+            mNetworkHandle.loadData(true, String.valueOf(mPageIndex));
         }
     }
+
 
     /**
      * 数据加载完成之后的统一操作,关闭下拉刷新,关闭上拉加载的进度条,显示空数据的界面等等
@@ -140,18 +168,13 @@ public class BaseRecyclerView extends FrameLayout {
      * @param data 网络请求到的数据
      */
     public void onLoadDataComplete(List data, CharSequence hint) {
-        onLoadDataComplete(hint);
-        //获取到数据后，如果当前页数是1，肯定是下拉刷新，所以清空数据
-        if (mCurrentIsRefresh) {
+        if (isRefreshing()) {
             mAdapter.getData().clear();
         }
         mAdapter.addData(data);
+        mPageIndex++;
 
-        if (mCurrentIsRefresh) {
-            mPageIndex = 1;
-        } else {
-            mPageIndex++;
-        }
+        onLoadDataComplete(hint);
 
         if (data.size() >= mPageSize) {
             mRefreshLayout.setEnableLoadMore(true);
@@ -164,8 +187,29 @@ public class BaseRecyclerView extends FrameLayout {
                     }
                 }
             }, 500);
-
         }
+    }
+
+    public void onLoadDataCompleteErr(CharSequence errText) {
+        if (isRefreshing()) {
+            mAdapter.getData().clear();
+        }
+        mAdapter.notifyDataSetChanged();
+
+        mRefreshLayout.finishRefresh(false);
+        mRefreshLayout.finishLoadMore(false);
+        mRefreshLayout.setEnableAutoLoadMore(false);
+        RefreshFooter refreshFooter = mRefreshLayout.getRefreshFooter();
+        if (refreshFooter instanceof ClassicsFooter) {
+            ClassicsFooter classicsFooter = (ClassicsFooter) refreshFooter;
+            classicsFooter.setFinishDuration(500);
+        }
+
+        if (mAdapter.getData().size() <= 0) {
+            showErrView(errText);
+        }
+
+        mStatus = STATUS_NONE;
     }
 
     /**
@@ -173,10 +217,18 @@ public class BaseRecyclerView extends FrameLayout {
      */
     public void onLoadDataComplete(@NonNull CharSequence noDataText) {
         mAdapter.notifyDataSetChanged();
+
         mRefreshLayout.finishRefresh();
         mRefreshLayout.finishLoadMore();
+        RefreshFooter refreshFooter = mRefreshLayout.getRefreshFooter();
+        if (refreshFooter instanceof ClassicsFooter) {
+            ClassicsFooter classicsFooter = (ClassicsFooter) refreshFooter;
+            classicsFooter.setFinishDuration(300);
+        }
 
-        if (mAdapter.getData().size() > 0 && mCurrentIsRefresh) {
+        mRefreshLayout.setEnableAutoLoadMore(true);
+
+        if (mAdapter.getData().size() > 0 && isRefreshing()) {
             post(new Runnable() {
                 @Override
                 public void run() {
@@ -188,15 +240,8 @@ public class BaseRecyclerView extends FrameLayout {
         if (mAdapter.getData().size() <= 0) {
             showNoDataView(noDataText);
         }
-    }
 
-
-    public void onLoadDataCompleteErr(CharSequence errText) {
-        mAdapter.notifyDataSetChanged();
-        mRefreshLayout.finishRefresh(false);
-        mRefreshLayout.finishLoadMore(false);
-
-        showErrView(errText);
+        mStatus = STATUS_NONE;
     }
 
     public void onLoadDataComplete(List data) {
@@ -315,12 +360,6 @@ public class BaseRecyclerView extends FrameLayout {
         mRecyclerView.addOnItemTouchListener(listener);
     }
 
-    public void callRefreshListener() {
-        mAdapter.getData().clear();
-        mPageIndex = 1;
-        mRefreshLayout.autoRefresh(0, 200, 1);
-    }
-
     public BaseQuickAdapter getAdapter() {
         return mAdapter;
     }
@@ -424,4 +463,18 @@ public class BaseRecyclerView extends FrameLayout {
     public void setDefaultHintTextView(TextView defaultHintTextView) {
         this.mDefaultHintTextView = defaultHintTextView;
     }
+
+    private boolean isRefreshing() {
+        return mStatus == STATUS_FIRST_LOAD_DATA || mStatus == STATUS_REFRESHING;
+    }
+
+    @NonNull
+    private View getProgressView() {
+        if (mProgressView == null) {
+            mProgressView = LayoutInflater.from(mContext).inflate(R.layout.frame_layout_baserecycler_default_loading_view, null);
+            mProgressView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        }
+        return mProgressView;
+    }
+
 }

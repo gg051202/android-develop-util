@@ -13,7 +13,6 @@ import com.chad.library.adapter.base.listener.OnItemClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import a26c.com.android_frame_test.R;
 import a26c.com.android_frame_test.adapter.TestAdapter;
@@ -57,33 +56,26 @@ public class BaseRecyclerViewActivity extends AppCompatActivity {
                 System.out.println(String.format("isRefresh:%s , pageIndex:%s", isRefresh, pageIndex));
                 final List<TestAdapterData> list = new ArrayList<>();
                 if (mCheckbox.isChecked()) {
-                    mBaseRecyclerView.postDelayed(new Runnable() {
+                    mCheckbox.postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             System.out.println("获取数据成功\n");
                             System.out.println(" ");
-                            for (int i = 0; i < (Integer.parseInt(pageIndex) < 3 ? 20 : 10); i++) {
+                            for (int i = 0; i < (Integer.parseInt(pageIndex) < 5 ? 20 : 0); i++) {
                                 list.add(new TestAdapterData(pageIndex + "页，" + i));
                             }
                             success(list);
                         }
-                    }, 500);
+                    }, 300);
                 } else {
-                    if (new Random().nextBoolean()) {
-                        mBaseRecyclerView.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                System.out.println("获取数据失败\n");
-                                System.out.println(" ");
-                                fail();
-                            }
-                        }, 1);
-                    } else {
-                        System.out.println("获取数据失败\n");
-                        System.out.println(" ");
-                        fail();
-                    }
-
+                    mCheckbox.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            System.out.println("获取数据失败\n");
+                            System.out.println(" ");
+                            fail();
+                        }
+                    }, 300);
 
                 }
 
@@ -116,7 +108,7 @@ public class BaseRecyclerViewActivity extends AppCompatActivity {
         if (checkbox2.isChecked()) {
             mBaseRecyclerView.onLoadDataCompleteErr("断网啦");
         } else {
-            mBaseRecyclerView.onLoadDataComplete("没有数据哦");
+            mBaseRecyclerView.onLoadDataCompleteErr("没有数据哦");
         }
     }
 

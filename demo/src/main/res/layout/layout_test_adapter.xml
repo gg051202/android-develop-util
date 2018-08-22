@@ -6,6 +6,7 @@
               android:clickable="true"
               android:gravity="center"
               android:padding="@dimen/dp_10"
+              android:background="#77000000"
               android:focusable="true">
 
     <TextView

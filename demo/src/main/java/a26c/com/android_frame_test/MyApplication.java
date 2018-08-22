@@ -35,7 +35,7 @@ public class MyApplication extends Application {
                 ClassicsHeader classicsHeader = new ClassicsHeader(context);
                 classicsHeader.setBackgroundColor(0xffffffff);
                 classicsHeader.setEnableLastTime(false);
-                classicsHeader.setFinishDuration(1);
+                classicsHeader.setFinishDuration(300);
                 classicsHeader.setTextSizeTitle(13);
                 classicsHeader.setDrawableSize(13);
                 classicsHeader.setDrawableMarginRight(10);
@@ -49,15 +49,15 @@ public class MyApplication extends Application {
             @Override
             public RefreshFooter createRefreshFooter(@NonNull Context context, @NonNull RefreshLayout layout) {
                 ClassicsFooter.REFRESH_FOOTER_PULLING = "上拉加载更多";
-                ClassicsFooter.REFRESH_FOOTER_RELEASE = "释放已加载";
+                ClassicsFooter.REFRESH_FOOTER_RELEASE = "释放以加载";
                 ClassicsFooter.REFRESH_FOOTER_REFRESHING = "正在刷新";
                 ClassicsFooter.REFRESH_FOOTER_LOADING = "正在加载";
                 ClassicsFooter.REFRESH_FOOTER_FINISH = "";
                 ClassicsFooter.REFRESH_FOOTER_FAILED = "加载失败";
-                ClassicsFooter.REFRESH_FOOTER_NOTHING = "没有更多数据了";
+                ClassicsFooter.REFRESH_FOOTER_NOTHING = "已到最后";
                 ClassicsFooter classicsFooter = new ClassicsFooter(context);
                 classicsFooter.setBackgroundColor(0xffffffff);
-                classicsFooter.setFinishDuration(1);
+                classicsFooter.setFinishDuration(300);
                 classicsFooter.setTextSizeTitle(13);
                 classicsFooter.setDrawableSize(13);
                 classicsFooter.setDrawableMarginRight(10);
