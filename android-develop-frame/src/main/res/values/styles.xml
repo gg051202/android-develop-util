@@ -14,5 +14,25 @@
         <item name="android:windowMinWidthMinor">100%</item>
     </style>
 
+    <style name="update_dialog_style1">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_marginRight">@dimen/dp13</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:background">@drawable/frame_update_dialog_cancel</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/default_grey</item>
+        <item name="android:textSize">@dimen/sp16</item>
+    </style>
+
+    <style name="update_dialog_style2">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/dp40</item>
+        <item name="android:layout_marginBottom">@dimen/dp20</item>
+        <item name="android:layout_marginLeft">@dimen/dp13</item>
+        <item name="android:layout_marginRight">@dimen/dp13</item>
+        <item name="android:layout_marginTop">@dimen/dp20</item>
+    </style>
+
 
 </resources>

@@ -41,8 +41,9 @@ public class MainActivity extends CommonActivity {
             @Override
             public void success() {
                 new UpdateDialog(MainActivity.this)
-                        .setDescName("您有新的版本")
-                        .setDownloadUrl("http://imtt.dd.qq.com/16891/2F1FE079D5498D7FBDF5565965A868E0.apk?fsname=com.aalife.android_6.0.4_604.apk&csr=1bbd")
+                        .setTitleName("您有新的版本")
+                        .setDescName("更新\n日\n日\n日\n日\n日\n日\n日日\n日\n日日\n日\n日\n日\n日\n日日\n日\n日\n日\n日\n日\n日\n日\n日日\n日\n日\n日\n日\n日志更新日志")
+                        .setDownloadUrl("http://imtt.dd.qq.com/16891/A92C29C6A2255AD59E082A9B6336AEAD.apk?fsname=com.lotus.game.popthewheel.android_1.0.1_2.apk&csr=1bbd")
                         .show();
             }
 

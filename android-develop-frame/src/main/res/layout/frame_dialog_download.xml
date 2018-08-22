@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:gravity="center">
@@ -12,74 +13,83 @@
         android:background="@drawable/frame_bg_white_corrner_3dp"
         android:gravity="center"
         android:orientation="vertical"
-        android:paddingBottom="@dimen/dp30"
         android:paddingLeft="@dimen/dp13"
-        android:paddingRight="@dimen/dp13"
-        android:paddingTop="@dimen/dp35">
+        android:paddingRight="@dimen/dp13">
 
-        <LinearLayout
+
+        <com.a26c.android.frame.widget.FakeBoldTextView
+            android:id="@+id/titleTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center">
+            android:layout_marginLeft="@dimen/dp13"
+            android:layout_marginRight="@dimen/dp13"
+            android:layout_marginTop="@dimen/dp24"
+            android:text="发现新版本"
+            android:textColor="@color/default_black"
+            android:textSize="@dimen/sp18"
+            app:fbt_boldSize="0.8" />
 
-            <ImageView
-                android:layout_width="@dimen/dp26"
-                android:layout_height="@dimen/dp26"
-                android:layout_marginEnd="@dimen/dp13"
-                android:layout_marginRight="@dimen/dp13"
-                android:src="@mipmap/frame_icon_is_download" />
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp150"
+            android:layout_marginBottom="@dimen/dp13"
+            android:layout_marginTop="@dimen/dp13"
+            android:overScrollMode="never">
 
             <TextView
                 android:id="@+id/descTextView"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="正在下载啊啊啊啊"
+                android:layout_marginLeft="@dimen/dp13"
+                android:layout_marginRight="@dimen/dp13"
                 android:textColor="@color/default_black"
                 android:textSize="@dimen/sp15" />
+        </ScrollView>
 
-
-        </LinearLayout>
 
         <com.daimajia.numberprogressbar.NumberProgressBar
             android:id="@+id/progressBar"
             style="@style/NumberProgressBar_Default"
-            android:layout_marginBottom="@dimen/dp40"
+            android:layout_marginBottom="@dimen/dp10"
             android:layout_marginLeft="@dimen/dp13"
             android:layout_marginRight="@dimen/dp13"
-            android:layout_marginTop="@dimen/dp30" />
+            android:layout_marginTop="@dimen/dp40"
+            android:visibility="gone" />
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/dp40"
-            android:layout_marginLeft="@dimen/dp13"
-            android:layout_marginRight="@dimen/dp13">
-
+            android:id="@+id/bottomLayout1"
+            style="@style/update_dialog_style2">
 
             <TextView
                 android:id="@+id/cancelTextView"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginRight="@dimen/dp13"
-                android:layout_weight="1"
-                android:background="@drawable/frame_update_dialog_cancel"
-                android:gravity="center"
-                android:text="取消"
-                android:textColor="@color/default_black"
-                android:textSize="@dimen/sp16"
-                android:layout_marginEnd="@dimen/dp13" />
+                style="@style/update_dialog_style1"
+                android:text="暂不更新" />
 
             <TextView
                 android:id="@+id/submitTextView"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="@dimen/dp13"
-                android:layout_weight="1"
+                style="@style/update_dialog_style1"
                 android:background="@drawable/frame_update_dialog_submit"
-                android:gravity="center"
-                android:text="后台运行"
-                android:textColor="@color/white"
-                android:textSize="@dimen/sp16"
-                android:layout_marginStart="@dimen/dp13" />
+                android:text="开始下载"
+                android:textColor="@color/white" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/bottomLayout2"
+            style="@style/update_dialog_style2"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/cancelDownloadTextView"
+                style="@style/update_dialog_style1"
+                android:text="取消下载" />
+
+            <TextView
+                android:id="@+id/backgroundTextView"
+                style="@style/update_dialog_style1"
+                android:background="@drawable/frame_update_dialog_submit"
+                android:text="后台更新"
+                android:textColor="@color/white" />
 
         </LinearLayout>
 

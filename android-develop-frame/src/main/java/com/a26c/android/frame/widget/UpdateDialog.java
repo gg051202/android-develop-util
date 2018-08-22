@@ -29,13 +29,12 @@ public class UpdateDialog implements View.OnClickListener {
     private Activity activity;
 
     private NumberProgressBar mNumberProgressBar;
+    private View bottomLayout1;
+    private View bottomLayout2;
 
+    private String mTitleName;
     private String mDescName;
-    private String mcancleName = "取消";
-    private String mSubmitName = "后台运行";
     private String downloadUrl;
-    private OnDialogCancleListener mOnDialogCancleListener;
-    private OnDialogSubmitListener mDialogSubmitListener;
     private FrameDownloadUtil mDownloadUtil;
 
     public UpdateDialog(Activity activity) {
@@ -46,18 +45,21 @@ public class UpdateDialog implements View.OnClickListener {
 
     public void show() {
         if (alertDialog == null) {
-            @SuppressLint("InflateParams") View view = LayoutInflater.from(activity).inflate(R.layout.frame_dialog_download, null);
+            @SuppressLint("InflateParams")
+            View view = LayoutInflater.from(activity).inflate(R.layout.frame_dialog_download, null);
+            TextView titleTextView = view.findViewById(R.id.titleTextView);
             TextView descTextView = view.findViewById(R.id.descTextView);
-            TextView cancelTextView = view.findViewById(R.id.cancelTextView);
-            TextView submitTextView = view.findViewById(R.id.submitTextView);
             mNumberProgressBar = view.findViewById(R.id.progressBar);
+            bottomLayout1 = view.findViewById(R.id.bottomLayout1);
+            bottomLayout2 = view.findViewById(R.id.bottomLayout2);
 
+            titleTextView.setText(mTitleName);
             descTextView.setText(mDescName);
-            cancelTextView.setText(mcancleName);
-            submitTextView.setText(mSubmitName);
 
-            cancelTextView.setOnClickListener(this);
-            submitTextView.setOnClickListener(this);
+            view.findViewById(R.id.cancelDownloadTextView).setOnClickListener(this);
+            view.findViewById(R.id.backgroundTextView).setOnClickListener(this);
+            view.findViewById(R.id.cancelTextView).setOnClickListener(this);
+            view.findViewById(R.id.submitTextView).setOnClickListener(this);
 
             mNumberProgressBar.setProgress(0);
 
@@ -74,7 +76,6 @@ public class UpdateDialog implements View.OnClickListener {
         if (!alertDialog.isShowing()) {
             alertDialog.show();
         }
-        startDownload();
     }
 
     /**
@@ -86,64 +87,70 @@ public class UpdateDialog implements View.OnClickListener {
         mDownloadUtil = new FrameDownloadUtil(activity);
         mDownloadUtil.setDownloadUrl(downloadUrl);
         mDownloadUtil.setFileName(fileName);
-        mDownloadUtil.setOnDownloadListener(new FrameDownloadUtil.OnDownloadListener() {
-            @Override
-            public void start() {
-
-            }
-
-            @Override
-            public void onProgress(int progress) {
-                if (progress == 100) {
-                    if (alertDialog != null && alertDialog.isShowing()) {
-                        alertDialog.dismiss();
-                    }
-                } else {
-                    if (progress >= 1) {
-                        mNumberProgressBar.setProgress(progress);
-                    }
-                }
-            }
-
-            @Override
-            public void success(File file) {
-                if (alertDialog != null && alertDialog.isShowing()) {
-                    alertDialog.dismiss();
-                }
-                CommonUtils.install(activity, file, false);
-            }
-
-            @Override
-            public void err(String msg) {
-                if (alertDialog != null && alertDialog.isShowing()) {
-                    alertDialog.dismiss();
-                }
-                Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
-            }
-        });
+        mDownloadUtil.setOnDownloadListener(mDownloadListener);
         mDownloadUtil.startDownload();
     }
 
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.submitTextView) {
-            if (mDialogSubmitListener != null) {
-                mDialogSubmitListener.submit();
-            }
-            if (alertDialog != null && alertDialog.isShowing()) {
-                alertDialog.dismiss();
-            }
-
+            startDownload();
         } else if (v.getId() == R.id.cancelTextView) {
-            if (mOnDialogCancleListener != null) {
-                mOnDialogCancleListener.cancle();
-            }
             if (alertDialog != null && alertDialog.isShowing()) {
                 alertDialog.dismiss();
             }
-            mDownloadUtil.cancel();
+        } else if (v.getId() == R.id.cancelDownloadTextView) {
+            if (alertDialog != null && alertDialog.isShowing()) {
+                alertDialog.dismiss();
+            }
+            if (mDownloadUtil != null) {
+                mDownloadUtil.cancel();
+            }
+        } else if (v.getId() == R.id.backgroundTextView) {
+            if (alertDialog != null && alertDialog.isShowing()) {
+                alertDialog.dismiss();
+            }
         }
     }
+
+    private FrameDownloadUtil.OnDownloadListener mDownloadListener = new FrameDownloadUtil.OnDownloadListener() {
+        @Override
+        public void start() {
+            mNumberProgressBar.setVisibility(View.VISIBLE);
+            bottomLayout1.setVisibility(View.GONE);
+            bottomLayout2.setVisibility(View.VISIBLE);
+
+        }
+
+        @Override
+        public void onProgress(int progress) {
+            if (progress == 100) {
+                if (alertDialog != null && alertDialog.isShowing()) {
+                    alertDialog.dismiss();
+                }
+            } else {
+                if (progress >= 1) {
+                    mNumberProgressBar.setProgress(progress);
+                }
+            }
+        }
+
+        @Override
+        public void success(File file) {
+            if (alertDialog != null && alertDialog.isShowing()) {
+                alertDialog.dismiss();
+            }
+            CommonUtils.install(activity, file, false);
+        }
+
+        @Override
+        public void err(String msg) {
+            if (alertDialog != null && alertDialog.isShowing()) {
+                alertDialog.dismiss();
+            }
+            Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
+        }
+    };
 
 
     public UpdateDialog setDescName(String descName) {
@@ -153,43 +160,18 @@ public class UpdateDialog implements View.OnClickListener {
         return this;
     }
 
+    public UpdateDialog setTitleName(String titleName) {
+        if (!TextUtils.isEmpty(titleName)) {
+            mTitleName = titleName;
+        }
+        return this;
+    }
+
     public UpdateDialog setDownloadUrl(String downloadUrl) {
         if (!TextUtils.isEmpty(downloadUrl)) {
             this.downloadUrl = downloadUrl;
         }
         return this;
-    }
-
-    public UpdateDialog setCancleName(String cancleName) {
-        if (!TextUtils.isEmpty(cancleName)) {
-            this.mcancleName = cancleName;
-        }
-        return this;
-    }
-
-    public UpdateDialog setSubmitName(String submitName) {
-        if (!TextUtils.isEmpty(submitName)) {
-            mSubmitName = submitName;
-        }
-        return this;
-    }
-
-    public UpdateDialog setOnDialogCancleListener(OnDialogCancleListener onDialogCancleListener) {
-        mOnDialogCancleListener = onDialogCancleListener;
-        return this;
-    }
-
-    public UpdateDialog setDialogSubmitListener(OnDialogSubmitListener dialogSubmitListener) {
-        mDialogSubmitListener = dialogSubmitListener;
-        return this;
-    }
-
-    public interface OnDialogSubmitListener {
-        void submit();
-    }
-
-    public interface OnDialogCancleListener {
-        void cancle();
     }
 
 }
