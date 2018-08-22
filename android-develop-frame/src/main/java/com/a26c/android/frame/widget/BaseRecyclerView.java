@@ -139,7 +139,7 @@ public class BaseRecyclerView extends FrameLayout {
      *
      * @param data 网络请求到的数据
      */
-    public void onLoadDataComplete(List data, String hint) {
+    public void onLoadDataComplete(List data, CharSequence hint) {
         onLoadDataComplete(hint);
         //获取到数据后，如果当前页数是1，肯定是下拉刷新，所以清空数据
         if (mCurrentIsRefresh) {
@@ -171,7 +171,7 @@ public class BaseRecyclerView extends FrameLayout {
     /**
      * 无数据显示的数据
      */
-    public void onLoadDataComplete(@NonNull String noDataText) {
+    public void onLoadDataComplete(@NonNull CharSequence noDataText) {
         mAdapter.notifyDataSetChanged();
         mRefreshLayout.finishRefresh();
         mRefreshLayout.finishLoadMore();
@@ -191,7 +191,7 @@ public class BaseRecyclerView extends FrameLayout {
     }
 
 
-    public void onLoadDataCompleteErr(String errText) {
+    public void onLoadDataCompleteErr(CharSequence errText) {
         mAdapter.notifyDataSetChanged();
         mRefreshLayout.finishRefresh(false);
         mRefreshLayout.finishLoadMore(false);
@@ -214,7 +214,7 @@ public class BaseRecyclerView extends FrameLayout {
     /**
      * 显示没有数据的视图
      */
-    private void showNoDataView(String hint) {
+    private void showNoDataView(CharSequence hint) {
         if (!mNeedShowNodataView) {
             return;
         }
@@ -229,7 +229,7 @@ public class BaseRecyclerView extends FrameLayout {
     /**
      * 显示网络加载错误的视图
      */
-    private void showErrView(String hint) {
+    private void showErrView(CharSequence hint) {
         if (!mNeedShowNodataView) {
             return;
         }
