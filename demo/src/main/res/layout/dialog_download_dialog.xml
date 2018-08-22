@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/dp40"
         android:layout_marginRight="@dimen/dp40"
-        android:background="@drawable/bg_white_corrner_3dp"
+        android:background="@drawable/frame_bg_white_corrner_3dp"
         android:orientation="vertical">
 
 

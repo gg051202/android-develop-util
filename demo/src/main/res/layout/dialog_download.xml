@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:gravity="center">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/dp40"
+        android:layout_marginRight="@dimen/dp40"
+        android:background="@drawable/frame_bg_white_corrner_3dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/dp30"
+        android:paddingLeft="@dimen/dp13"
+        android:paddingRight="@dimen/dp13"
+        android:paddingTop="@dimen/dp35">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="@dimen/dp26"
+                android:layout_height="@dimen/dp26"
+                android:layout_marginEnd="@dimen/dp13"
+                android:layout_marginRight="@dimen/dp13"
+                android:src="@mipmap/frame_icon_is_download" />
+
+            <TextView
+                android:id="@+id/descTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="正在下载啊啊啊啊"
+                android:textColor="@color/default_black"
+                android:textSize="@dimen/sp15" />
+
+
+        </LinearLayout>
+
+        <com.daimajia.numberprogressbar.NumberProgressBar
+            android:id="@+id/progressBar"
+            style="@style/NumberProgressBar_Default"
+            android:layout_marginBottom="@dimen/dp40"
+            android:layout_marginLeft="@dimen/dp13"
+            android:layout_marginRight="@dimen/dp13"
+            android:layout_marginTop="@dimen/dp30" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp40"
+            android:layout_marginLeft="@dimen/dp13"
+            android:layout_marginRight="@dimen/dp13">
+
+
+            <TextView
+                android:id="@+id/cancelTextView"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginRight="@dimen/dp13"
+                android:layout_weight="1"
+                android:background="@drawable/frame_update_dialog_cancel"
+                android:gravity="center"
+                android:text="取消"
+                android:textColor="@color/default_black"
+                android:textSize="@dimen/sp16" />
+
+            <TextView
+                android:id="@+id/submitTextView"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/dp13"
+                android:layout_weight="1"
+                android:background="@drawable/frame_update_dialog_submit"
+                android:gravity="center"
+                android:text="后台运行"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp16" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</LinearLayout>
