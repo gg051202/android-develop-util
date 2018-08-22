@@ -272,7 +272,7 @@ public abstract class CommonActivity extends AppCompatActivity {
 
     protected void checkPermission(@NonNull OnCheckPermissionListener checkPermissionListener, String... permissions) {
 
-        if (!isMarshmallow()) {//如果是6.0以上系统，不需要验证权限
+        if (!isMarshmallow()) {//如果是6.0以下系统，不需要验证权限
             checkPermissionListener.success();
             return;
         }

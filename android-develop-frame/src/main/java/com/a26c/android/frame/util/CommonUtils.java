@@ -14,7 +14,9 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Environment;
+import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
 import android.telephony.TelephonyManager;
@@ -544,4 +546,23 @@ public class CommonUtils {
             Toast.makeText(context, "保存图片失败", Toast.LENGTH_LONG).show();
         }
     }
+
+
+    public static void install(Context context, File file, boolean force) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+            intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
+        } else {//修复7.0无法更新
+            StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+            StrictMode.setVmPolicy(builder.build());
+            intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
+        }
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
+        if (force) {
+            System.exit(0);
+        }
+    }
+
+
 }

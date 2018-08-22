@@ -4,13 +4,9 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Environment;
-import android.os.StrictMode;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
@@ -209,7 +205,7 @@ public class CheckUpdateManager {
                     public void onNext(Integer progress) {
                         if (progress == 100) {
                             mManager.cancel(NOTIFICATION_ID);
-                            install(mContext, downloadFile, false);
+                            CommonUtils.install(mContext, downloadFile, false);
                         } else {
                             if (progress % 5 == 0 || progress >= 1) {
                                 mBuilder.setProgress(100, progress, false);
@@ -432,23 +428,6 @@ public class CheckUpdateManager {
             messages.append(DOWNLOAD_INCOMPLETE, "下载失败：下载不完整");
             messages.append(DOWNLOAD_VERIFY, "下载失败：校验错误");
             messages.append(DOWNLOAD_URL_ERR, "下载失败：下载地址错误");
-        }
-    }
-
-
-    public static void install(Context context, File file, boolean force) {
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-            intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
-        } else {//修复7.0无法更新
-            StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-            StrictMode.setVmPolicy(builder.build());
-            intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
-        }
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(intent);
-        if (force) {
-            System.exit(0);
         }
     }
 

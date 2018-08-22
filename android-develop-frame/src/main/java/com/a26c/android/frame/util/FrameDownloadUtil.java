@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseArray;
@@ -41,11 +40,8 @@ public class FrameDownloadUtil {
     private Subscriber<Integer> mSubscriber;
 
 
-    public FrameDownloadUtil(Activity activity, String downloadUrl, String fileName, OnDownloadListener downloadListener) {
-        this.fileName = fileName;
+    public FrameDownloadUtil(Activity activity ) {
         this.activity = activity;
-        this.downloadUrl = downloadUrl;
-        this.onDownloadListener = downloadListener;
     }
 
 
@@ -127,9 +123,7 @@ public class FrameDownloadUtil {
             throw new DownLoadError(DownLoadError.DOWNLOAD_URL_ERR);
         }
 
-        downloadFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-                TextUtils.isEmpty(fileName) ? CommonUtils.MD5(downloadUrl) : fileName);
-
+        downloadFile = new File(fileName);
 
         try {
 
@@ -341,5 +335,23 @@ public class FrameDownloadUtil {
         }
     }
 
+    public String getDownloadUrl() {
+        return downloadUrl;
+    }
 
+    public void setDownloadUrl(String downloadUrl) {
+        this.downloadUrl = downloadUrl;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public OnDownloadListener getOnDownloadListener() {
+        return onDownloadListener;
+    }
 }
