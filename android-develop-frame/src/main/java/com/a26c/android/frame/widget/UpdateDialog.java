@@ -36,6 +36,7 @@ public class UpdateDialog implements View.OnClickListener {
     private String downloadUrl;
     private OnDialogCancleListener mOnDialogCancleListener;
     private OnDialogSubmitListener mDialogSubmitListener;
+    private FrameDownloadUtil mDownloadUtil;
 
     public UpdateDialog(Activity activity) {
         this.activity = activity;
@@ -82,10 +83,10 @@ public class UpdateDialog implements View.OnClickListener {
     private void startDownload() {
         String fileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() +
                 File.separatorChar + CommonUtils.MD5(downloadUrl) + ".apk";
-        FrameDownloadUtil frameDownloadUtil = new FrameDownloadUtil(activity);
-        frameDownloadUtil.setDownloadUrl(downloadUrl);
-        frameDownloadUtil.setFileName(fileName);
-        frameDownloadUtil.setOnDownloadListener(new FrameDownloadUtil.OnDownloadListener() {
+        mDownloadUtil = new FrameDownloadUtil(activity);
+        mDownloadUtil.setDownloadUrl(downloadUrl);
+        mDownloadUtil.setFileName(fileName);
+        mDownloadUtil.setOnDownloadListener(new FrameDownloadUtil.OnDownloadListener() {
             @Override
             public void start() {
 
@@ -120,7 +121,7 @@ public class UpdateDialog implements View.OnClickListener {
                 Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
             }
         });
-        frameDownloadUtil.startDownload();
+        mDownloadUtil.startDownload();
     }
 
     @Override
@@ -140,7 +141,7 @@ public class UpdateDialog implements View.OnClickListener {
             if (alertDialog != null && alertDialog.isShowing()) {
                 alertDialog.dismiss();
             }
-
+            mDownloadUtil.cancel();
         }
     }
 
