@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.a26c.android.frame.R;
 import com.a26c.android.frame.util.CommonUtils;
+import com.a26c.android.frame.util.DialogFactory;
 import com.a26c.android.frame.util.FrameDownloadUtil;
 import com.a26c.android.frame.util.FrameSPUtils;
 import com.daimajia.numberprogressbar.NumberProgressBar;
@@ -25,36 +26,45 @@ import java.io.File;
 
 /**
  * 统一风格的dialog
+ * <p>
+ * SpannableString spannableString = new SpannableString("12312312313");
+ * spannableString.setSpan(new ForegroundColorSpan(0xffff0000), 2, 5, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+ * <p>
+ * new UpdateDialog(MainActivity.this)
+ * .setIsAutoCheck(false)
+ * .setNeedUpdate(true)
+ * .setTitleName(spannableString)
+ * .setSpaceTimeHour(8)
+ * .setDescName("更新日志")
+ * .setDownloadUrl("http://imtt.dd.qq.com/16891/A92C29C6A2255AD59E082A9B6336AEAD.apk?fsname=com.lotus.game.popthewheel.android_1.0.1_2.apk&csr=1bbd")
+ * .show();
  */
 public class UpdateDialog implements View.OnClickListener {
 
     private static final String TAG = "UpdateDialog";
-
-    private AlertDialog alertDialog;
+    private AlertDialog mAlertDialog;
     private Activity mActivity;
-
     private NumberProgressBar mNumberProgressBar;
-    private View bottomLayout1;
-    private View bottomLayout2;
-
+    private View mBottomLayout1;
+    private View mBottomLayout2;
     private CharSequence mTitleName;
     private CharSequence mDescName;
-    private String downloadUrl;
+    private String mDownloadUrl;
     private FrameDownloadUtil mDownloadUtil;
 
 
     /**
      * true表示是自动检测更新，当自动更新时如果是最新版本，不需要弹出"已是最新版本"的提示窗
      */
-    private boolean isAutoCheck = false;
+    private boolean mIsAutoCheck = false;
     /**
      * 是否需要更新，根据这个值判断，如果需要更新，弹出更新框，如果不需要更新，弹出"已是最新版本提示框"
      */
-    private boolean needUpdate = false;
+    private boolean mNeedUpdate = false;
     /**
      * 点击"暂不更新"，下次再弹窗更新窗口的间隔,小时为单位
      */
-    private int spaceTimeHour = 8;
+    private int mSpaceTimeHour = 8;
 
     public UpdateDialog(Activity activity) {
         this.mActivity = activity;
@@ -62,10 +72,10 @@ public class UpdateDialog implements View.OnClickListener {
     }
 
     public void show() {
-        if (needUpdate) {
+        if (mNeedUpdate) {
             update();
         } else {
-            if (!isAutoCheck) {//如果不是自动更新，才需要弹出提示窗
+            if (!mIsAutoCheck) {//如果不是自动更新，才需要弹出提示窗
                 new AlertDialog.Builder(mActivity).
                         setTitle("提示")
                         .setMessage("当前版本已是最新版本")
@@ -82,20 +92,20 @@ public class UpdateDialog implements View.OnClickListener {
 
     private void update() {
         //如果是自动更新但是距离上次点击"明天再说"的时间还没超过一天，就不弹出
-        if (isAutoCheck && !checkLastTimeIsOver()) {
+        if (mIsAutoCheck && !checkLastTimeIsOver()) {
             Log.i(TAG, "需要更新但是用户设置了提醒间隔");
             return;
         }
 
 
-        if (alertDialog == null) {
+        if (mAlertDialog == null) {
             @SuppressLint("InflateParams")
             View view = LayoutInflater.from(mActivity).inflate(R.layout.frame_dialog_download, null);
             TextView titleTextView = view.findViewById(R.id.titleTextView);
             TextView descTextView = view.findViewById(R.id.descTextView);
             mNumberProgressBar = view.findViewById(R.id.progressBar);
-            bottomLayout1 = view.findViewById(R.id.bottomLayout1);
-            bottomLayout2 = view.findViewById(R.id.bottomLayout2);
+            mBottomLayout1 = view.findViewById(R.id.bottomLayout1);
+            mBottomLayout2 = view.findViewById(R.id.bottomLayout2);
 
             titleTextView.setText(mTitleName);
             descTextView.setText(mDescName);
@@ -108,18 +118,18 @@ public class UpdateDialog implements View.OnClickListener {
             mNumberProgressBar.setProgress(0);
 
 
-            alertDialog = new AlertDialog.Builder(mActivity, R.style.frame_loading_dialog)
+            mAlertDialog = new AlertDialog.Builder(mActivity, R.style.frame_loading_dialog)
                     .setView(view)
                     .setCancelable(false)
                     .show();
-            Window window = alertDialog.getWindow();
+            Window window = mAlertDialog.getWindow();
             if (window != null) {
                 window.setGravity(Gravity.CENTER);
             }
 
         }
-        if (!alertDialog.isShowing()) {
-            alertDialog.show();
+        if (!mAlertDialog.isShowing()) {
+            mAlertDialog.show();
         }
     }
 
@@ -128,59 +138,65 @@ public class UpdateDialog implements View.OnClickListener {
      */
     private void startDownload() {
         String fileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() +
-                File.separatorChar + CommonUtils.MD5(downloadUrl) + ".apk";
+                File.separatorChar + CommonUtils.MD5(mDownloadUrl) + ".apk";
         mDownloadUtil = new FrameDownloadUtil(mActivity);
-        mDownloadUtil.setDownloadUrl(downloadUrl);
-        mDownloadUtil.setFileName(fileName);
         mDownloadUtil.setOnDownloadListener(mDownloadListener);
-        mDownloadUtil.startDownload();
+        mDownloadUtil.startDownload(fileName, mDownloadUrl);
     }
 
     @Override
     public void onClick(View v) {
         //立即更新
         if (v.getId() == R.id.submitTextView) {
+            if (isRunningBackground()) {
+                dismissDialog();
+                DialogFactory.show(mActivity, "提示", "更新程序正在后台运行，请稍候", "确定", null);
+
+                return;
+            }
             startDownload();
         }
         //暂不更新
         else if (v.getId() == R.id.cancelTextView) {
-            if (alertDialog != null && alertDialog.isShowing()) {
-                alertDialog.dismiss();
-            }
+            dismissDialog();
             saveLatestTime();
         }
         //取消下载
         else if (v.getId() == R.id.cancelDownloadTextView) {
-            if (alertDialog != null && alertDialog.isShowing()) {
-                alertDialog.dismiss();
-            }
+            dismissDialog();
             if (mDownloadUtil != null) {
                 mDownloadUtil.cancel();
             }
         }
         //后台运行
         else if (v.getId() == R.id.backgroundTextView) {
-            if (alertDialog != null && alertDialog.isShowing()) {
-                alertDialog.dismiss();
-            }
+            dismissDialog();
+            setIsRunningBackground(true);
         }
     }
 
+    private void dismissDialog() {
+        if (mAlertDialog != null && mAlertDialog.isShowing()) {
+            mAlertDialog.dismiss();
+        }
+    }
+
+    /**
+     * 下载的监听事件
+     */
     private FrameDownloadUtil.OnDownloadListener mDownloadListener = new FrameDownloadUtil.OnDownloadListener() {
         @Override
         public void start() {
             mNumberProgressBar.setVisibility(View.VISIBLE);
-            bottomLayout1.setVisibility(View.GONE);
-            bottomLayout2.setVisibility(View.VISIBLE);
+            mBottomLayout1.setVisibility(View.GONE);
+            mBottomLayout2.setVisibility(View.VISIBLE);
 
         }
 
         @Override
         public void onProgress(int progress) {
             if (progress == 100) {
-                if (alertDialog != null && alertDialog.isShowing()) {
-                    alertDialog.dismiss();
-                }
+                dismissDialog();
             } else {
                 if (progress >= 1) {
                     mNumberProgressBar.setProgress(progress);
@@ -190,20 +206,43 @@ public class UpdateDialog implements View.OnClickListener {
 
         @Override
         public void success(File file) {
-            if (alertDialog != null && alertDialog.isShowing()) {
-                alertDialog.dismiss();
-            }
+            dismissDialog();
             CommonUtils.install(mActivity, file, false);
+            setIsRunningBackground(false);
         }
 
         @Override
         public void err(String msg) {
-            if (alertDialog != null && alertDialog.isShowing()) {
-                alertDialog.dismiss();
-            }
+            dismissDialog();
             Toast.makeText(mActivity, msg, Toast.LENGTH_LONG).show();
+            setIsRunningBackground(false);
         }
     };
+
+    /**
+     * 保存点击"明天再说"时的时间
+     */
+    private void saveLatestTime() {
+        FrameSPUtils.put(mActivity, "checkUpdate_tomorrow_dialog", System.currentTimeMillis());
+    }
+
+    /**
+     * 检查距离上次点击"明天再说"是否超过1天
+     *
+     * @return true表示超过
+     */
+    private boolean checkLastTimeIsOver() {
+        long latest = (long) FrameSPUtils.get(mActivity, "checkUpdate_tomorrow_dialog", 0L);
+        return ((System.currentTimeMillis() - latest) > (mSpaceTimeHour == 0 ? 24 : mSpaceTimeHour * 3600000L));//24*60*60*1000
+    }
+
+    private void setIsRunningBackground(boolean isRunningBackground) {
+        FrameSPUtils.put(mActivity, "setIsRunningBackground_update", isRunningBackground);
+    }
+
+    private boolean isRunningBackground() {
+        return (boolean) FrameSPUtils.get(mActivity, "setIsRunningBackground_update", false);
+    }
 
 
     public UpdateDialog setDescName(CharSequence descName) {
@@ -222,41 +261,24 @@ public class UpdateDialog implements View.OnClickListener {
 
     public UpdateDialog setDownloadUrl(String downloadUrl) {
         if (!TextUtils.isEmpty(downloadUrl)) {
-            this.downloadUrl = downloadUrl;
+            this.mDownloadUrl = downloadUrl;
         }
         return this;
     }
 
     public UpdateDialog setIsAutoCheck(boolean isAutoCheck) {
-        this.isAutoCheck = isAutoCheck;
+        this.mIsAutoCheck = isAutoCheck;
         return this;
     }
 
     public UpdateDialog setNeedUpdate(boolean needUpdate) {
-        this.needUpdate = needUpdate;
+        this.mNeedUpdate = needUpdate;
         return this;
     }
 
     public UpdateDialog setSpaceTimeHour(int spaceTimeHour) {
-        this.spaceTimeHour = spaceTimeHour;
+        this.mSpaceTimeHour = spaceTimeHour;
         return this;
-    }
-
-    /**
-     * 保存点击"明天再说"时的时间
-     */
-    private void saveLatestTime() {
-        FrameSPUtils.put(mActivity, "checkUpdate_tomorrow_dialog", System.currentTimeMillis());
-    }
-
-    /**
-     * 检查距离上次点击"明天再说"是否超过1天
-     *
-     * @return true表示超过
-     */
-    private boolean checkLastTimeIsOver() {
-        long latest = (long) FrameSPUtils.get(mActivity, "checkUpdate_tomorrow_dialog", 0L);
-        return ((System.currentTimeMillis() - latest) > (spaceTimeHour == 0 ? 24 : spaceTimeHour * 3600000L));//24*60*60*1000
     }
 }
 

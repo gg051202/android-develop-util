@@ -31,21 +31,20 @@ public class FrameDownloadUtil {
 
     private static final String TAG = "DownloadUtil";
 
-    private Activity activity;
-    private String downloadUrl;
-    private long totalSize = 0;
-    private File downloadFile;
+    private Activity mActivity;
+    private volatile long mTotalSize = 0;
+    private File mDownloadFile;
     private HttpURLConnection mConnection;
-    private String fileName;
     private Subscriber<Integer> mSubscriber;
+    private LoadingRandomAccessFile mRandomAccessFile;
 
 
-    public FrameDownloadUtil(Activity activity ) {
-        this.activity = activity;
+    public FrameDownloadUtil(Activity activity) {
+        this.mActivity = activity;
     }
 
 
-    public void startDownload() {
+    public void startDownload(final String fileName, final String downloadUrl) {
         Log.i(TAG, "start download");
         mSubscriber = new Subscriber<Integer>() {
             @Override
@@ -65,7 +64,11 @@ public class FrameDownloadUtil {
                 e.printStackTrace();
                 String msg = "下载失败";
                 if (e instanceof DownLoadError) {
-                    msg = ((DownLoadError) e).getMessage();
+                    msg = ((DownLoadError) e).getErrString();
+                }
+                if (mDownloadFile != null && mDownloadFile.exists()) {
+                    boolean delete = mDownloadFile.delete();
+                    Log.i(TAG, "下载失败，删除文件，result：" + delete);
                 }
                 if (onDownloadListener != null) {
                     onDownloadListener.err(msg);
@@ -76,7 +79,7 @@ public class FrameDownloadUtil {
             public void onNext(Integer progress) {
                 if (progress == 100) {
                     if (onDownloadListener != null) {
-                        onDownloadListener.success(downloadFile);
+                        onDownloadListener.success(mDownloadFile);
                     }
                 } else {
                     if (progress >= 1) {
@@ -91,7 +94,7 @@ public class FrameDownloadUtil {
                 .create(new Observable.OnSubscribe<Integer>() {
                     @Override
                     public void call(Subscriber<? super Integer> subscriber) {
-                        startDownload(subscriber, downloadUrl);
+                        startDownload(subscriber, fileName, downloadUrl);
                     }
                 })
                 .sample(1, TimeUnit.SECONDS)//过滤 1秒只能更新一次
@@ -99,6 +102,22 @@ public class FrameDownloadUtil {
                 .observeOn(AndroidScheduler.mainThread())
                 .subscribe(mSubscriber);
     }
+
+    public void cancel() {
+        if (mSubscriber != null && !mSubscriber.isUnsubscribed()) {
+            mSubscriber.unsubscribe();
+        }
+        if (mRandomAccessFile != null) {
+            Log.i(TAG, "关闭下载");
+            try {
+                mRandomAccessFile.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
 
     public interface OnDownloadListener {
         void start();
@@ -118,36 +137,42 @@ public class FrameDownloadUtil {
     }
 
 
-    private void startDownload(Subscriber<? super Integer> subscriber, String url) {
+    private void startDownload(Subscriber<? super Integer> subscriber, String fileName, String downloadUrl) {
         if (TextUtils.isEmpty(downloadUrl)) {
             throw new DownLoadError(DownLoadError.DOWNLOAD_URL_ERR);
         }
 
-        downloadFile = new File(fileName);
+        mDownloadFile = new File(fileName);
 
         try {
 
-            mConnection = create(new URL(url));
+            mConnection = create(new URL(downloadUrl));
 
             mConnection.connect();
 
             checkStatus();
 
-            totalSize = mConnection.getContentLength();
+            mTotalSize = mConnection.getContentLength();
 
-            if (downloadFile.exists() && downloadFile.length() == totalSize) {
-                Log.i(TAG, "文件已存在：" + downloadFile.getAbsolutePath());
-                subscriber.onNext(100);
-                return;
+            if (mDownloadFile.exists()) {
+                if (mDownloadFile.length() == mTotalSize) {
+                    Log.i(TAG, "文件已存在,直接调用，path：" + mDownloadFile.getAbsolutePath());
+                    subscriber.onNext(100);
+                    return;
+                } else {
+                    boolean delete = mDownloadFile.delete();
+                    Log.i(TAG, "文件已存在，但是大小不同，删除重新下载，result：" + delete);
+                }
             }
 
-            CommonUtils.clearFile(downloadFile);
+            CommonUtils.clearFile(mDownloadFile);
 
-            Log.i(TAG, "开始下载，将要保存到的文件路径：" + downloadFile.getAbsolutePath());
+            Log.i(TAG, "开始下载，将要保存到的文件路径：" + mDownloadFile.getAbsolutePath());
 
-            int bytesCopied = copy(mConnection.getInputStream(), new LoadingRandomAccessFile(subscriber, downloadFile));
+            mRandomAccessFile = new LoadingRandomAccessFile(subscriber, mDownloadFile);
+            int bytesCopied = copy(mConnection.getInputStream(), mRandomAccessFile);
 
-            if (bytesCopied != totalSize && totalSize != -1) {
+            if (bytesCopied != mTotalSize && mTotalSize != -1) {
                 throw new DownLoadError(DownLoadError.DOWNLOAD_INCOMPLETE);
             }
             subscriber.onNext(100);
@@ -158,12 +183,12 @@ public class FrameDownloadUtil {
     }
 
     private void checkNetwork() throws CheckUpdateManager.DownLoadError {
-        if (!checkNetwork(activity)) {
+        if (!checkNetwork(mActivity)) {
             throw new CheckUpdateManager.DownLoadError(CheckUpdateManager.DownLoadError.DOWNLOAD_NETWORK_BLOCKED);
         }
     }
 
-    public static boolean checkNetwork(Context context) {
+    private static boolean checkNetwork(Context context) {
         ConnectivityManager connectivity = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivity == null) {
             return false;
@@ -176,13 +201,6 @@ public class FrameDownloadUtil {
         int statusCode = mConnection.getResponseCode();
         if (statusCode != 200 && statusCode != 206) {
             throw new CheckUpdateManager.DownLoadError(CheckUpdateManager.DownLoadError.DOWNLOAD_HTTP_STATUS, "" + statusCode);
-        }
-    }
-
-
-    public void cancel() {
-        if (mSubscriber != null && !mSubscriber.isUnsubscribed()) {
-            mSubscriber.unsubscribe();
         }
     }
 
@@ -206,6 +224,7 @@ public class FrameDownloadUtil {
             return bytes;
         } catch (IOException e) {
             e.printStackTrace();
+            throw new CheckUpdateManager.DownLoadError(CheckUpdateManager.DownLoadError.DOWNLOAD_DISK_IO);
         } finally {
             try {
                 out.close();
@@ -215,7 +234,6 @@ public class FrameDownloadUtil {
                 e.printStackTrace();
             }
         }
-        return -1;
     }
 
     private HttpURLConnection create(URL url) throws IOException {
@@ -230,11 +248,11 @@ public class FrameDownloadUtil {
 
         public final int code;
 
-        public DownLoadError(int code) {
+        DownLoadError(int code) {
             this(code, null);
         }
 
-        public DownLoadError(int code, String message) {
+        DownLoadError(int code, String message) {
             super(make(code, message));
             this.code = code;
         }
@@ -243,11 +261,7 @@ public class FrameDownloadUtil {
             return code;
         }
 
-        public String getMessage() {
-            return messages.get(code);
-        }
-
-        public static String getMessage(int code) {
+        public String getErrString() {
             return messages.get(code);
         }
 
@@ -263,27 +277,27 @@ public class FrameDownloadUtil {
         }
 
 
-        public static final int CHECK_UNKNOWN = 2001;
-        public static final int CHECK_NO_WIFI = 2002;
-        public static final int CHECK_NO_NETWORK = 2003;
-        public static final int CHECK_NETWORK_IO = 2004;
-        public static final int CHECK_HTTP_STATUS = 2005;
-        public static final int CHECK_PARSE = 2006;
+        static final int CHECK_UNKNOWN = 2001;
+        static final int CHECK_NO_WIFI = 2002;
+        static final int CHECK_NO_NETWORK = 2003;
+        static final int CHECK_NETWORK_IO = 2004;
+        static final int CHECK_HTTP_STATUS = 2005;
+        static final int CHECK_PARSE = 2006;
 
 
-        public static final int DOWNLOAD_UNKNOWN = 3001;
-        public static final int DOWNLOAD_CANCELLED = 3002;
-        public static final int DOWNLOAD_DISK_NO_SPACE = 3003;
-        public static final int DOWNLOAD_DISK_IO = 3004;
-        public static final int DOWNLOAD_NETWORK_IO = 3005;
-        public static final int DOWNLOAD_NETWORK_BLOCKED = 3006;
-        public static final int DOWNLOAD_NETWORK_TIMEOUT = 3007;
-        public static final int DOWNLOAD_HTTP_STATUS = 3008;
-        public static final int DOWNLOAD_INCOMPLETE = 3009;
-        public static final int DOWNLOAD_VERIFY = 3010;
-        public static final int DOWNLOAD_URL_ERR = 3011;
+        static final int DOWNLOAD_UNKNOWN = 3001;
+        static final int DOWNLOAD_CANCELLED = 3002;
+        static final int DOWNLOAD_DISK_NO_SPACE = 3003;
+        static final int DOWNLOAD_DISK_IO = 3004;
+        static final int DOWNLOAD_NETWORK_IO = 3005;
+        static final int DOWNLOAD_NETWORK_BLOCKED = 3006;
+        static final int DOWNLOAD_NETWORK_TIMEOUT = 3007;
+        static final int DOWNLOAD_HTTP_STATUS = 3008;
+        static final int DOWNLOAD_INCOMPLETE = 3009;
+        static final int DOWNLOAD_VERIFY = 3010;
+        static final int DOWNLOAD_URL_ERR = 3011;
 
-        public static final SparseArray<String> messages = new SparseArray<>();
+        static final SparseArray<String> messages = new SparseArray<>();
 
         static {
 
@@ -315,7 +329,7 @@ public class FrameDownloadUtil {
         private int mBytesLoaded = 0;
         private int oldProgress;
 
-        public LoadingRandomAccessFile(Subscriber<? super Integer> subscriber, File file) throws FileNotFoundException {
+        LoadingRandomAccessFile(Subscriber<? super Integer> subscriber, File file) throws FileNotFoundException {
             super(file, "rw");
             this.subscriber = subscriber;
         }
@@ -324,8 +338,8 @@ public class FrameDownloadUtil {
         public void write(byte[] buffer, int offset, int count) throws IOException {
             super.write(buffer, offset, count);
             mBytesLoaded += count;
-            if (mBytesLoaded < totalSize) {
-                int progress = (int) ((float) (mBytesLoaded) / totalSize * 100);
+            if (mBytesLoaded < mTotalSize) {
+                int progress = (int) ((float) (mBytesLoaded) / mTotalSize * 100);
                 if (oldProgress != progress) {
                     oldProgress = progress;
                     subscriber.onNext(progress);
@@ -335,23 +349,4 @@ public class FrameDownloadUtil {
         }
     }
 
-    public String getDownloadUrl() {
-        return downloadUrl;
-    }
-
-    public void setDownloadUrl(String downloadUrl) {
-        this.downloadUrl = downloadUrl;
-    }
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
-
-    public OnDownloadListener getOnDownloadListener() {
-        return onDownloadListener;
-    }
 }

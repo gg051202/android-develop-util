@@ -52,7 +52,7 @@ public class MainActivity extends CommonActivity {
                         .setTitleName(spannableString)
                         .setSpaceTimeHour(8)
                         .setDescName("更新\n日\n日\n日\n日\n日\n日\n日日\n日\n日日\n日\n日\n日\n日\n日日\n日\n日\n日\n日\n日\n日\n日\n日日\n日\n日\n日\n日\n日志更新日志")
-                        .setDownloadUrl("http://imtt.dd.qq.com/16891/A92C29C6A2255AD59E082A9B6336AEAD.apk?fsname=com.lotus.game.popthewheel.android_1.0.1_2.apk&csr=1bbd")
+                        .setDownloadUrl("http://imtt.dd.qq.com/16891/943DD8AB1BA30F9C0A4D0C688CEF53A0.apk?fsname=jp.co.goodroid.LWorld_1.0.4_5.apk&csr=1bbd")
                         .show();
             }
 
