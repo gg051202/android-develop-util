@@ -2,6 +2,9 @@ package a26c.com.android_frame_test.activity;
 
 import android.Manifest;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.widget.Button;
 
 import com.a26c.android.frame.base.CommonActivity;
@@ -40,8 +43,14 @@ public class MainActivity extends CommonActivity {
         checkPermission(new OnCheckPermissionListener() {
             @Override
             public void success() {
+                SpannableString spannableString = new SpannableString("12312312313");
+                spannableString.setSpan(new ForegroundColorSpan(0xffff0000), 2, 5, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
                 new UpdateDialog(MainActivity.this)
-                        .setTitleName("您有新的版本")
+                        .setIsAutoCheck(true)
+                        .setNeedUpdate(true)
+                        .setTitleName(spannableString)
+                        .setSpaceTimeHour(8)
                         .setDescName("更新\n日\n日\n日\n日\n日\n日\n日日\n日\n日日\n日\n日\n日\n日\n日日\n日\n日\n日\n日\n日\n日\n日\n日日\n日\n日\n日\n日\n日志更新日志")
                         .setDownloadUrl("http://imtt.dd.qq.com/16891/A92C29C6A2255AD59E082A9B6336AEAD.apk?fsname=com.lotus.game.popthewheel.android_1.0.1_2.apk&csr=1bbd")
                         .show();
