@@ -47,7 +47,7 @@ public class MainActivity extends CommonActivity {
                 spannableString.setSpan(new ForegroundColorSpan(0xffff0000), 2, 5, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
                 new UpdateDialog(MainActivity.this)
-                        .setIsAutoCheck(true)
+                        .setIsAutoCheck(false)
                         .setNeedUpdate(true)
                         .setTitleName(spannableString)
                         .setSpaceTimeHour(8)

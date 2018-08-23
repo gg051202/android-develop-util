@@ -54,7 +54,7 @@
             android:layout_marginLeft="@dimen/dp13"
             android:layout_marginRight="@dimen/dp13"
             android:layout_marginTop="@dimen/dp40"
-            android:visibility="invisible" />
+            android:visibility="gone" />
 
         <LinearLayout
             android:id="@+id/bottomLayout1"
