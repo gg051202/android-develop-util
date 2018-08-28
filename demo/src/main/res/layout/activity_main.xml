@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -14,6 +15,40 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="更新" />
+
+        <com.a26c.android.frame.widget.CommonMenu
+            android:id="@+id/commonMenu"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp50"
+            android:layout_marginTop="@dimen/dp10"
+            android:background="#22ff00ff"
+
+            app:cm_LeftText="123123"
+            app:cm_LeftTextColor="#ff0000"
+            app:cm_LeftTextSize="@dimen/sp20"
+
+            app:cm_RightText="abc"
+            app:cm_RightTextColor="#00ff00"
+            app:cm_RightTextSize="@dimen/sp10"
+
+            app:cm_LeftImageHeight="@dimen/dp50"
+            app:cm_LeftImageWidth="@dimen/dp10"
+            app:cm_LeftImage="@mipmap/frame_icon_delete"
+
+
+            app:cm_RightImageHeight="@dimen/dp30"
+            app:cm_RightImageWidth="@dimen/dp100"
+            app:cm_RightImage="@mipmap/frame_icon_delete"
+
+            app:cm_ShowBottomDivider="true"
+            app:cm_ShowLeftImage="true"
+            app:cm_ShowRightImage="true"
+            app:cm_ShowTopDivider="true"
+
+            app:cm_margin1="@dimen/dp13"
+            app:cm_margin2="@dimen/dp13"
+            app:cm_margin3="@dimen/dp13"
+            app:cm_margin4="@dimen/dp13" />
 
     </LinearLayout>
 

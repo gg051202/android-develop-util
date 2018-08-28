@@ -96,4 +96,39 @@
         <attr name="fbt_color" format="color" />
         <attr name="fbt_boldSize" format="float" />
     </declare-styleable>
+
+    <declare-styleable name="CommonMenu">
+        <!--左边的图片资源id-->
+        <attr name="cm_LeftImage" format="reference" />
+        <attr name="cm_LeftImageHeight" format="dimension" />
+        <attr name="cm_LeftImageWidth" format="dimension" />
+        <!--右边的图片资源id-->
+        <attr name="cm_RightImage" format="reference" />
+        <attr name="cm_RightImageHeight" format="dimension" />
+        <attr name="cm_RightImageWidth" format="dimension" />
+
+        <!--左边文字的尺寸、颜色-->
+        <attr name="cm_LeftText" format="string" />
+        <attr name="cm_LeftTextSize" format="dimension" />
+        <attr name="cm_LeftTextColor" format="color" />
+        <!--右边文字的尺寸、颜色-->
+        <attr name="cm_RightText" format="string" />
+        <attr name="cm_RightTextSize" format="dimension" />
+        <attr name="cm_RightTextColor" format="color" />
+
+        <!--      【   图片   文字                 文字   图片   】       -->
+        <!--         1    2                           3     4          -->
+        <attr name="cm_margin1" format="dimension" />
+        <attr name="cm_margin2" format="dimension" />
+        <attr name="cm_margin3" format="dimension" />
+        <attr name="cm_margin4" format="dimension" />
+
+        <attr name="cm_ShowTopDivider" format="boolean" />
+        <attr name="cm_ShowBottomDivider" format="boolean" />
+        <attr name="cm_ShowLeftImage" format="boolean" />
+        <attr name="cm_ShowRightImage" format="boolean" />
+        <!--点击时是否变色-->
+        <attr name="cm_ClickColor" format="boolean" />
+    </declare-styleable>
+
 </resources>

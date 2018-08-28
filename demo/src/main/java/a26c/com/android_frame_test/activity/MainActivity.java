@@ -8,6 +8,7 @@ import android.text.style.ForegroundColorSpan;
 import android.widget.Button;
 
 import com.a26c.android.frame.base.CommonActivity;
+import com.a26c.android.frame.widget.CommonMenu;
 import com.a26c.android.frame.widget.UpdateDialog;
 
 import a26c.com.android_frame_test.R;
@@ -20,6 +21,8 @@ public class MainActivity extends CommonActivity {
 
     @BindView(R.id.button)
     Button mButton;
+    @BindView(R.id.commonMenu)
+    CommonMenu mCommonMenu;
 
     @Override
     public int getContainLayout() {
@@ -29,7 +32,6 @@ public class MainActivity extends CommonActivity {
     @Override
     protected void init(Bundle savedInstanceState) {
         ButterKnife.bind(this);
-
 
     }
 
