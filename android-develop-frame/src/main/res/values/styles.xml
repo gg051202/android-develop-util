@@ -31,7 +31,7 @@
         <item name="android:layout_marginBottom">@dimen/dp20</item>
         <item name="android:layout_marginLeft">@dimen/dp13</item>
         <item name="android:layout_marginRight">@dimen/dp13</item>
-        <item name="android:layout_marginTop">@dimen/dp20</item>
+        <item name="android:layout_marginTop">@dimen/dp13</item>
     </style>
 
 

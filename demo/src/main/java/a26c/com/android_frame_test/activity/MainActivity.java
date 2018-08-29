@@ -53,7 +53,25 @@ public class MainActivity extends CommonActivity {
                         .setNeedUpdate(true)
                         .setTitleName(spannableString)
                         .setSpaceTimeHour(8)
-                        .setDescName("更新\n日\n日\n日\n日\n日\n日\n日日\n日\n日日\n日\n日\n日\n日\n日日\n日\n日\n日\n日\n日\n日\n日\n日日\n日\n日\n日\n日\n日志更新日志")
+                        .setDescName(
+                                "作者：Viola\n" +
+                                "作者：Viola\n" +
+                                "作者：Viola\n" +
+                                "作者：Viola\n" +
+                                "作者：Viola\n" +
+                                "作者：Viola\n" +
+                                "作者：Viola\n" +
+                                "作者：Viola\n" +
+                                "作者：Viola\n" +
+                                "作者：Viola\n" +
+                                "作者：Viola\n" +
+                                "作者：Viola\n" +
+                                "作者：Viola\n" +
+                                "作者：Viola\n" +
+                                "作者：Viola\n" +
+                                "作者：Viola\n" +
+                                "作者：Viola\n" +
+                                "著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。")
                         .setDownloadUrl("http://imtt.dd.qq.com/16891/943DD8AB1BA30F9C0A4D0C688CEF53A0.apk?fsname=jp.co.goodroid.LWorld_1.0.4_5.apk&csr=1bbd")
                         .show();
             }

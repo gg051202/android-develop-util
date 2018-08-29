@@ -155,14 +155,17 @@ public class FrameDownloadUtil {
             mTotalSize = mConnection.getContentLength();
 
             if (mDownloadFile.exists()) {
-                if (mDownloadFile.length() == mTotalSize) {
-                    Log.i(TAG, "文件已存在,直接调用，path：" + mDownloadFile.getAbsolutePath());
-                    subscriber.onNext(100);
-                    return;
-                } else {
-                    boolean delete = mDownloadFile.delete();
-                    Log.i(TAG, "文件已存在，但是大小不同，删除重新下载，result：" + delete);
-                }
+                //文件已存在，不重新下载
+//                if (mDownloadFile.length() == mTotalSize) {
+//                    Log.i(TAG, "文件已存在,直接调用，path：" + mDownloadFile.getAbsolutePath());
+//                    subscriber.onNext(100);
+//                    return;
+//                } else {
+//                    boolean delete = mDownloadFile.delete();
+//                    Log.i(TAG, "文件已存在，但是大小不同，删除重新下载，result：" + delete);
+//                }
+                boolean delete = mDownloadFile.delete();
+                Log.i(TAG, "文件已存在，删除重新下载，删除结果：" + delete);
             }
 
             CommonUtils.clearFile(mDownloadFile);

@@ -29,9 +29,10 @@
             android:textSize="@dimen/sp18"
             app:fbt_boldSize="0.8" />
 
-        <ScrollView
+        <com.a26c.android.frame.widget.MaxHeightScrollView
             android:layout_width="match_parent"
-            android:layout_height="@dimen/dp150"
+            android:layout_height="wrap_content"
+            app:maxHeight="@dimen/dp300"
             android:layout_marginBottom="@dimen/dp13"
             android:layout_marginTop="@dimen/dp13"
             android:overScrollMode="never">
@@ -40,11 +41,12 @@
                 android:id="@+id/descTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:lineSpacingExtra="@dimen/dp6"
                 android:layout_marginLeft="@dimen/dp13"
                 android:layout_marginRight="@dimen/dp13"
                 android:textColor="@color/default_black"
                 android:textSize="@dimen/sp15" />
-        </ScrollView>
+        </com.a26c.android.frame.widget.MaxHeightScrollView>
 
 
         <com.daimajia.numberprogressbar.NumberProgressBar
@@ -53,7 +55,7 @@
             android:layout_marginBottom="@dimen/dp10"
             android:layout_marginLeft="@dimen/dp13"
             android:layout_marginRight="@dimen/dp13"
-            android:layout_marginTop="@dimen/dp40"
+            android:layout_marginTop="@dimen/dp13"
             android:visibility="gone" />
 
         <LinearLayout

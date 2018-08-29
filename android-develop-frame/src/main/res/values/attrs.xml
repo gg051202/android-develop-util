@@ -131,4 +131,8 @@
         <attr name="cm_ClickColor" format="boolean" />
     </declare-styleable>
 
+    <declare-styleable name="MaxHeightScrollView">
+        <attr name="maxHeight" format="dimension" />
+    </declare-styleable>
+
 </resources>
