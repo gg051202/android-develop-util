@@ -155,9 +155,8 @@ public class BaseRecyclerView extends FrameLayout {
         mStatus = STATUS_FIRST_LOAD_DATA;
         mAdapter.getData().clear();
         mAdapter.notifyDataSetChanged();
-        if (mNetworkHandle != null) {
-            mNetworkHandle.loadData(true, String.valueOf(mPageIndex));
-        }
+        mAdapter.setEmptyView(new View(mContext));
+        mRefreshLayout.autoRefresh(0, 0, 0);
     }
 
 
@@ -198,6 +197,7 @@ public class BaseRecyclerView extends FrameLayout {
         mRefreshLayout.finishRefresh(false);
         mRefreshLayout.finishLoadMore(false);
         mRefreshLayout.setEnableAutoLoadMore(false);
+        mRefreshLayout.setEnableLoadMore(false);
         RefreshFooter refreshFooter = mRefreshLayout.getRefreshFooter();
         if (refreshFooter instanceof ClassicsFooter) {
             ClassicsFooter classicsFooter = (ClassicsFooter) refreshFooter;
