@@ -13,6 +13,7 @@ import com.chad.library.adapter.base.listener.OnItemClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import a26c.com.android_frame_test.R;
 import a26c.com.android_frame_test.adapter.TestAdapter;
@@ -48,7 +49,7 @@ public class BaseRecyclerViewActivity extends AppCompatActivity {
         mBaseRecyclerView.init(mAdapter, new BaseRecyclerView.NetworkHandle() {
             @Override
             public void init(BaseRecyclerView baseRecyclerView) {
-                baseRecyclerView.setPageSize(20);
+                baseRecyclerView.setPageSize(15);
             }
 
             @Override
@@ -61,7 +62,8 @@ public class BaseRecyclerViewActivity extends AppCompatActivity {
                         public void run() {
                             System.out.println("获取数据成功\n");
                             System.out.println(" ");
-                            for (int i = 0; i < (Integer.parseInt(pageIndex) < 5 ? 20 : 0); i++) {
+                            int dataSize =new Random().nextBoolean()? 15 : 10;
+                            for (int i = 0; i < dataSize; i++) {
                                 list.add(new TestAdapterData(pageIndex + "页，" + i));
                             }
                             success(list);

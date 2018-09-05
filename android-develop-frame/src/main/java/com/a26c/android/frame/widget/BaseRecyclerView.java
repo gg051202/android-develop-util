@@ -155,7 +155,6 @@ public class BaseRecyclerView extends FrameLayout {
         mStatus = STATUS_FIRST_LOAD_DATA;
         mAdapter.getData().clear();
         mAdapter.notifyDataSetChanged();
-        mAdapter.setEmptyView(getProgressView());
         if (mNetworkHandle != null) {
             mNetworkHandle.loadData(true, String.valueOf(mPageIndex));
         }
@@ -168,7 +167,7 @@ public class BaseRecyclerView extends FrameLayout {
      * @param data 网络请求到的数据
      */
     public void onLoadDataComplete(List data, CharSequence hint) {
-        if (isRefreshing()|| mPageIndex == 1) {
+        if (isRefreshing() || mPageIndex == 1) {
             mAdapter.getData().clear();
         }
         mAdapter.addData(data);
