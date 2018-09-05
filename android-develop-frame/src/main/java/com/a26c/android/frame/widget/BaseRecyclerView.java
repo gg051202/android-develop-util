@@ -287,7 +287,6 @@ public class BaseRecyclerView extends FrameLayout {
 
     }
 
-
     /**
      * 修改默认的无数据的视图,前提是数据长度是0
      */
