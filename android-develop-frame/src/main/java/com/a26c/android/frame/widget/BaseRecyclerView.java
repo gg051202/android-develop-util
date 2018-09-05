@@ -168,7 +168,7 @@ public class BaseRecyclerView extends FrameLayout {
      * @param data 网络请求到的数据
      */
     public void onLoadDataComplete(List data, CharSequence hint) {
-        if (isRefreshing()) {
+        if (isRefreshing()|| mPageIndex == 1) {
             mAdapter.getData().clear();
         }
         mAdapter.addData(data);
