@@ -191,7 +191,7 @@ public class BaseRecyclerView extends FrameLayout {
     }
 
     public void onLoadDataCompleteErr(CharSequence errText) {
-        if (isRefreshing()) {
+        if (isRefreshing() || mPageIndex == 1) {
             mAdapter.getData().clear();
         }
         mAdapter.notifyDataSetChanged();

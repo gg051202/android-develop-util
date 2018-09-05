@@ -16,7 +16,6 @@ public class MaxScrollView extends ScrollView {
 
     @Override
     protected void onScrollChanged(int l, int t, int oldl, int oldt) {
-        System.out.println(t);
         if (t > 770) {
             scrollTo(0, 770);
             return;
