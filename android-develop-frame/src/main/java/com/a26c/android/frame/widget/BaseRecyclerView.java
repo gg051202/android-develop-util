@@ -459,6 +459,26 @@ public class BaseRecyclerView extends FrameLayout {
         return mDefaultHintTextView;
     }
 
+    public void setAdapter(BaseQuickAdapter adapter) {
+        mAdapter = adapter;
+    }
+
+    public void setPageIndex(int pageIndex) {
+        mPageIndex = pageIndex;
+    }
+
+    public int getStatus() {
+        return mStatus;
+    }
+
+    public void setStatus(int status) {
+        mStatus = status;
+    }
+
+    public void setProgressView(View progressView) {
+        mProgressView = progressView;
+    }
+
     public void setDefaultHintTextView(TextView defaultHintTextView) {
         this.mDefaultHintTextView = defaultHintTextView;
     }
