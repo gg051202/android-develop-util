@@ -1,10 +1,10 @@
 package a26c.com.android_frame_test.activity;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 
 import com.a26c.android.frame.base.CommonActivity;
-import com.a26c.android.frame.widget.CommonMenu;
 
 import a26c.com.android_frame_test.R;
 import butterknife.BindView;
@@ -16,8 +16,6 @@ public class MainActivity extends CommonActivity {
 
     @BindView(R.id.button)
     Button mButton;
-    @BindView(R.id.commonMenu)
-    CommonMenu mCommonMenu;
 
     @Override
     public int getContainLayout() {
@@ -32,12 +30,19 @@ public class MainActivity extends CommonActivity {
 
     @Override
     protected void setEvent() {
+        View viewById = findViewById(R.id.commonMenu);
+        viewById.setFocusable(true);
+        viewById.findViewById(R.id.parentLayout).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.out.println(123);
+            }
+        });
 
     }
 
     @OnClick(R.id.button)
     public void onClick() {
-        gotoActivity(BaseRecyclerViewActivity.class);
 
 //        checkPermission(new OnCheckPermissionListener() {
 //            @Override
@@ -69,7 +74,7 @@ public class MainActivity extends CommonActivity {
 //                                "作者：Viola\n" +
 //                                "作者：Viola\n" +
 //                                "著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。")
-//                        .setDownloadUrl("http://imtt.dd.qq.com/16891/943DD8AB1BA30F9C0A4D0C688CEF53A0.apk?fsname=jp.co.goodroid.LWorld_1.0.4_5.apk&csr=1bbd")
+//                        .setDownloadUrl("https://imtt.dd.qq.com/16891/594918EC7AF0BC9E2E22B55753DDEE2D.apk?fsname=com.ijinshan.duba_3.5.0_30500016.apk&csr=1bbd")
 //                        .show();
 //            }
 //
@@ -79,7 +84,7 @@ public class MainActivity extends CommonActivity {
 //
 //            }
 //        }, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE);
-
+//
     }
 
 
