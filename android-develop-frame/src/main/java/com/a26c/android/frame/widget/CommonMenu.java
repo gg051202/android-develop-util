@@ -211,8 +211,6 @@ public class CommonMenu extends ConstraintLayout {
      * 设置点击时变色
      */
     public CommonMenu setClickColorChange(boolean b) {
-        mConstraintLayout.setClickable(true);
-        mConstraintLayout.setFocusable(true);
         if (b) {
             if (Build.VERSION.SDK_INT >= 16) {
                 mConstraintLayout.setBackground(context.getResources().getDrawable(R.drawable.frame_bg_common_item_pressed));
