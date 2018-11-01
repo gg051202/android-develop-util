@@ -3,7 +3,11 @@ package a26c.com.android_frame_test;
 import android.app.Application;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.view.View;
+import android.widget.Button;
 
+import com.a26c.android.frame.widget.BaseRecyclerView;
+import com.a26c.android.frame.widget.BaseRecyclerViewPlaceholderCreater;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.DefaultRefreshFooterCreator;
 import com.scwang.smartrefresh.layout.api.DefaultRefreshHeaderCreator;
@@ -65,6 +69,24 @@ public class MyApplication extends Application {
             }
         });
 
+        BaseRecyclerView.setPlaceholderCreater(new BaseRecyclerViewPlaceholderCreater() {
+            @Override
+            public BaseRecyclerView.ViewCreator create(final Context context) {
+                return new BaseRecyclerView.ViewCreator() {
+                    @Override
+                    public View getNoDataView() {
+                        return null;
+                    }
+
+                    @Override
+                    public View getErrDataView() {
+                        Button button = new Button(context);
+                        button.setText("12312312");
+                        return button;
+                    }
+                };
+            }
+        });
     }
 
 }

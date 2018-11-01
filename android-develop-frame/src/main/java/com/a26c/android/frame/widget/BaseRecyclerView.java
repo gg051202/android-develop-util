@@ -59,6 +59,7 @@ public class BaseRecyclerView extends FrameLayout {
     private MutiItemDecoration mMutiItemDecoration;
     private NetworkHandle mNetworkHandle;
     private ViewCreator mViewCreator;
+    protected static BaseRecyclerViewPlaceholderCreater placeholderCreater = null;
     private View mNoDataView;
     private View mErrView;
     /**
@@ -301,6 +302,10 @@ public class BaseRecyclerView extends FrameLayout {
      * 初始化空数据和无数据视图
      */
     private void initViewCreator() {
+        if (placeholderCreater != null) {
+            mViewCreator = placeholderCreater.create(mContext);
+        }
+
         if (mViewCreator != null && mViewCreator.getNoDataView() != null) {
             mNoDataView = mViewCreator.getNoDataView();
             mNoDataView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
@@ -495,4 +500,8 @@ public class BaseRecyclerView extends FrameLayout {
         return mProgressView;
     }
 
+
+    public static void setPlaceholderCreater(BaseRecyclerViewPlaceholderCreater placeholderCreater) {
+        BaseRecyclerView.placeholderCreater = placeholderCreater;
+    }
 }
