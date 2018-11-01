@@ -82,6 +82,7 @@ public class MyApplication extends Application {
                     public View getErrDataView() {
                         Button button = new Button(context);
                         button.setText("12312312");
+                        button.setId(R.id.refresh);
                         return button;
                     }
                 };

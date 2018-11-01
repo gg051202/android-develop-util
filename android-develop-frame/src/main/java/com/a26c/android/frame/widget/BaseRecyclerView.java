@@ -55,6 +55,7 @@ public class BaseRecyclerView extends FrameLayout {
 
     private BaseQuickAdapter mAdapter;
     private RecyclerView mRecyclerView;
+    private FrameLayout mContentFrameLayout;
     private SmartRefreshLayout mRefreshLayout;
     private MutiItemDecoration mMutiItemDecoration;
     private NetworkHandle mNetworkHandle;
@@ -95,6 +96,7 @@ public class BaseRecyclerView extends FrameLayout {
         LayoutInflater.from(context).inflate(R.layout.frame_layout_base_recycler_view, this, true);
         mRecyclerView = findViewById(R.id.recyclerView);
         mRefreshLayout = findViewById(R.id.refreshLayout);
+        mContentFrameLayout = findViewById(R.id.contentFrameLayout);
         mPageSize = DEFAULT_PAGE_SIZE;
 
         //初始化recyclerView
@@ -316,10 +318,32 @@ public class BaseRecyclerView extends FrameLayout {
             mErrView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         }
 
-        //如果在没有设置两种视图，那么就创建一个默认的 view，用来显示错误信息
+        //如果再没有设置两种视图，那么就创建一个默认的 view，用来显示错误信息
         if (mErrView == null || mNoDataView == null) {
             mDefaultHintTextView = (TextView) LayoutInflater.from(mContext).inflate(R.layout.frame_layout_network_nodata, null);
             mDefaultHintTextView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        }
+        if (mErrView != null) {
+            View refreshView = mErrView.findViewById(R.id.refresh);
+            if (refreshView != null && !refreshView.hasOnClickListeners()) {
+                refreshView.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        callRefreshListener();
+                    }
+                });
+            }
+        }
+        if (mNoDataView != null) {
+            View refreshView = mNoDataView.findViewById(R.id.refresh);
+            if (refreshView != null && !refreshView.hasOnClickListeners()) {
+                refreshView.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        callRefreshListener();
+                    }
+                });
+            }
         }
     }
 
@@ -485,6 +509,14 @@ public class BaseRecyclerView extends FrameLayout {
 
     public void setDefaultHintTextView(TextView defaultHintTextView) {
         this.mDefaultHintTextView = defaultHintTextView;
+    }
+
+    public FrameLayout getContentFrameLayout() {
+        return mContentFrameLayout;
+    }
+
+    public void setContentFrameLayout(FrameLayout contentFrameLayout) {
+        mContentFrameLayout = contentFrameLayout;
     }
 
     private boolean isRefreshing() {
