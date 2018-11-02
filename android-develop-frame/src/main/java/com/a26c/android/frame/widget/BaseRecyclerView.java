@@ -63,10 +63,8 @@ public class BaseRecyclerView extends FrameLayout {
     protected static BaseRecyclerViewPlaceholderCreater placeholderCreater = null;
     private View mNoDataView;
     private View mErrView;
-    /**
-     * 默认的占位视图，比如没有数据显示"无数据"，请求失败显示"请求失败"
-     */
-    private TextView mDefaultHintTextView;
+    private String mNodataString = "暂无数据";
+    private String mErrString = "请求失败";
 
     /**
      * 没有数据时，时候需要显示 没有数据的视图
@@ -168,56 +166,13 @@ public class BaseRecyclerView extends FrameLayout {
      *
      * @param data 网络请求到的数据
      */
-    public void onLoadDataComplete(List data, CharSequence hint) {
+    public void onLoadDataComplete(List data) {
         if (isRefreshing() || mPageIndex == 1) {
             mAdapter.getData().clear();
         }
         mAdapter.addData(data);
         mPageIndex++;
 
-        onLoadDataComplete(hint);
-
-        if (data.size() >= mPageSize) {
-            mRefreshLayout.setEnableLoadMore(true);
-        } else {
-            getHandler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if (mRefreshLayout != null) {
-                        mRefreshLayout.finishLoadMoreWithNoMoreData();
-                    }
-                }
-            }, 500);
-        }
-    }
-
-    public void onLoadDataCompleteErr(CharSequence errText) {
-        if (isRefreshing() || mPageIndex == 1) {
-            mAdapter.getData().clear();
-        }
-        mAdapter.notifyDataSetChanged();
-
-        mRefreshLayout.finishRefresh(false);
-        mRefreshLayout.finishLoadMore(false);
-        mRefreshLayout.setEnableAutoLoadMore(false);
-        mRefreshLayout.setEnableLoadMore(false);
-        RefreshFooter refreshFooter = mRefreshLayout.getRefreshFooter();
-        if (refreshFooter instanceof ClassicsFooter) {
-            ClassicsFooter classicsFooter = (ClassicsFooter) refreshFooter;
-            classicsFooter.setFinishDuration(500);
-        }
-
-        if (mAdapter.getData().size() <= 0) {
-            showErrView(errText);
-        }
-
-        mStatus = STATUS_NONE;
-    }
-
-    /**
-     * 无数据显示的数据
-     */
-    public void onLoadDataComplete(@NonNull CharSequence noDataText) {
         mAdapter.notifyDataSetChanged();
 
         mRefreshLayout.finishRefresh();
@@ -239,100 +194,95 @@ public class BaseRecyclerView extends FrameLayout {
             });
         }
 
-        if (mAdapter.getData().size() <= 0) {
-            showNoDataView(noDataText);
-        }
+        showNoDataView(mNodataString);
 
         mStatus = STATUS_NONE;
-    }
 
-    public void onLoadDataComplete(List data) {
-        onLoadDataComplete(data, "暂无数据");
-    }
-
-    public void onLoadDataComplete() {
-        onLoadDataComplete("暂无数据");
+        if (data.size() >= mPageSize) {
+            mRefreshLayout.setEnableLoadMore(true);
+        } else {
+            getHandler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (mRefreshLayout != null) {
+                        mRefreshLayout.finishLoadMoreWithNoMoreData();
+                    }
+                }
+            }, 500);
+        }
     }
 
     public void onLoadDataCompleteErr() {
-        onLoadDataCompleteErr("请求失败");
+        onLoadDataCompleteErr(mErrString);
+    }
+
+    public void onLoadDataCompleteErr(CharSequence errText) {
+        if (isRefreshing() || mPageIndex == 1) {
+            mAdapter.getData().clear();
+        }
+        mAdapter.notifyDataSetChanged();
+
+        mRefreshLayout.finishRefresh(false);
+        mRefreshLayout.finishLoadMore(false);
+        mRefreshLayout.setEnableAutoLoadMore(false);
+        mRefreshLayout.setEnableLoadMore(false);
+        RefreshFooter refreshFooter = mRefreshLayout.getRefreshFooter();
+        if (refreshFooter instanceof ClassicsFooter) {
+            ClassicsFooter classicsFooter = (ClassicsFooter) refreshFooter;
+            classicsFooter.setFinishDuration(500);
+        }
+
+        showErrView(errText);
+
+        mStatus = STATUS_NONE;
     }
 
     /**
      * 显示没有数据的视图
      */
     private void showNoDataView(CharSequence hint) {
-        if (!mNeedShowNodataView) {
+        if (mAdapter.getData().size() > 0 || !mNeedShowNodataView) {
             return;
         }
-        initViewCreator();
-        if (mNoDataView == null) {
-            showDefaultHintTextView(hint);
-        } else {
-            mAdapter.setEmptyView(mNoDataView);
-        }
+        initNoDataView();
+        TextView tv = mNoDataView.findViewById(R.id.hint);
+        if (tv != null) tv.setText(mNodataString);
+        mAdapter.setEmptyView(mNoDataView);
     }
 
     /**
      * 显示网络加载错误的视图
      */
     private void showErrView(CharSequence hint) {
-        if (!mNeedShowNodataView) {
+        if (mAdapter.getData().size() > 0 || !mNeedShowNodataView) {
             return;
         }
-        initViewCreator();
-        if (mErrView == null) {
-            showDefaultHintTextView(hint);
-        } else {
-            mAdapter.setEmptyView(mErrView);
-        }
-
-    }
-
-    /**
-     * 修改默认的无数据的视图,前提是数据长度是0
-     */
-    private void showDefaultHintTextView(CharSequence hint) {
-        if (!mNeedShowNodataView) {
-            return;
-        }
-        mDefaultHintTextView.setText(hint);
-        mAdapter.setEmptyView(mDefaultHintTextView);
+        initErrView();
+        TextView tv = mErrView.findViewById(R.id.hint);
+        if (tv != null) tv.setText(mErrString);
+        mAdapter.setEmptyView(mErrView);
     }
 
     /**
      * 初始化空数据和无数据视图
      */
-    private void initViewCreator() {
-        if (placeholderCreater != null) {
-            mViewCreator = placeholderCreater.create(mContext);
-        }
-
-        if (mViewCreator != null && mViewCreator.getNoDataView() != null) {
-            mNoDataView = mViewCreator.getNoDataView();
-            mNoDataView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        }
-
-        if (mViewCreator != null && mViewCreator.getErrDataView() != null) {
-            mErrView = mViewCreator.getErrDataView();
-            mErrView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        }
-
-        //如果再没有设置两种视图，那么就创建一个默认的 view，用来显示错误信息
-        if (mErrView == null || mNoDataView == null) {
-            mDefaultHintTextView = (TextView) LayoutInflater.from(mContext).inflate(R.layout.frame_layout_network_nodata, null);
-            mDefaultHintTextView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        }
-        if (mErrView != null) {
-            View refreshView = mErrView.findViewById(R.id.refresh);
-            if (refreshView != null && !refreshView.hasOnClickListeners()) {
-                refreshView.setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        callRefreshListener();
-                    }
-                });
+    private void initNoDataView() {
+        if (mViewCreator == null) {
+            if (placeholderCreater != null) {
+                mViewCreator = placeholderCreater.create(mContext);
             }
+        }
+
+        if (mViewCreator != null) {
+            if (mViewCreator.getNoDataView() != null) {
+                mNoDataView = mViewCreator.getNoDataView();
+                mNoDataView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            }
+        }
+
+        if (mNoDataView == null) {
+            mNoDataView = (TextView) LayoutInflater.from(mContext).inflate(R.layout.frame_layout_network_nodata, null);
+            mNoDataView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         }
         if (mNoDataView != null) {
             View refreshView = mNoDataView.findViewById(R.id.refresh);
@@ -346,6 +296,41 @@ public class BaseRecyclerView extends FrameLayout {
             }
         }
     }
+
+    /**
+     * 初始化空数据和无数据视图
+     */
+    private void initErrView() {
+        if (mViewCreator == null) {
+            if (placeholderCreater != null) {
+                mViewCreator = placeholderCreater.create(mContext);
+            }
+        }
+
+        if (mViewCreator != null) {
+            if (mViewCreator.getErrDataView() != null) {
+                mErrView = mViewCreator.getErrDataView();
+                mErrView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            }
+        }
+
+        if (mErrView == null) {
+            mErrView = (TextView) LayoutInflater.from(mContext).inflate(R.layout.frame_layout_network_nodata, null);
+            mErrView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        }
+        if (mErrView != null) {
+            View refreshView = mErrView.findViewById(R.id.refresh);
+            if (refreshView != null && !refreshView.hasOnClickListeners()) {
+                refreshView.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        callRefreshListener();
+                    }
+                });
+            }
+        }
+    }
+
 
 
     public interface NetworkHandle {
@@ -483,10 +468,6 @@ public class BaseRecyclerView extends FrameLayout {
         mOnRefreshLoadmoreListener = onRefreshLoadmoreListener;
     }
 
-    public TextView getDefaultHintTextView() {
-        return mDefaultHintTextView;
-    }
-
     public void setAdapter(BaseQuickAdapter adapter) {
         mAdapter = adapter;
     }
@@ -507,16 +488,28 @@ public class BaseRecyclerView extends FrameLayout {
         mProgressView = progressView;
     }
 
-    public void setDefaultHintTextView(TextView defaultHintTextView) {
-        this.mDefaultHintTextView = defaultHintTextView;
-    }
-
     public FrameLayout getContentFrameLayout() {
         return mContentFrameLayout;
     }
 
     public void setContentFrameLayout(FrameLayout contentFrameLayout) {
         mContentFrameLayout = contentFrameLayout;
+    }
+
+    public String getNodataString() {
+        return mNodataString;
+    }
+
+    public void setNodataString(String nodataString) {
+        mNodataString = nodataString;
+    }
+
+    public String getErrString() {
+        return mErrString;
+    }
+
+    public void setErrString(String errString) {
+        mErrString = errString;
     }
 
     private boolean isRefreshing() {
