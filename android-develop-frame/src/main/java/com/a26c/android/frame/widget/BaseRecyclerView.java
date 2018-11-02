@@ -216,7 +216,8 @@ public class BaseRecyclerView extends FrameLayout {
         onLoadDataCompleteErr(mErrString);
     }
 
-    public void onLoadDataCompleteErr(CharSequence errText) {
+    public void onLoadDataCompleteErr(String errText) {
+        this.mErrString = errText;
         if (isRefreshing() || mPageIndex == 1) {
             mAdapter.getData().clear();
         }
@@ -330,7 +331,6 @@ public class BaseRecyclerView extends FrameLayout {
             }
         }
     }
-
 
 
     public interface NetworkHandle {
