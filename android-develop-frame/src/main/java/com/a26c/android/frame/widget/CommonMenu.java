@@ -254,4 +254,59 @@ public class CommonMenu extends ConstraintLayout {
         mRightTextView.setLayoutParams(layoutParams);
     }
 
+    public TextView getLeftTextView() {
+        return mLeftTextView;
+    }
+
+    public void setLeftTextView(TextView leftTextView) {
+        mLeftTextView = leftTextView;
+    }
+
+    public TextView getRightTextView() {
+        return mRightTextView;
+    }
+
+    public void setRightTextView(TextView rightTextView) {
+        mRightTextView = rightTextView;
+    }
+
+    public ImageView getLeftImageView() {
+        return mLeftImageView;
+    }
+
+    public void setLeftImageView(ImageView leftImageView) {
+        mLeftImageView = leftImageView;
+    }
+
+    public ImageView getRightImageView() {
+        return mRightImageView;
+    }
+
+    public void setRightImageView(ImageView rightImageView) {
+        mRightImageView = rightImageView;
+    }
+
+    public View getTopDividerView() {
+        return mTopDividerView;
+    }
+
+    public void setTopDividerView(View topDividerView) {
+        mTopDividerView = topDividerView;
+    }
+
+    public View getBottomDividerView() {
+        return mBottomDividerView;
+    }
+
+    public void setBottomDividerView(View bottomDividerView) {
+        mBottomDividerView = bottomDividerView;
+    }
+
+    public ConstraintLayout getConstraintLayout() {
+        return mConstraintLayout;
+    }
+
+    public void setConstraintLayout(ConstraintLayout constraintLayout) {
+        mConstraintLayout = constraintLayout;
+    }
 }
