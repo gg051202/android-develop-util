@@ -41,8 +41,8 @@
             app:cm_RightImage="@mipmap/frame_icon_delete"
 
             app:cm_ShowBottomDivider="true"
-            app:cm_ShowLeftImage="true"
-            app:cm_ShowRightImage="true"
+            app:cm_ShowLeftImage="false"
+            app:cm_ShowRightImage="false"
             app:cm_ShowTopDivider="true"
 
             app:cm_margin1="@dimen/dp13"

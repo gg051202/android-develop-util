@@ -230,13 +230,14 @@ public class CommonMenu extends ConstraintLayout {
     public void setMargin2(float margin) {
         ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) mLeftTextView.getLayoutParams();
         layoutParams.leftMargin = (int) margin;
+        layoutParams.goneLeftMargin = (int) margin;
         mLeftTextView.setLayoutParams(layoutParams);
     }
 
     public void setMargin3(float margin) {
         ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) mRightTextView.getLayoutParams();
         layoutParams.rightMargin = (int) margin;
-
+        layoutParams.goneRightMargin = (int) margin;
         mRightTextView.setLayoutParams(layoutParams);
     }
 

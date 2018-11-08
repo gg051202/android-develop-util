@@ -40,11 +40,11 @@ public class BaseRecyclerView extends FrameLayout {
     /**
      * 下拉刷新中
      */
-    public static final int STATUS_REFRESHING = 102;
+    public static final int STATUS_REFRESHING = 103;
     /**
      * 正在上拉加载
      */
-    public static final int STATUS_LOADMORE = 103;
+    public static final int STATUS_LOADMORE = 104;
 
 
     /**
