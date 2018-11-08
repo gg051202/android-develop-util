@@ -144,14 +144,14 @@ public class CommonMenu extends ConstraintLayout {
 
 
     public CommonMenu setRightImage(int imgId) {
-        if(imgId!=0){
+        if (imgId != 0) {
             mRightImageView.setImageResource(imgId);
         }
         return this;
     }
 
     public CommonMenu setLeftImage(int imgId) {
-        if(imgId!=0){
+        if (imgId != 0) {
             mLeftImageView.setImageResource(imgId);
         }
         return this;
@@ -225,19 +225,21 @@ public class CommonMenu extends ConstraintLayout {
         ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) mLeftImageView.getLayoutParams();
         layoutParams.leftMargin = (int) margin;
         mLeftImageView.setLayoutParams(layoutParams);
+
+        layoutParams = (ConstraintLayout.LayoutParams) mLeftTextView.getLayoutParams();
+        layoutParams.goneLeftMargin = (int) margin;
+        mLeftTextView.setLayoutParams(layoutParams);
     }
 
     public void setMargin2(float margin) {
         ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) mLeftTextView.getLayoutParams();
         layoutParams.leftMargin = (int) margin;
-        layoutParams.goneLeftMargin = (int) margin;
         mLeftTextView.setLayoutParams(layoutParams);
     }
 
     public void setMargin3(float margin) {
         ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) mRightTextView.getLayoutParams();
         layoutParams.rightMargin = (int) margin;
-        layoutParams.goneRightMargin = (int) margin;
         mRightTextView.setLayoutParams(layoutParams);
     }
 
@@ -245,6 +247,11 @@ public class CommonMenu extends ConstraintLayout {
         ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) mRightImageView.getLayoutParams();
         layoutParams.rightMargin = (int) margin;
         mRightImageView.setLayoutParams(layoutParams);
+
+
+        layoutParams = (ConstraintLayout.LayoutParams) mRightTextView.getLayoutParams();
+        layoutParams.goneRightMargin = (int) margin;
+        mRightTextView.setLayoutParams(layoutParams);
     }
 
 }
