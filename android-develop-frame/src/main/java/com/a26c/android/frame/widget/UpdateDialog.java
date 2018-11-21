@@ -49,6 +49,8 @@ public class UpdateDialog implements View.OnClickListener {
     private View mBottomLayout2;
     private CharSequence mTitleName;
     private CharSequence mDescName;
+    private CharSequence mSubmitName;
+    private CharSequence mCancleName;
     private String mDownloadUrl;
     private FrameDownloadUtil mDownloadUtil;
 
@@ -103,12 +105,16 @@ public class UpdateDialog implements View.OnClickListener {
             View view = LayoutInflater.from(mActivity).inflate(R.layout.frame_dialog_download, null);
             TextView titleTextView = view.findViewById(R.id.titleTextView);
             TextView descTextView = view.findViewById(R.id.descTextView);
+            TextView submitTextView = view.findViewById(R.id.submitTextView);
+            TextView cancelTextView = view.findViewById(R.id.cancelTextView);
             mNumberProgressBar = view.findViewById(R.id.progressBar);
             mBottomLayout1 = view.findViewById(R.id.bottomLayout1);
             mBottomLayout2 = view.findViewById(R.id.bottomLayout2);
 
             titleTextView.setText(mTitleName);
             descTextView.setText(mDescName);
+            submitTextView.setText(mSubmitName);
+            cancelTextView.setText(mCancleName);
 
             view.findViewById(R.id.cancelDownloadTextView).setOnClickListener(this);
             view.findViewById(R.id.backgroundTextView).setOnClickListener(this);
@@ -278,6 +284,24 @@ public class UpdateDialog implements View.OnClickListener {
 
     public UpdateDialog setSpaceTimeHour(int spaceTimeHour) {
         this.mSpaceTimeHour = spaceTimeHour;
+        return this;
+    }
+
+    public CharSequence getSubmitName() {
+        return mSubmitName;
+    }
+
+    public UpdateDialog setSubmitName(CharSequence submitName) {
+        mSubmitName = submitName;
+        return this;
+    }
+
+    public CharSequence getCancleName() {
+        return mCancleName;
+    }
+
+    public UpdateDialog setCancleName(CharSequence cancleName) {
+        mCancleName = cancleName;
         return this;
     }
 }

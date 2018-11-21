@@ -32,18 +32,18 @@
         <com.a26c.android.frame.widget.MaxHeightScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:maxHeight="@dimen/dp300"
             android:layout_marginBottom="@dimen/dp13"
             android:layout_marginTop="@dimen/dp13"
-            android:overScrollMode="never">
+            android:overScrollMode="never"
+            app:maxHeight="@dimen/dp300">
 
             <TextView
                 android:id="@+id/descTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:lineSpacingExtra="@dimen/dp6"
                 android:layout_marginLeft="@dimen/dp13"
                 android:layout_marginRight="@dimen/dp13"
+                android:lineSpacingExtra="@dimen/dp6"
                 android:textColor="@color/default_black"
                 android:textSize="@dimen/sp15" />
         </com.a26c.android.frame.widget.MaxHeightScrollView>
@@ -84,14 +84,17 @@
             <TextView
                 android:id="@+id/cancelDownloadTextView"
                 style="@style/update_dialog_style1"
-                android:text="取消下载" />
+                android:text="取消下载"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/backgroundTextView"
                 style="@style/update_dialog_style1"
+                android:layout_marginRight="0dp"
                 android:background="@drawable/frame_update_dialog_submit"
-                android:text="后台更新"
-                android:textColor="@color/white" />
+                android:text="后台下载"
+                android:textColor="@color/white"
+                android:layout_marginEnd="0dp" />
 
         </LinearLayout>
 
