@@ -49,8 +49,8 @@ public class UpdateDialog implements View.OnClickListener {
     private View mBottomLayout2;
     private CharSequence mTitleName;
     private CharSequence mDescName;
-    private CharSequence mSubmitName;
-    private CharSequence mCancleName;
+    private CharSequence mSubmitName = "抢先体验";
+    private CharSequence mCancleName = "留在旧版";
     private String mDownloadUrl;
     private FrameDownloadUtil mDownloadUtil;
 
