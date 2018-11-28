@@ -107,7 +107,6 @@ public class BaseRecyclerView extends FrameLayout {
         mRefreshLayout.setEnableLoadMoreWhenContentNotFull(false);
         mRefreshLayout.setOnRefreshLoadMoreListener(mOnRefreshLoadmoreListener);
         mRefreshLayout.setNestedScrollingEnabled(true);
-        mRefreshLayout.setEnableFooterFollowWhenLoadFinished(true);
     }
 
     public void init(BaseQuickAdapter baseQuickAdapter, NetworkHandle networkHandle) {

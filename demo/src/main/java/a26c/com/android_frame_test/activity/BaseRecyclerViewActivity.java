@@ -13,7 +13,6 @@ import com.chad.library.adapter.base.listener.OnItemClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import a26c.com.android_frame_test.R;
 import a26c.com.android_frame_test.adapter.TestAdapter;
@@ -37,6 +36,7 @@ public class BaseRecyclerViewActivity extends AppCompatActivity {
     @BindView(R.id.checkbox2)
     CheckBox checkbox2;
     private TestAdapter mAdapter;
+    int i = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +44,7 @@ public class BaseRecyclerViewActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_base_recycler_view_acitivity);
         ButterKnife.bind(this);
+
 
         mAdapter = new TestAdapter();
         mBaseRecyclerView.init(mAdapter, new BaseRecyclerView.NetworkHandle() {
@@ -54,6 +55,9 @@ public class BaseRecyclerViewActivity extends AppCompatActivity {
 
             @Override
             public void loadData(boolean isRefresh, final String pageIndex) {
+                if (isRefresh) {
+                    i = 0;
+                }
                 System.out.println(String.format("isRefresh:%s , pageIndex:%s", isRefresh, pageIndex));
                 final List<TestAdapterData> list = new ArrayList<>();
                 if (mCheckbox.isChecked()) {
@@ -62,7 +66,8 @@ public class BaseRecyclerViewActivity extends AppCompatActivity {
                         public void run() {
                             System.out.println("获取数据成功\n");
                             System.out.println(" ");
-                            int dataSize =new Random().nextBoolean()? 15 : 10;
+//                            int dataSize =new Random().nextBoolean()? 15 : 10;
+                            int dataSize = (i++ == 0 ? 15 : 12);
                             for (int i = 0; i < dataSize; i++) {
                                 list.add(new TestAdapterData(pageIndex + "页，" + i));
                             }
