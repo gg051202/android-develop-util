@@ -12,6 +12,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.a26c.android.frame.R;
+import com.a26c.android.frame.util.AndroidScheduler;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -21,6 +22,11 @@ import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
 import com.scwang.smartrefresh.layout.listener.OnRefreshLoadMoreListener;
 
 import java.util.List;
+
+import rx.Observable;
+import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by guilinlin on 16/7/29 15:41.
@@ -200,14 +206,29 @@ public class BaseRecyclerView extends FrameLayout {
         if (data.size() >= mPageSize) {
             mRefreshLayout.setEnableLoadMore(true);
         } else {
-            getHandler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if (mRefreshLayout != null) {
-                        mRefreshLayout.finishLoadMoreWithNoMoreData();
-                    }
-                }
-            }, 500);
+            Observable.just(1)
+                    .subscribeOn(Schedulers.io())
+                    .map(new Func1<Integer, Object>() {
+                        @Override
+                        public Object call(Integer integer) {
+                            try {
+                                Thread.sleep(500);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            return null;
+                        }
+                    })
+                    .observeOn(AndroidScheduler.mainThread())
+                    .subscribe(new Action1<Object>() {
+                        @Override
+                        public void call(Object integer) {
+                            if (mRefreshLayout != null) {
+                                mRefreshLayout.finishLoadMoreWithNoMoreData();
+                            }
+                        }
+                    });
+
         }
     }
 
