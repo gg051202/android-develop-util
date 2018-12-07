@@ -258,6 +258,19 @@ public class BaseRecyclerView extends FrameLayout {
         mStatus = STATUS_NONE;
     }
 
+    public void finishLoadData() {
+        mRefreshLayout.finishRefresh(false);
+        mRefreshLayout.finishLoadMore(false);
+        mRefreshLayout.setEnableAutoLoadMore(false);
+        mRefreshLayout.setEnableLoadMore(false);
+        RefreshFooter refreshFooter = mRefreshLayout.getRefreshFooter();
+        if (refreshFooter instanceof ClassicsFooter) {
+            ClassicsFooter classicsFooter = (ClassicsFooter) refreshFooter;
+            classicsFooter.setFinishDuration(500);
+        }
+        mStatus = STATUS_NONE;
+    }
+
     /**
      * 显示没有数据的视图
      */
