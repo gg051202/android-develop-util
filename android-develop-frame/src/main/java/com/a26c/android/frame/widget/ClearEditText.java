@@ -2,16 +2,15 @@ package com.a26c.android.frame.widget;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.support.v7.widget.AppCompatEditText;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnFocusChangeListener;
 import android.view.animation.Animation;
 import android.view.animation.CycleInterpolator;
 import android.view.animation.TranslateAnimation;
-import android.widget.EditText;
 
 import com.a26c.android.frame.R;
 import com.a26c.android.frame.util.FrameDensityUtils;
@@ -19,7 +18,7 @@ import com.a26c.android.frame.util.FrameDensityUtils;
 /**
  * 带清除功能的EditText
  */
-public class ClearEditText extends EditText implements OnFocusChangeListener, TextWatcher {
+public class ClearEditText extends AppCompatEditText {
     /**
      * 删除按钮的引用
      */
@@ -27,7 +26,7 @@ public class ClearEditText extends EditText implements OnFocusChangeListener, Te
     /**
      * 控件是否有焦点
      */
-    private boolean hasFoucs;
+    private boolean mHasFoucs;
     private Context context;
 
     public ClearEditText(Context context) {
@@ -59,11 +58,45 @@ public class ClearEditText extends EditText implements OnFocusChangeListener, Te
         mClearDrawable.setBounds(0, 0, width, width);
         // 默认设置隐藏图标
         setClearIconVisible(false);
-        // 设置焦点改变的监听
-        setOnFocusChangeListener(this);
+        // 当ClearEditText焦点发生变化的时候，判断里面字符串长度设置清除图标的显示与隐藏
+
+        setOnFocusChangeListener(onFocusChangeListener);
         // 设置输入框里面内容发生改变的监听
-        addTextChangedListener(this);
+        addTextChangedListener(watcher);
     }
+
+    private OnFocusChangeListener onFocusChangeListener = new OnFocusChangeListener() {
+        @Override
+        public void onFocusChange(View v, boolean hasFocus) {
+            mHasFoucs = hasFocus;
+            if (hasFocus) {
+                setClearIconVisible(getText().length() > 0);
+            } else {
+                setClearIconVisible(false);
+            }
+        }
+    };
+
+    private TextWatcher watcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            if (mHasFoucs) {
+                setClearIconVisible(s.length() > 0);
+            }
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            if (onTextChangeListener != null) {
+                onTextChangeListener.afterTextChanged(s);
+            }
+        }
+    };
 
     /**
      * 因为我们不能直接给EditText设置点击事件，所以我们用记住我们按下的位置来模拟点击事件 当我们按下的位置 在 EditText的宽度 -
@@ -86,18 +119,6 @@ public class ClearEditText extends EditText implements OnFocusChangeListener, Te
         return super.onTouchEvent(event);
     }
 
-    /**
-     * 当ClearEditText焦点发生变化的时候，判断里面字符串长度设置清除图标的显示与隐藏
-     */
-    @Override
-    public void onFocusChange(View v, boolean hasFocus) {
-        this.hasFoucs = hasFocus;
-        if (hasFocus) {
-            setClearIconVisible(getText().length() > 0);
-        } else {
-            setClearIconVisible(false);
-        }
-    }
 
     /**
      * 设置清除图标的显示与隐藏，调用setCompoundDrawables为EditText绘制上去
@@ -109,43 +130,6 @@ public class ClearEditText extends EditText implements OnFocusChangeListener, Te
         setCompoundDrawables(getCompoundDrawables()[0], getCompoundDrawables()[1], right, getCompoundDrawables()[3]);
     }
 
-    /**
-     * 当输入框里面内容发生变化的时候回调的方法
-     */
-    @Override
-    public void onTextChanged(CharSequence s, int start, int count, int after) {
-        if (hasFoucs) {
-            setClearIconVisible(s.length() > 0);
-        }
-    }
-
-    @Override
-    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-    }
-
-    @Override
-    public void afterTextChanged(Editable s) {
-        if (onTextChangeListener != null) {
-            onTextChangeListener.afterTextChanged(s);
-        }
-    }
-
-    /**
-     * 自绘颜色
-     *
-     * @Override protected void onDraw(Canvas canvas) { //
-     *           method stub
-     *
-     *           Paint paint = new Paint(); paint.setStyle(Style.STROKE);
-     *           paint.setStrokeWidth(1); if (this.isFocused() == true) {
-     *           paint.setColor(getResources().getColor(R.color.ansee)); }else{
-     *           paint.setColor(getResources().getColor(R.color.ansee)); }
-     *           canvas.drawRoundRect(new RectF(1+this.getScrollX(),
-     *           1+this.getScrollY(), this.getWidth()-2+this.getScrollX(),
-     *           this.getHeight()+this.getScrollY()-1),3,3,paint);
-     *           super.onDraw(canvas); }
-     */
     /**
      * 设置晃动动画
      */
@@ -174,5 +158,14 @@ public class ClearEditText extends EditText implements OnFocusChangeListener, Te
     }
 
     private OnTextChangeListener onTextChangeListener;
+
+    public void destory() {
+
+        setOnFocusChangeListener(null);
+        // 设置输入框里面内容发生改变的监听
+        removeTextChangedListener(watcher);
+        watcher = null;
+        onFocusChangeListener = null;
+    }
 
 }
