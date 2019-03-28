@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.a26c.android.frame.base.CommonActivity;
+import com.a26c.android.frame.widget.CommonListDialog;
 import com.a26c.android.frame.widget.OnUploadPhotoListener;
 import com.a26c.android.frame.widget.UpdateDialog;
 import com.a26c.android.frame.widget.UploadPhotoDialog;
@@ -91,17 +92,20 @@ public class MainActivity extends CommonActivity {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.button:
-                checkPermission(new OnCheckPermissionListener() {
-                    @Override
-                    public void success() {
-                        mUploadPhotoDialog.show();
-                    }
-
-                    @Override
-                    public void fail() {
-
-                    }
-                }, Manifest.permission.CAMERA);
+                new CommonListDialog(mActivity)
+                        .addData("1", "a1")
+                        .addData("2", "a2")
+                        .addData("3", "a3")
+                        .setCurrentKey("3")
+                        .setTitleName("123")
+                        .setShowButtonLayout(true)
+                        .setDialogSubmitListener(new CommonListDialog.OnDialogSubmitListener() {
+                            @Override
+                            public void submit(String key, String value) {
+                                System.out.println(value);
+                            }
+                        })
+                        .show();
                 break;
             case R.id.image:
                 checkPermission(new OnCheckPermissionListener() {
