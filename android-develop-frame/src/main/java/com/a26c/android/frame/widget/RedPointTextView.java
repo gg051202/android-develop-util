@@ -31,7 +31,7 @@ public class RedPointTextView extends View {
     private float radius;
     private float textWidth;
     private Rect textRect;// 计算text的宽高
-    private int mMaxNumber;
+    private int mMaxNumber = 99;
 
     public RedPointTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -89,7 +89,6 @@ public class RedPointTextView extends View {
     public void setNumber(int number) {
         setVisibility(View.VISIBLE);
         this.number = number + "";
-        mMaxNumber = 999;
         if (number > mMaxNumber) {
             this.number = mMaxNumber + "+";
         }
