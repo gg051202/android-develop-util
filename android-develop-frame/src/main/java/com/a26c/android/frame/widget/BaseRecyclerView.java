@@ -310,7 +310,9 @@ public class BaseRecyclerView extends FrameLayout {
         if (mViewCreator != null) {
             if (mViewCreator.getNoDataView() != null) {
                 mNoDataView = mViewCreator.getNoDataView();
-                mNoDataView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                if (mNoDataView.getLayoutParams() == null) {
+                    mNoDataView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                }
             }
         }
 
@@ -344,7 +346,9 @@ public class BaseRecyclerView extends FrameLayout {
         if (mViewCreator != null) {
             if (mViewCreator.getErrDataView() != null) {
                 mErrView = mViewCreator.getErrDataView();
-                mErrView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                if (mErrView.getLayoutParams() == null) {
+                    mErrView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                }
             }
         }
 
