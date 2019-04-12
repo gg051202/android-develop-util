@@ -2,7 +2,6 @@ package a26c.com.android_frame_test.activity;
 
 import android.Manifest;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -103,13 +102,8 @@ public class MainActivity extends CommonActivity {
                     }
 
                     @Override
-                    public void success(int requestCode, boolean isVideo, String imagePath, Uri uri) {
-                        if (isVideo) {
-                            Glide.with(MainActivity.this).load(uri).into(image);
-                        } else {
-                            Glide.with(MainActivity.this).load(imagePath).into(image);
-
-                        }
+                    public void success(int requestCode, boolean isVideo, String imagePath) {
+                        Glide.with(MainActivity.this).load(imagePath).into(image);
                         System.out.println(imagePath);
                     }
 

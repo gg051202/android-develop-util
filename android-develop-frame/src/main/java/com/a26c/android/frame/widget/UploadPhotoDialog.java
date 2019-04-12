@@ -20,6 +20,7 @@ import com.a26c.android.frame.util.AndroidScheduler;
 import com.a26c.android.frame.util.CommonUtils;
 import com.a26c.android.frame.util.FrameBitmapUtil;
 import com.a26c.android.frame.util.FrameCropUtils;
+import com.a26c.android.frame.util.SelectVideoUtil;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 
@@ -169,7 +170,7 @@ public class UploadPhotoDialog implements View.OnClickListener {
                             boolean isVideo = isVideo(data.getDataString());
                             if (isVideo) {
                                 ResultData t = new ResultData(true, ResultData.TYPE_SUCCESS);
-                                t.setUri(data.getData());
+                                t.setPath(SelectVideoUtil.getPath(context, data.getData()));
                                 subscriber.onNext(t);
                             } else {
                                 //如果需要压缩，只有图片能压缩
@@ -198,10 +199,10 @@ public class UploadPhotoDialog implements View.OnClickListener {
                                 break;
                             case ResultData.TYPE_SUCCESS:
                                 if (listener != null) {
-                                    if (TextUtils.isEmpty(resultData.getPath()) && resultData.getUri() == null) {
+                                    if (TextUtils.isEmpty(resultData.getPath())) {
                                         listener.fail(requestCode, new RuntimeException("获取数据为空"));
                                     } else {
-                                        listener.success(requestCode, resultData.isVideo, resultData.getPath(), resultData.getUri());
+                                        listener.success(requestCode, resultData.isVideo, resultData.getPath());
                                     }
                                 }
                                 break;
@@ -241,9 +242,6 @@ public class UploadPhotoDialog implements View.OnClickListener {
             if (FrameBitmapUtil.savePicture(newFilePath, bitmap)) {
                 ResultData resultData = new ResultData(false, ResultData.TYPE_SUCCESS);
                 resultData.setPath(newFilePath);
-                if (data instanceof Uri) {
-                    resultData.setUri((Uri) data);
-                }
                 subscriber.onNext(resultData);
             } else {
                 subscriber.onNext(null);
@@ -405,7 +403,6 @@ public class UploadPhotoDialog implements View.OnClickListener {
         static final String TYPE_RECEIVED_IMAGE = "type_received_image";
         static final String TYPE_SUCCESS = "type_success";
         private String path;
-        private Uri uri;
 
         private String type;
         private boolean isVideo;
@@ -432,12 +429,5 @@ public class UploadPhotoDialog implements View.OnClickListener {
             this.path = path;
         }
 
-        public Uri getUri() {
-            return uri;
-        }
-
-        public void setUri(Uri uri) {
-            this.uri = uri;
-        }
     }
 }

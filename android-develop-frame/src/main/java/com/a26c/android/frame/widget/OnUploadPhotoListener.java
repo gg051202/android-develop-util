@@ -1,7 +1,5 @@
 package com.a26c.android.frame.widget;
 
-import android.net.Uri;
-
 /**
  * 压缩图片后获取图片成功的接口
  */
@@ -23,11 +21,10 @@ public interface OnUploadPhotoListener {
     void onlyReceivedImage(int requestCode);
 
     /**
-     * @param isVideo 返回的是图片还是视频
-     * @param imagePath     图像被保存到本地的地址
-     * @param uri           如果是视频，这个uri肯定不为空，图片则不一定
+     * @param isVideo   返回的是图片还是视频
+     * @param imagePath 图像或者视频被保存到本地的地址
      */
-    void success(int requestCode, boolean isVideo, String imagePath, Uri uri);
+    void success(int requestCode, boolean isVideo, String imagePath);
 
     void fail(int requestCode, Throwable e);
 }
