@@ -117,7 +117,7 @@ public class MainActivity extends CommonActivity {
                     @Override
                     public void success() {
 
-                        mUploadPhotoDialog.showScale(1.5f);
+                        mUploadPhotoDialog.show();
                     }
 
                     @Override

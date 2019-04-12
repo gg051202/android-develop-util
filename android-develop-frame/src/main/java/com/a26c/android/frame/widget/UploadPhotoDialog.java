@@ -233,7 +233,7 @@ public class UploadPhotoDialog implements View.OnClickListener {
      */
     private void zipImage(Subscriber<? super ResultData> subscriber, Object data) {
         subscriber.onNext(new ResultData(false, ResultData.TYPE_RECEIVED_IMAGE));
-        Bitmap bitmap = null;
+        Bitmap bitmap;
         try {
             RequestOptions requestOptions = new RequestOptions().override(imageWidth, imageHeight);
             bitmap = Glide.with(context).asBitmap().load(data).apply(requestOptions)
@@ -253,10 +253,6 @@ public class UploadPhotoDialog implements View.OnClickListener {
             e.printStackTrace();
             subscriber.onNext(null);
         } finally {
-            if (bitmap != null) {
-                bitmap.recycle();
-                bitmap = null;
-            }
         }
     }
 
