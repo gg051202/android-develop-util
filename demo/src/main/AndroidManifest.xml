@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="a26c.com.android_frame_test"
-          xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="a26c.com.android_frame_test">
 
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -22,13 +22,13 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.MainActivity" >
+        <activity android:name=".activity.BuyRoomActivity" />
+        <activity android:name=".activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
         <activity android:name="com.a26c.android.frame.base.HtmlActivity" />
         <activity android:name=".activity.TakePhotoActivity" />
@@ -37,19 +37,15 @@
         <service android:name=".socket.MinaService" />
 
         <activity android:name=".activity.DataBindingTestActivity" />
-        <activity android:name=".activity.BaseRecyclerViewActivity" >
-
-        </activity>
+        <activity android:name=".activity.BaseRecyclerViewActivity"></activity>
         <activity android:name=".activity.LruCacheAcitivity" />
-        <activity android:name=".activity.KeepServiceAliveActivity">
-
-        </activity>
+        <activity android:name=".activity.KeepServiceAliveActivity"></activity>
 
         <service
             android:name=".activity.KeepAliveService"
             android:enabled="true"
-            android:process=":alive"
-            android:exported="true" />
+            android:exported="true"
+            android:process=":alive" />
         <service android:name=".activity.KeepAliveService$GrayInnerService" />
     </application>
 

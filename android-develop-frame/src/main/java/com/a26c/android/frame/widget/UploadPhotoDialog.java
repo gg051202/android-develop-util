@@ -13,6 +13,7 @@ import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 
 import com.a26c.android.frame.R;
 import com.a26c.android.frame.util.AndroidScheduler;
@@ -23,6 +24,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.util.concurrent.ExecutionException;
 
 import rx.Observable;
@@ -48,6 +50,9 @@ public class UploadPhotoDialog implements View.OnClickListener {
     public static final byte PHOTO = 1;
     public static final byte ALBUM = 2;
     public static final byte PHOTO_AND_ALBUM = 3;
+    public static final String SELECT_IMAGE = "image/*";
+    public static final String SELECT_IMAGE_AND_VIDEO = "image/*,video/*";
+    public static final String SELECT_VIDEO = "video/*";
 
     /**
      * 默认相册和拍照的入口都有
@@ -66,6 +71,10 @@ public class UploadPhotoDialog implements View.OnClickListener {
      * 拍照是相片保存的临时路径
      */
     private String photoCachePath;
+    /**
+     * 选择图片的类型，可以设置为：图片，视频，图片和视频
+     */
+    private String selectMediaType = SELECT_IMAGE;
 
     private File cropFile;
     private Context context;
@@ -115,7 +124,7 @@ public class UploadPhotoDialog implements View.OnClickListener {
     public void onClick(View v) {
         if (v.getId() == R.id.photoLayout) {
             if (!(listener != null && listener.photoClick(requestCode))) {
-                photoCachePath = String.format("%s/%sphoto.jpg", getFileDir(), System.currentTimeMillis());
+                photoCachePath = String.format("%s/saved_%sphoto.jpg", getFileDir(), System.currentTimeMillis());
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(photoCachePath)));
 
@@ -131,7 +140,7 @@ public class UploadPhotoDialog implements View.OnClickListener {
         } else if (v.getId() == R.id.albumLayout) {
             if (!(listener != null && listener.albumClick(requestCode))) {
                 Intent intent = new Intent(Intent.ACTION_PICK, null);
-                intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+                intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, selectMediaType);
                 ((Activity) context).startActivityForResult(intent, RESULT_ALBUM);
             }
             alertDialog.dismiss();
@@ -139,33 +148,37 @@ public class UploadPhotoDialog implements View.OnClickListener {
     }
 
     // 拍完照片的回调方法
-    public void onActivityResult(final int request, int resultCode, final Intent data) {
+    public void onActivityResult(final int request, final int resultCode, final Intent data) {
         if (resultCode != Activity.RESULT_OK) {
             return;
         }
         Observable
-                .create(new Observable.OnSubscribe<String>() {
+                .create(new Observable.OnSubscribe<ResultData>() {
                     @Override
-                    public void call(Subscriber<? super String> subscriber) {
+                    public void call(Subscriber<? super ResultData> subscriber) {
                         if (request == RESULT_CAMERA) {
                             //如果需要压缩
                             if (imageHeight != imageWidth) {
                                 File picture2 = new File(photoCachePath);
-                                ZoomPhoto(Uri.fromFile(picture2));
-                                subscriber.onNext("isCrop");
+                                zoomPhoto(Uri.fromFile(picture2));
                             } else {
                                 zipImage(subscriber, photoCachePath);
                             }
 
                         } else if (request == RESULT_ALBUM) {
-                            //如果需要压缩
-                            if (imageHeight != imageWidth) {
-                                ZoomPhoto(data.getData());
-                                subscriber.onNext("isCrop");
+                            boolean isVideo = isVideo(data.getDataString());
+                            if (isVideo) {
+                                ResultData t = new ResultData(true, ResultData.TYPE_SUCCESS);
+                                t.setUri(data.getData());
+                                subscriber.onNext(t);
                             } else {
-                                zipImage(subscriber, data.getData());
+                                //如果需要压缩，只有图片能压缩
+                                if (imageHeight != imageWidth) {
+                                    zoomPhoto(data.getData());
+                                } else {
+                                    zipImage(subscriber, data.getData());
+                                }
                             }
-
                         } else if (request == RESULT_ZOOM_PHOTO) {
                             zipImage(subscriber, cropFile);
                         }
@@ -174,26 +187,28 @@ public class UploadPhotoDialog implements View.OnClickListener {
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidScheduler.mainThread())
-                .subscribe(new Subscriber<String>() {
+                .subscribe(new Subscriber<ResultData>() {
                     @Override
-                    public void onNext(String imageSavedPath) {
-                        if (listener == null) {
-                            return;
-                        }
-                        if (TextUtils.isEmpty(imageSavedPath)) {
-                            listener.fail(requestCode, null);
-                            return;
-                        }
-                        if (imageSavedPath.equals("isCrop")) {
-                            Log.i(TAG, "获取图片完成，调用系统裁剪图片");
-                            return;
-                        }
-                        if (imageSavedPath.equals("onlyReceivedImage")) {
-                            listener.onlyReceivedImage(requestCode);
-                            return;
+                    public void onNext(ResultData resultData) {
+                        switch (resultData.getType()) {
+                            case ResultData.TYPE_RECEIVED_IMAGE:
+                                if (listener != null) {
+                                    listener.onlyReceivedImage(requestCode);
+                                }
+                                break;
+                            case ResultData.TYPE_SUCCESS:
+                                if (listener != null) {
+                                    if (TextUtils.isEmpty(resultData.getPath()) && resultData.getUri() == null) {
+                                        listener.fail(requestCode, new RuntimeException("获取数据为空"));
+                                    } else {
+                                        listener.success(requestCode, resultData.isVideo, resultData.getPath(), resultData.getUri());
+                                    }
+                                }
+                                break;
+                            default:
+                                break;
                         }
 
-                        listener.success(requestCode, imageSavedPath);
                     }
 
                     @Override
@@ -215,8 +230,8 @@ public class UploadPhotoDialog implements View.OnClickListener {
     /**
      * 压缩下载图片
      */
-    private void zipImage(Subscriber<? super String> subscriber, Object data) {
-        subscriber.onNext("onlyReceivedImage");
+    private void zipImage(Subscriber<? super ResultData> subscriber, Object data) {
+        subscriber.onNext(new ResultData(false, ResultData.TYPE_RECEIVED_IMAGE));
         Bitmap bitmap = null;
         try {
             RequestOptions requestOptions = new RequestOptions().override(imageWidth, imageHeight);
@@ -224,7 +239,12 @@ public class UploadPhotoDialog implements View.OnClickListener {
                     .into(imageWidth, imageHeight).get();
             String newFilePath = String.format("%s/saved_%s.jpg", getFileDir(), System.currentTimeMillis());
             if (FrameBitmapUtil.savePicture(newFilePath, bitmap)) {
-                subscriber.onNext(newFilePath);
+                ResultData resultData = new ResultData(false, ResultData.TYPE_SUCCESS);
+                resultData.setPath(newFilePath);
+                if (data instanceof Uri) {
+                    resultData.setUri((Uri) data);
+                }
+                subscriber.onNext(resultData);
             } else {
                 subscriber.onNext(null);
             }
@@ -238,7 +258,6 @@ public class UploadPhotoDialog implements View.OnClickListener {
             if (bitmap != null) {
                 bitmap.recycle();
                 bitmap = null;
-
             }
         }
     }
@@ -246,7 +265,7 @@ public class UploadPhotoDialog implements View.OnClickListener {
     /**
      * 调用系统的裁剪
      */
-    private void ZoomPhoto(Uri uri) {
+    private void zoomPhoto(Uri uri) {
         Intent intent = new Intent("com.android.camera.action.CROP");
         Uri newUri = Uri.parse("file://" + FrameCropUtils.getPath(context, uri));
         intent.setDataAndType(newUri, "image/*");
@@ -265,7 +284,7 @@ public class UploadPhotoDialog implements View.OnClickListener {
         ((Activity) context).startActivityForResult(intent, RESULT_ZOOM_PHOTO);
     }
 
-    private String getFileDir() {
+    private static String getFileDir() {
         return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
     }
 
@@ -350,5 +369,75 @@ public class UploadPhotoDialog implements View.OnClickListener {
 
     public void setListener(OnUploadPhotoListener listener) {
         this.listener = listener;
+    }
+
+    public String getSelectMediaType() {
+        return selectMediaType;
+    }
+
+    public void setSelectMediaType(String selectMediaType) {
+        this.selectMediaType = selectMediaType;
+    }
+
+    public static void deleteCacheFiles() {
+        File dir = new File(getFileDir());
+        if (dir.exists() && dir.isDirectory()) {
+            File[] files = dir.listFiles(new FilenameFilter() {
+                @Override
+                public boolean accept(File dir1, String name) {
+                    return name.startsWith("saved_") && (name.endsWith(".jpg") || name.endsWith(".png"));
+                }
+            });
+            for (File file : files) {
+                Log.i("delete file", file.getName() + ",result:" + file.delete());
+            }
+        }
+    }
+
+    private boolean isVideo(String path) {
+        String fileExtension = MimeTypeMap.getFileExtensionFromUrl(path);
+        String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension);
+        return (mimeType != null && mimeType.contains("video"));
+    }
+
+    private static class ResultData {
+
+        static final String TYPE_RECEIVED_IMAGE = "type_received_image";
+        static final String TYPE_SUCCESS = "type_success";
+        private String path;
+        private Uri uri;
+
+        private String type;
+        private boolean isVideo;
+
+        public ResultData(boolean isVideo, String type) {
+            this.type = type;
+            this.isVideo = isVideo;
+        }
+
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public String getPath() {
+            return path;
+        }
+
+        public void setPath(String path) {
+            this.path = path;
+        }
+
+        public Uri getUri() {
+            return uri;
+        }
+
+        public void setUri(Uri uri) {
+            this.uri = uri;
+        }
     }
 }

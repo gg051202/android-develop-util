@@ -1,5 +1,7 @@
 package com.a26c.android.frame.adapter;
 
+import android.net.Uri;
+
 import com.a26c.android.frame.widget.OnUploadPhotoListener;
 
 /**
@@ -25,7 +27,7 @@ public class OnGetImageSuccessAdapter implements OnUploadPhotoListener {
     }
 
     @Override
-    public void success(int requestCode, String imagePath) {
+    public void success(int requestCode, boolean isReturnImage, String imagePath, Uri uri) {
 
     }
 

@@ -2,6 +2,7 @@ package a26c.com.android_frame_test.activity;
 
 import android.Manifest;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -11,7 +12,6 @@ import android.widget.ImageView;
 import com.a26c.android.frame.base.CommonActivity;
 import com.a26c.android.frame.widget.CommonListDialog;
 import com.a26c.android.frame.widget.OnUploadPhotoListener;
-import com.a26c.android.frame.widget.UpdateDialog;
 import com.a26c.android.frame.widget.UploadPhotoDialog;
 import com.bumptech.glide.Glide;
 
@@ -53,33 +53,6 @@ public class MainActivity extends CommonActivity {
             }
         });
 
-
-        mUploadPhotoDialog = new UploadPhotoDialog(this, new OnUploadPhotoListener() {
-            @Override
-            public boolean photoClick(int requestCode) {
-                return false;
-            }
-
-            @Override
-            public boolean albumClick(int requestCode) {
-                return false;
-            }
-
-            @Override
-            public void onlyReceivedImage(int requestCode) {
-
-            }
-
-            @Override
-            public void success(int requestCode, String imagePath) {
-                Glide.with(MainActivity.this).load(imagePath).into(image);
-            }
-
-            @Override
-            public void fail(int requestCode, Throwable e) {
-
-            }
-        });
     }
 
     @Override
@@ -88,10 +61,14 @@ public class MainActivity extends CommonActivity {
         mUploadPhotoDialog.onActivityResult(requestCode, resultCode, data);
     }
 
-    @OnClick({R.id.button, R.id.image})
+    @OnClick({R.id.button, R.id.image, R.id.fangdaiTextView})
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.fangdaiTextView:
+                gotoActivity(BuyRoomActivity.class);
+                break;
             case R.id.button:
+                UploadPhotoDialog.deleteCacheFiles();
                 new CommonListDialog(mActivity)
                         .addData("1", "a1")
                         .addData("2", "a2")
@@ -108,74 +85,59 @@ public class MainActivity extends CommonActivity {
                         .show();
                 break;
             case R.id.image:
+
+                mUploadPhotoDialog = new UploadPhotoDialog(this, new OnUploadPhotoListener() {
+                    @Override
+                    public boolean photoClick(int requestCode) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean albumClick(int requestCode) {
+                        return false;
+                    }
+
+                    @Override
+                    public void onlyReceivedImage(int requestCode) {
+
+                    }
+
+                    @Override
+                    public void success(int requestCode, boolean isVideo, String imagePath, Uri uri) {
+                        if (isVideo) {
+                            Glide.with(MainActivity.this).load(uri).into(image);
+                        } else {
+                            Glide.with(MainActivity.this).load(imagePath).into(image);
+
+                        }
+                        System.out.println(imagePath);
+                    }
+
+                    @Override
+                    public void fail(int requestCode, Throwable e) {
+                        e.printStackTrace();
+                    }
+                });
+                mUploadPhotoDialog.setSelectMediaType(UploadPhotoDialog.SELECT_IMAGE_AND_VIDEO);
                 checkPermission(new OnCheckPermissionListener() {
                     @Override
                     public void success() {
-                        new UpdateDialog(MainActivity.this)
-                                .setNeedUpdate(true)
-                                .setTitleName("发现新版本 v1.0.0")
-                                .setDescName("10.1M")
-                                .setDownloadUrl("https://5e03325c9c5257588339c7517cb6db32.dd.cdntips.com/imtt.dd.qq.com/16891/D56151A2A3AC4DE7F751B892E8B64399.apk?mkey=5bf399337d780835&f=1455&fsname=tv.acfundanmaku.video_5.9.0.595_595.apk&csr=1bbd&cip=125.120.46.192&proto=https")
-                                .setIsAutoCheck(false)
-                                .setSubmitName("抢先体验")
-                                .setCancleName("留在旧版")
-                                .setSpaceTimeHour(5)
-                                .show();
+
+                        mUploadPhotoDialog.showScale(1.5f);
                     }
 
                     @Override
                     public void fail() {
 
                     }
-                }, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                }, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA);
+
 
                 break;
 
             default:
                 break;
         }
-
-//        checkPermission(new OnCheckPermissionListener() {
-//            @Override
-//            public void success() {
-//                SpannableString spannableString = new SpannableString("12312312313");
-//                spannableString.setSpan(new ForegroundColorSpan(0xffff0000), 2, 5, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-//
-//                new UpdateDialog(MainActivity.this)
-//                        .setIsAutoCheck(false)
-//                        .setNeedUpdate(true)
-//                        .setTitleName(spannableString)
-//                        .setSpaceTimeHour(8)
-//                        .setDescName(
-//                                "作者：Viola\n" +
-//                                "作者：Viola\n" +
-//                                "作者：Viola\n" +
-//                                "作者：Viola\n" +
-//                                "作者：Viola\n" +
-//                                "作者：Viola\n" +
-//                                "作者：Viola\n" +
-//                                "作者：Viola\n" +
-//                                "作者：Viola\n" +
-//                                "作者：Viola\n" +
-//                                "作者：Viola\n" +
-//                                "作者：Viola\n" +
-//                                "作者：Viola\n" +
-//                                "作者：Viola\n" +
-//                                "作者：Viola\n" +
-//                                "作者：Viola\n" +
-//                                "作者：Viola\n" +
-//                                "著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。")
-//                        .setDownloadUrl("https://imtt.dd.qq.com/16891/594918EC7AF0BC9E2E22B55753DDEE2D.apk?fsname=com.ijinshan.duba_3.5.0_30500016.apk&csr=1bbd")
-//                        .show();
-//            }
-//
-//            @Override
-//            public void fail() {
-//                System.out.println(123);
-//
-//            }
-//        }, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE);
-//
     }
 
 

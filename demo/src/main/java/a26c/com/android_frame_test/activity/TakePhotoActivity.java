@@ -8,11 +8,7 @@ import android.widget.ImageView;
 
 import com.a26c.android.frame.base.CommonActivity;
 import com.a26c.android.frame.util.DialogFactory;
-import com.a26c.android.frame.widget.OnUploadPhotoListener;
 import com.a26c.android.frame.widget.UploadPhotoDialog;
-import com.bumptech.glide.Glide;
-
-import java.io.File;
 
 import a26c.com.android_frame_test.R;
 import butterknife.BindView;
@@ -43,40 +39,7 @@ public class TakePhotoActivity extends CommonActivity implements CommonActivity.
     }
 
     private void takePhoto() {
-        dialog = new UploadPhotoDialog(this, new OnUploadPhotoListener() {
-            @Override
-            public boolean photoClick(int requestCode) {
-                System.out.println("photoClick:" + Thread.currentThread().getName());
-                return false;
-            }
 
-            @Override
-            public boolean albumClick(int requestCode) {
-                System.out.println("albumClick:" + Thread.currentThread().getName());
-                return false;
-            }
-
-            @Override
-            public void onlyReceivedImage(int requestCode) {
-
-                System.out.println("onlyReceivedImage:" + Thread.currentThread().getName());
-            }
-
-            @Override
-            public void success(int requestCode, String imagePath) {
-                System.out.println("success:" + Thread.currentThread().getName());
-                System.out.println(new File(imagePath).length());
-                Glide.with(TakePhotoActivity.this).load(imagePath).into(image);
-                System.out.println("Request code:" + requestCode);
-            }
-
-            @Override
-            public void fail(int requestCode, Throwable e) {
-                System.out.println("fail:" + Thread.currentThread().getName());
-            }
-        });
-        dialog.setImageHeight(1000);
-        dialog.show(500,1.5f);
     }
 
     @Override

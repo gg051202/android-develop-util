@@ -8,6 +8,5 @@ package a26c.com.android_frame_test.util;
 public class Task {
 
     public void run(){
-        System.out.println(123);
     }
 }
