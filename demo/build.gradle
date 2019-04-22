@@ -33,4 +33,7 @@ dependencies {
     annotationProcessor ('com.jakewharton:butterknife-compiler:8.8.1')
     implementation ('com.airbnb.android:lottie:1.0.1')
 
+    //比例适配
+    implementation 'me.jessyan:autosize:1.1.2'
+
 }
