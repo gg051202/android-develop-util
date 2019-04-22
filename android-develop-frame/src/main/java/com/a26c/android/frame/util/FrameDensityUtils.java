@@ -1,7 +1,6 @@
 package com.a26c.android.frame.util;
 
 import android.content.Context;
-import android.util.TypedValue;
 
 /**
  * 常用单位转换的辅助类
@@ -12,22 +11,6 @@ public class FrameDensityUtils {
     private FrameDensityUtils() {
         /* cannot be instantiated */
         throw new UnsupportedOperationException("cannot be instantiated");
-    }
-
-    /**
-     * dp转px
-     */
-    public static int dp2px(Context context ,float dpVal) {
-        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpVal,context.getResources()
-                .getDisplayMetrics());
-    }
-
-    /**
-     * sp转px
-     */
-    public static int sp2px(Context context ,float spVal) {
-        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, spVal,context.getResources()
-                .getDisplayMetrics());
     }
 
     /**
