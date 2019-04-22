@@ -15,8 +15,8 @@
 
     <ImageView
         android:id="@+id/leftImageView"
-        android:layout_width="@dimen/dp25"
-        android:layout_height="@dimen/dp25"
+        android:layout_width="21dp"
+        android:layout_height="21dp"
         android:src="#ff0000"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -48,8 +48,8 @@
 
     <ImageView
         android:id="@+id/rightImageView"
-        android:layout_width="@dimen/dp25"
-        android:layout_height="@dimen/dp25"
+        android:layout_width="21dp"
+        android:layout_height="21dp"
         android:src="#ff0000"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"

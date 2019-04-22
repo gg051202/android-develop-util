@@ -5,8 +5,8 @@
                 android:orientation="vertical">
 
     <ProgressBar
-        android:layout_width="@dimen/dp20"
-        android:layout_height="@dimen/dp20"
+        android:layout_width="17dp"
+        android:layout_height="17dp"
         android:layout_centerInParent="true" />
 
 

@@ -6,14 +6,14 @@
 
     <EditText
         android:id="@+id/priceEditText"
-        android:padding="@dimen/dp13"
+        android:padding="11dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white" />
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="@dimen/dp15"
+        android:layout_height="13dp"
         android:background="#f3f3f3" />
 
     <EditText
@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:gravity="top"
-        android:padding="@dimen/dp13"
+        android:padding="11dp"
         android:text="" />
 
     <Button
@@ -38,7 +38,7 @@
         android:layout_height="wrap_content"
         android:text=""
         android:textColor="@color/default_black"
-        android:lineSpacingExtra="@dimen/dp8"
+        android:lineSpacingExtra="7dp"
         android:textSize="@dimen/sp18" />
 
 

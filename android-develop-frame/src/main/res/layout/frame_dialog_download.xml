@@ -8,22 +8,22 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/dp40"
-        android:layout_marginRight="@dimen/dp40"
+        android:layout_marginLeft="35dp"
+        android:layout_marginRight="35dp"
         android:background="@drawable/frame_bg_white_corrner_3dp"
         android:gravity="center"
         android:orientation="vertical"
-        android:paddingLeft="@dimen/dp13"
-        android:paddingRight="@dimen/dp13">
+        android:paddingLeft="11dp"
+        android:paddingRight="11dp">
 
 
         <com.a26c.android.frame.widget.FakeBoldTextView
             android:id="@+id/titleTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/dp13"
-            android:layout_marginRight="@dimen/dp13"
-            android:layout_marginTop="@dimen/dp24"
+            android:layout_marginLeft="11dp"
+            android:layout_marginRight="11dp"
+            android:layout_marginTop="21dp"
             android:text="发现新版本"
             android:textColor="@color/default_black"
             android:textSize="@dimen/sp18"
@@ -32,18 +32,18 @@
         <com.a26c.android.frame.widget.MaxHeightScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/dp13"
-            android:layout_marginTop="@dimen/dp13"
+            android:layout_marginBottom="11dp"
+            android:layout_marginTop="11dp"
             android:overScrollMode="never"
-            app:maxHeight="@dimen/dp300">
+            app:maxHeight="262dp">
 
             <TextView
                 android:id="@+id/descTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/dp13"
-                android:layout_marginRight="@dimen/dp13"
-                android:lineSpacingExtra="@dimen/dp6"
+                android:layout_marginLeft="11dp"
+                android:layout_marginRight="11dp"
+                android:lineSpacingExtra="5dp"
                 android:textColor="@color/default_black"
                 android:textSize="@dimen/sp15" />
         </com.a26c.android.frame.widget.MaxHeightScrollView>
@@ -52,10 +52,10 @@
         <com.daimajia.numberprogressbar.NumberProgressBar
             android:id="@+id/progressBar"
             style="@style/NumberProgressBar_Default"
-            android:layout_marginBottom="@dimen/dp10"
-            android:layout_marginLeft="@dimen/dp13"
-            android:layout_marginRight="@dimen/dp13"
-            android:layout_marginTop="@dimen/dp13"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="11dp"
+            android:layout_marginRight="11dp"
+            android:layout_marginTop="11dp"
             android:visibility="gone" />
 
         <LinearLayout

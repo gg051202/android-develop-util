@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/select_pay_style1"
-    android:paddingLeft="@dimen/dp13"
-    android:paddingTop="@dimen/dp15"
-    android:paddingRight="@dimen/dp13"
-    android:paddingBottom="@dimen/dp15">
+    android:paddingLeft="11dp"
+    android:paddingTop="13dp"
+    android:paddingRight="11dp"
+    android:paddingBottom="13dp">
 
     <ImageView
         android:id="@+id/radio"
-        android:layout_width="@dimen/dp24"
-        android:layout_height="@dimen/dp24"
+        android:layout_width="21dp"
+        android:layout_height="21dp"
         android:layout_centerVertical="true"
-        android:layout_marginStart="@dimen/dp13"
-        android:layout_marginLeft="@dimen/dp13" />
+        android:layout_marginStart="11dp"
+        android:layout_marginLeft="11dp" />
 
     <TextView
         android:id="@+id/name"
         style="@style/select_pay_style3"
         android:layout_centerVertical="true"
-        android:layout_marginStart="@dimen/dp13"
-        android:layout_marginLeft="@dimen/dp13"
+        android:layout_marginStart="11dp"
+        android:layout_marginLeft="11dp"
         android:layout_toEndOf="@+id/radio"
         android:layout_toRightOf="@+id/radio" />
 
