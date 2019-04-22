@@ -9,19 +9,19 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
-public class FrameAppManager {
+public class AppManager {
     private static Stack<Activity> activityStack;
-    private static FrameAppManager instance;
+    private static AppManager instance;
 
-    private FrameAppManager() {
+    private AppManager() {
     }
 
     /**
      * 单一实例
      */
-    public static FrameAppManager getAppManager() {
+    public static AppManager getAppManager() {
         if (instance == null) {
-            instance = new FrameAppManager();
+            instance = new AppManager();
         }
         return instance;
     }
@@ -31,7 +31,7 @@ public class FrameAppManager {
      */
     public void addActivity(Activity activity) {
         if (activityStack == null) {
-            activityStack = new Stack<Activity>();
+            activityStack = new Stack<>();
         }
         activityStack.add(activity);
     }
@@ -50,6 +50,13 @@ public class FrameAppManager {
     public void finishActivity() {
         Activity activity = activityStack.lastElement();
         finishActivity(activity);
+    }
+
+    /**
+     * 获取当前Activity 是否位于栈顶
+     */
+    public boolean isActivityTop(Class<?> cls) {
+        return activityStack.lastElement().getClass().equals(cls);
     }
 
     /**
@@ -112,7 +119,7 @@ public class FrameAppManager {
      * 获得所有IdeaCodeActivity
      */
     public List<Activity> getAllActivity() {
-        ArrayList<Activity> listActivity = new ArrayList<Activity>();
+        ArrayList<Activity> listActivity = new ArrayList<>();
         for (Activity activity : activityStack) {
             listActivity.add(activity);
         }
@@ -123,7 +130,9 @@ public class FrameAppManager {
      * 检查某个Activity是否在运行
      */
     public boolean checkActivity(Class<?> cls) {
-
+        if (activityStack == null) {
+            return false;
+        }
         for (Activity activity : activityStack) {
             if (activity.getClass().equals(cls)) {
                 return true;
@@ -156,6 +165,7 @@ public class FrameAppManager {
             ActivityManager activityMgr = (ActivityManager) context
                     .getSystemService(Context.ACTIVITY_SERVICE);
             activityMgr.restartPackage(context.getPackageName());
+            // System.exit(0);
         } catch (Exception e) {
         }
     }

@@ -22,31 +22,11 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.BuyRoomActivity" />
-        <activity android:name=".activity.MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity android:name="com.a26c.android.frame.base.HtmlActivity" />
-        <activity android:name=".activity.TakePhotoActivity" />
-        <activity android:name=".activity.MinaTestActivity" />
-
-        <service android:name=".socket.MinaService" />
-
-        <activity android:name=".activity.DataBindingTestActivity" />
-        <activity android:name=".activity.BaseRecyclerViewActivity"></activity>
-        <activity android:name=".activity.LruCacheAcitivity" />
-        <activity android:name=".activity.KeepServiceAliveActivity"></activity>
-
-        <service
-            android:name=".activity.KeepAliveService"
-            android:enabled="true"
-            android:exported="true"
-            android:process=":alive" />
-        <service android:name=".activity.KeepAliveService$GrayInnerService" />
+        <activity android:name=".activity.Main2aActivity"></activity>
+        <activity
+            android:name=".activity.Main2Activity"
+            android:label="@string/title_activity_main2"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>
