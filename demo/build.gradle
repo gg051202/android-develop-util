@@ -33,8 +33,11 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     annotationProcessor('com.jakewharton:butterknife-compiler:8.8.1')
     implementation('com.airbnb.android:lottie:1.0.1')
-
-    //比例适配
-    implementation 'me.jessyan:autosize:1.1.2'
-
+    testImplementation 'junit:junit:4.12'
+    implementation 'com.android.support:design:28.0.0'
+    configurations.all {
+        resolutionStrategy {
+            force "com.android.support:support-v4:27.1.1"
+        }
+    }
 }

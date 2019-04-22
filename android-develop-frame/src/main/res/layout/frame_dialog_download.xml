@@ -26,7 +26,7 @@
             android:layout_marginTop="21dp"
             android:text="发现新版本"
             android:textColor="@color/default_black"
-            android:textSize="@dimen/sp18"
+            android:textSize="15sp"
             app:fbt_boldSize="0.8" />
 
         <com.a26c.android.frame.widget.MaxHeightScrollView
@@ -45,7 +45,7 @@
                 android:layout_marginRight="11dp"
                 android:lineSpacingExtra="5dp"
                 android:textColor="@color/default_black"
-                android:textSize="@dimen/sp15" />
+                android:textSize="13sp" />
         </com.a26c.android.frame.widget.MaxHeightScrollView>
 
 

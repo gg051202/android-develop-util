@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:text="算房贷"
             android:textColor="@color/default_black"
-            android:textSize="@dimen/sp15" />
+            android:textSize="13sp" />
 
 
         <ImageView
@@ -46,7 +46,7 @@
 
             app:cm_LeftText="123123"
             app:cm_LeftTextColor="#ff0000"
-            app:cm_LeftTextSize="@dimen/sp20"
+            app:cm_LeftTextSize="17sp"
 
             app:cm_RightImage="@mipmap/frame_icon_delete"
             app:cm_RightImageHeight="26dp"
@@ -55,7 +55,7 @@
 
             app:cm_RightText="asd1d12d12asd1d12d12asd1d12d12asd1d12d12asd1d12d12asd1d12d12asd1d12d12asd1d12d12asd1d12d12"
             app:cm_RightTextColor="#00ff00"
-            app:cm_RightTextSize="@dimen/sp20"
+            app:cm_RightTextSize="17sp"
 
             app:cm_ShowBottomDivider="true"
             app:cm_ShowLeftImage="true"

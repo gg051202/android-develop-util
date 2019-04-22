@@ -10,7 +10,7 @@
 
     <style name="a1">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:textSize">@dimen/sp20</item>
+        <item name="android:textSize">20sp</item>
         <item name="android:text">abc哈哈哈123+*……</item>
         <item name="android:layout_height">match_parent</item>
     </style>

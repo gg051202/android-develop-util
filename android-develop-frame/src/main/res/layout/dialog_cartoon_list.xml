@@ -24,7 +24,7 @@
             android:lineSpacingExtra="3dp"
             android:text="123"
             android:textColor="@color/default_black"
-            android:textSize="@dimen/sp18"
+            android:textSize="15sp"
             app:fbt_boldSize="0.9"
             app:fbt_color="@color/default_black"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -54,7 +54,7 @@
                 android:gravity="center"
                 android:text="取消"
                 android:textColor="@color/default_black"
-                android:textSize="@dimen/sp17"
+                android:textSize="13sp"
                 app:fbt_boldSize="0.7" />
 
             <com.a26c.android.frame.widget.FakeBoldTextView
@@ -66,7 +66,7 @@
                 android:gravity="center"
                 android:text="确定"
                 android:textColor="@color/white"
-                android:textSize="@dimen/sp17"
+                android:textSize="13sp"
                 app:fbt_boldSize="0.7" />
 
         </LinearLayout>

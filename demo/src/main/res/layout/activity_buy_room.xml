@@ -39,7 +39,7 @@
         android:text=""
         android:textColor="@color/default_black"
         android:lineSpacingExtra="7dp"
-        android:textSize="@dimen/sp18" />
+        android:textSize="15sp" />
 
 
 
