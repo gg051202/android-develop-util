@@ -13,7 +13,8 @@ import android.view.animation.CycleInterpolator;
 import android.view.animation.TranslateAnimation;
 
 import com.a26c.android.frame.R;
-import com.a26c.android.frame.util.FrameDensityUtils;
+
+import me.jessyan.autosize.utils.AutoSizeUtils;
 
 /**
  * 带清除功能的EditText
@@ -45,7 +46,7 @@ public class ClearEditText extends AppCompatEditText {
     }
 
     private void init() {
-        setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight() + FrameDensityUtils.dp2px(context, 8), getPaddingBottom());
+        setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight() + AutoSizeUtils.dp2px(context, 8), getPaddingBottom());
         // 获取EditText的DrawableRight,假如没有设置我们就使用默认的图片
         mClearDrawable = getCompoundDrawables()[2];
         if (mClearDrawable == null) {
@@ -54,7 +55,7 @@ public class ClearEditText extends AppCompatEditText {
             mClearDrawable = getResources().getDrawable(R.mipmap.frame_icon_delete);
         }
 
-        int width = FrameDensityUtils.dp2px(context, 20);
+        int width = AutoSizeUtils.dp2px(context, 20);
         mClearDrawable.setBounds(0, 0, width, width);
         // 默认设置隐藏图标
         setClearIconVisible(false);

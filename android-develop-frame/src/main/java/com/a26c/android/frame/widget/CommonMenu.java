@@ -18,6 +18,8 @@ import com.a26c.android.frame.R;
 import com.a26c.android.frame.util.FrameDensityUtils;
 import com.scwang.smartrefresh.layout.util.DensityUtil;
 
+import me.jessyan.autosize.utils.AutoSizeUtils;
+
 public class CommonMenu extends ConstraintLayout {
 
     private Context context;
@@ -37,7 +39,7 @@ public class CommonMenu extends ConstraintLayout {
 
     private void init(Context context, AttributeSet attrs) {
         this.context = context;
-        LayoutInflater.from(context).inflate(R.layout.frame_layout_common_item2, this, true);
+        LayoutInflater.from(context).inflate(R.layout.frame_layout_common_menu, this, true);
 
         mLeftTextView = findViewById(R.id.leftTextView);
         mRightTextView = findViewById(R.id.rightTextView);
@@ -51,28 +53,28 @@ public class CommonMenu extends ConstraintLayout {
 
         //配置左边文字
         setLeftText(array.getString(R.styleable.CommonMenu_cm_LeftText));
-        int leftTextSize = array.getDimensionPixelOffset(R.styleable.CommonMenu_cm_LeftTextSize, DensityUtil.dp2px(15));
+        int leftTextSize = array.getDimensionPixelOffset(R.styleable.CommonMenu_cm_LeftTextSize, AutoSizeUtils.sp2px(context, 15));
         setLeftTextSize(FrameDensityUtils.px2sp(context, leftTextSize));
         setLeftTextColor(array.getColor(R.styleable.CommonMenu_cm_LeftTextColor, 0xff2B2B2B));
 
         //配置右边文字
         setRightText(array.getString(R.styleable.CommonMenu_cm_RightText));
-        int rightTextSize = array.getDimensionPixelOffset(R.styleable.CommonMenu_cm_RightTextSize,  DensityUtil.dp2px(15));
+        int rightTextSize = array.getDimensionPixelOffset(R.styleable.CommonMenu_cm_RightTextSize, AutoSizeUtils.sp2px(context, 15));
         setRightTextSize(FrameDensityUtils.px2sp(context, rightTextSize));
         setRightTextColor(array.getColor(R.styleable.CommonMenu_cm_RightTextColor, 0xff868686));
 
         //配置四个边距
 //        1     2                          3     4
 //     【   图片   文字                 文字   图片   】
-        int dp13 =  DensityUtil.dp2px(13);
-        int dp5 =  DensityUtil.dp2px(5);
+        int dp13 = DensityUtil.dp2px(13);
+        int dp5 = DensityUtil.dp2px(5);
         setMargin1(array.getDimension(R.styleable.CommonMenu_cm_margin1, dp13));
         setMargin2(array.getDimension(R.styleable.CommonMenu_cm_margin2, dp5));
         setMargin3(array.getDimension(R.styleable.CommonMenu_cm_margin3, dp5));
         setMargin4(array.getDimension(R.styleable.CommonMenu_cm_margin4, dp13));
 
         //配置左边图片
-        int dp20 =  DensityUtil.dp2px(20);
+        int dp20 = DensityUtil.dp2px(20);
         setLeftImage(array.getResourceId(R.styleable.CommonMenu_cm_LeftImage, 0));
         setLeftImageHeight(array.getDimensionPixelOffset(R.styleable.CommonMenu_cm_LeftImageHeight, dp20));
         setLeftImageWidth(array.getDimensionPixelOffset(R.styleable.CommonMenu_cm_LeftImageWidth, dp20));
