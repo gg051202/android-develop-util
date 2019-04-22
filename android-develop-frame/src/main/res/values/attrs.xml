@@ -111,15 +111,4 @@
         <attr name="fived_width" format="integer" />
     </declare-styleable>
 
-    <declare-styleable name="FixedConstraintLayout">
-        <attr name="fixed_height" format="integer" />
-        <attr name="fived_width" format="integer" />
-    </declare-styleable>
-
-    <declare-styleable name="FixedFrameLayout">
-        <attr name="fixed_height" format="integer" />
-        <attr name="fived_width" format="integer" />
-    </declare-styleable>
-
-
 </resources>

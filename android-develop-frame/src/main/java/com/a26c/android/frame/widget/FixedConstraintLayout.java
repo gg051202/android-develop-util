@@ -19,9 +19,9 @@ public class FixedConstraintLayout extends ConstraintLayout {
 
     public FixedConstraintLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FixedConstraintLayout);
-        mHeight = typedArray.getInt(R.styleable.FixedConstraintLayout_fiv_height, 1);
-        mWidth = typedArray.getInt(R.styleable.FixedConstraintLayout_fiv_width, 1);
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FixedImageView);
+        mHeight = typedArray.getInt(R.styleable.FixedImageView_fixed_height, 1);
+        mWidth = typedArray.getInt(R.styleable.FixedImageView_fived_width, 1);
         typedArray.recycle();
     }
 
