@@ -102,4 +102,24 @@
         <attr name="maxHeight" format="dimension" />
     </declare-styleable>
 
+    <declare-styleable name="ClickColorImageView">
+        <attr name="cciv_clickColor" format="reference|color" />
+    </declare-styleable>
+
+    <declare-styleable name="FixedImageView">
+        <attr name="fixed_height" format="integer" />
+        <attr name="fived_width" format="integer" />
+    </declare-styleable>
+
+    <declare-styleable name="FixedConstraintLayout">
+        <attr name="fixed_height" format="integer" />
+        <attr name="fived_width" format="integer" />
+    </declare-styleable>
+
+    <declare-styleable name="FixedFrameLayout">
+        <attr name="fixed_height" format="integer" />
+        <attr name="fived_width" format="integer" />
+    </declare-styleable>
+
+
 </resources>
