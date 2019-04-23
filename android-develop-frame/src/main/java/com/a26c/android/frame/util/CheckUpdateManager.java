@@ -13,6 +13,8 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseArray;
 
+import com.a26c.android.frame.R;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -117,8 +119,8 @@ public class CheckUpdateManager {
                 Log.i(TAG, "需要更新但是用户设置了提醒间隔");
                 return;
             }
-            new AlertDialog.Builder(mContext).
-                    setTitle(title)
+            new AlertDialog.Builder(mContext, R.style.FrameDefaultDialogStyle)
+                    .setTitle(title)
                     .setMessage(desc)
                     .setPositiveButton("立即更新", new DialogInterface.OnClickListener() {
                         @Override
@@ -138,7 +140,7 @@ public class CheckUpdateManager {
 
         } else {
             if (!isAutoCheck) {//如果不是自动更新，才需要弹出提示窗
-                new AlertDialog.Builder(mContext).
+                new AlertDialog.Builder(mContext, R.style.FrameDefaultDialogStyle).
                         setTitle("提示")
                         .setMessage("当前版本已是最新版本")
                         .setPositiveButton("确定", new DialogInterface.OnClickListener() {
