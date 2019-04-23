@@ -15,7 +15,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="算房贷"
-            android:textColor="@color/default_black"
+            android:textColor="#313131"
             android:textSize="13sp" />
 
 

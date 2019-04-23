@@ -117,7 +117,7 @@ public class CommonListDialog implements View.OnClickListener {
             mCancelTextView.setOnClickListener(this);
             mSubmitTextView.setOnClickListener(this);
 
-            mAlertDialog = new AlertDialog.Builder(mActivity, R.style.DefaultDialogStyle)
+            mAlertDialog = new AlertDialog.Builder(mActivity, R.style.MultiDialogStyle)
                     .setView(view)
                     .show();
             if (mOnDismissListener != null) {

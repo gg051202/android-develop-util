@@ -1,14 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="white">#ffffff</color>
+    <color name="dialogColorAccent">#FF00FF</color>
 
-    <color name="transparent">#00000000</color>
-    <color name="default_select">#F9F9F9</color>
-    <color name="default_black">#313131</color>
-    <color name="default_grey">#868686</color>
-    <color name="default_grey_light">#E3E4E5</color>
-    <color name="light_grey">#E4E4E4</color>
-    <color name="light_yellow">#F6FCC4</color>
-    <color name="defaultBackGround">#F4F5F6</color>
-    <color name="defaultBackGroundDark">#E6E7E8</color>
 </resources>

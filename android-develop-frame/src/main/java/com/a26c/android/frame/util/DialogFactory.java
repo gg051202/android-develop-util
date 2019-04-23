@@ -26,7 +26,7 @@ public class DialogFactory {
                                    CharSequence negative, DialogInterface.OnClickListener negativeListener,
                                    CharSequence positive, DialogInterface.OnClickListener positiveListener) {
 
-        AlertDialog alertDialog = new AlertDialog.Builder(context).setTitle(title)
+        AlertDialog alertDialog = new AlertDialog.Builder(context, R.style.FrameDefaultDialogStyle).setTitle(title)
                 .setMessage(message)
                 .setNegativeButton(negative, negativeListener)
                 .setPositiveButton(positive, positiveListener).create();
@@ -37,9 +37,10 @@ public class DialogFactory {
     public static AlertDialog show(Context context, CharSequence title, CharSequence message,
                                    CharSequence positive, DialogInterface.OnClickListener positiveListener) {
 
-        AlertDialog alertDialog = new AlertDialog.Builder(context).setTitle(title)
+        AlertDialog alertDialog = new AlertDialog.Builder(context, R.style.FrameDefaultDialogStyle).setTitle(title)
                 .setMessage(message)
                 .setPositiveButton(positive, positiveListener).create();
+
         alertDialog.show();
         return alertDialog;
     }
@@ -47,7 +48,7 @@ public class DialogFactory {
     public static AlertDialog show(Context context, CharSequence title,
                                    CharSequence positive, DialogInterface.OnClickListener positiveListener) {
 
-        AlertDialog alertDialog = new AlertDialog.Builder(context).setTitle(title)
+        AlertDialog alertDialog = new AlertDialog.Builder(context, R.style.FrameDefaultDialogStyle).setTitle(title)
                 .setPositiveButton(positive, positiveListener).create();
         alertDialog.show();
         return alertDialog;
@@ -66,7 +67,7 @@ public class DialogFactory {
             }
         }
 
-        AlertDialog alertDialog = new AlertDialog.Builder(context)
+        AlertDialog alertDialog = new AlertDialog.Builder(context, R.style.FrameDefaultDialogStyle)
                 .setSingleChoiceItems(scList, select, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(final DialogInterface dialog, int which) {
@@ -113,7 +114,7 @@ public class DialogFactory {
             checkedItems[i] = list.get(i).isSelected();
         }
 
-        AlertDialog alertDialog = new AlertDialog.Builder(context)
+        AlertDialog alertDialog = new AlertDialog.Builder(context, R.style.FrameDefaultDialogStyle)
                 .setMultiChoiceItems(valueList, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which, boolean isChecked) {
@@ -139,7 +140,7 @@ public class DialogFactory {
      */
     public static AlertDialog getProgressDialog(Context context, boolean iscancel) {
 
-        return new AlertDialog.Builder(context)
+        return new AlertDialog.Builder(context, R.style.FrameDefaultDialogStyle)
                 .setView(R.layout.frame_layout_progressbar)
                 .setCancelable(iscancel)
                 .create();
@@ -184,7 +185,7 @@ public class DialogFactory {
 
     }
 
-    public static  class SimpleChoiceData implements ChoiceData {
+    public static class SimpleChoiceData implements ChoiceData {
         private String key;
         private CharSequence desc;
         private boolean isSelected;
