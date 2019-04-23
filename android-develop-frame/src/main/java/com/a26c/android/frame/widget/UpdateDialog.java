@@ -78,8 +78,8 @@ public class UpdateDialog implements View.OnClickListener {
             update();
         } else {
             if (!mIsAutoCheck) {//如果不是自动更新，才需要弹出提示窗
-                new AlertDialog.Builder(mActivity).
-                        setTitle("提示")
+                new AlertDialog.Builder(mActivity, R.style.FrameDefaultDialogStyle)
+                        .setTitle("提示")
                         .setMessage("当前版本已是最新版本")
                         .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                             @Override

@@ -115,7 +115,7 @@ public class UploadPhotoDialog implements View.OnClickListener {
         albumLayout.setOnClickListener(this);
         albumLayout.setVisibility(type == PHOTO ? View.GONE : View.VISIBLE);
         photoLayout.setVisibility(type == ALBUM ? View.GONE : View.VISIBLE);
-        alertDialog = new AlertDialog.Builder(context)
+        alertDialog = new AlertDialog.Builder(context, R.style.FrameDefaultDialogStyle)
                 .setView(view)
                 .create();
         alertDialog.show();
