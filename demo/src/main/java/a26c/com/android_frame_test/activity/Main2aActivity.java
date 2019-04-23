@@ -7,8 +7,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.a26c.android.frame.util.DialogFactory;
-import com.a26c.android.frame.widget.CommonListDialog;
 import com.a26c.android.frame.widget.CommonMenu;
+import com.a26c.android.frame.widget.UpdateDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +50,16 @@ public class Main2aActivity extends AppCompatActivity implements View.OnClickLis
             default:
                 break;
             case R.id.fangdaiTextView:
-                new CommonListDialog(this).addData("1", "1").show();
+                new UpdateDialog(this)
+                        .setNeedUpdate(false)
+                        .setTitleName("发现新版本 ")
+                        .setDescName("11M")
+                        .setDownloadUrl("https://44c48dfbc00abf22971f5bf20622e816.dd.cdntips.com/imtt.dd.qq.com/16891/2904F0968B511EA84AFBEFE8FCF21CE3.apk?mkey=5cbee67c73c39246&f=8eb5&fsname=tv.acfundanmaku.video_5.16.0.672_672.apk&csr=1bbd&cip=115.195.180.179&proto=https")
+                        .setIsAutoCheck(false)
+                        .setSubmitName("抢先体验")
+                        .setCancleName("留在旧版")
+                        .setSpaceTimeHour(1)
+                        .show();
                 break;
             case R.id.button:
 //                DialogFactory.show(this, "提示", "123", "确定", null, "取消", null);

@@ -11,7 +11,7 @@
         <item name="android:backgroundDimEnabled">true</item>
         <item name="android:backgroundDimAmount">0.6</item>
         <item name="android:windowMinWidthMajor">50%</item>
-        <item name="android:windowMinWidthMinor">100%</item>
+        <item name="android:windowMinWidthMinor">360dp</item>
     </style>
 
     <style name="update_dialog_style1">
