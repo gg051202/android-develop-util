@@ -68,6 +68,7 @@
 
     <style name="FrameDefaultDialogStyle"  parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="colorAccent">@color/dialogColorAccent</item>
+        <item name="android:windowMinWidthMinor">360dp</item>
     </style>
 
 </resources>
