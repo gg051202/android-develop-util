@@ -29,6 +29,7 @@ public class CommonMenu extends ConstraintLayout {
     private ImageView mRightImageView;
     private View mTopDividerView;
     private View mBottomDividerView;
+    private RedPointTextView mRedPointView;
     private ConstraintLayout mConstraintLayout;
 
     public CommonMenu(Context context, AttributeSet attrs) {
@@ -48,6 +49,7 @@ public class CommonMenu extends ConstraintLayout {
         mTopDividerView = findViewById(R.id.topDividerView);
         mBottomDividerView = findViewById(R.id.bottomDividerView);
         mConstraintLayout = findViewById(R.id.parentLayout);
+        mRedPointView = findViewById(R.id.redPointView);
 
         TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.CommonMenu);
 
@@ -311,5 +313,29 @@ public class CommonMenu extends ConstraintLayout {
 
     public void setConstraintLayout(ConstraintLayout constraintLayout) {
         mConstraintLayout = constraintLayout;
+    }
+
+    public RedPointTextView getRedPointView() {
+        return mRedPointView;
+    }
+
+    public void setRedPointView(RedPointTextView redPointView) {
+        mRedPointView = redPointView;
+    }
+
+    public void setRedPointSize(int width, int margin) {
+        ConstraintLayout.LayoutParams layoutParams = (LayoutParams) mRedPointView.getLayoutParams();
+        layoutParams.height = width;
+        layoutParams.width = width;
+        layoutParams.rightMargin = margin;
+        layoutParams.goneRightMargin = margin;
+        mRedPointView.requestLayout();
+    }
+
+    public void setRedPointSize(int width) {
+        ConstraintLayout.LayoutParams layoutParams = (LayoutParams) mRedPointView.getLayoutParams();
+        layoutParams.height = width;
+        layoutParams.width = width;
+        mRedPointView.requestLayout();
     }
 }

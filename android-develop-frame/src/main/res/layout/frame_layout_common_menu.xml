@@ -55,6 +55,18 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <com.a26c.android.frame.widget.RedPointTextView
+        android:id="@+id/redPointView"
+        android:layout_width="8dp"
+        android:layout_height="8dp"
+        android:layout_marginEnd="13dp"
+        android:layout_marginRight="13dp"
+        app:layout_constraintBottom_toBottomOf="@id/parentLayout"
+        app:layout_constraintRight_toLeftOf="@+id/rightImageView"
+        app:layout_constraintTop_toTopOf="@id/parentLayout"
+        app:layout_goneMarginRight="13dp"/>
+
+
     <View
         android:id="@+id/bottomDividerView"
         android:layout_width="match_parent"

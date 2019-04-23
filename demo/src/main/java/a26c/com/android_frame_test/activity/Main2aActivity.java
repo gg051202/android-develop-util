@@ -42,6 +42,8 @@ public class Main2aActivity extends AppCompatActivity implements View.OnClickLis
         mButton = (Button) findViewById(R.id.button);
         mButton.setOnClickListener(this);
         mCommonMenu = (CommonMenu) findViewById(R.id.commonMenu);
+
+        mCommonMenu.getRedPointView().setEmptyString();
     }
 
     @Override
