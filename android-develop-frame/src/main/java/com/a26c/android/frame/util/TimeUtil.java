@@ -1,5 +1,8 @@
 package com.a26c.android.frame.util;
 
+import android.annotation.SuppressLint;
+import android.text.TextUtils;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -13,7 +16,7 @@ import java.util.TimeZone;
  * @author fuguorong
  * @version 2015-3-11 下午4:00:12
  */
-public class TimeZoneUtil {
+public class TimeUtil {
     /**
      * 判断用户的设备时区是否为东八区（中国） 2014年7月31日
      */
@@ -270,4 +273,61 @@ public class TimeZoneUtil {
         Date date = new Date(time);
         return Formatter_NOHHMM.format(date);
     }
+
+
+
+    /**
+     * 将值转换成 毫秒
+     */
+    @SuppressLint("SimpleDateFormat")
+    public static long getLongTime(String date) {
+        if (TextUtils.isEmpty(date)) {
+            return 0L;
+        }
+        Date date1;
+        try {
+            date1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(date);
+        } catch (java.text.ParseException e) {
+            e.printStackTrace();
+            return 0;
+        }
+        return date1.getTime();
+    }
+
+    /**
+     * 将值转换成 毫秒
+     */
+    @SuppressLint("SimpleDateFormat")
+    public static long getLongTimeyyyyMMdd(String date) {
+        if (TextUtils.isEmpty(date)) {
+            return 0L;
+        }
+        Date date1;
+        try {
+            date1 = new SimpleDateFormat("yyyy-MM-dd").parse(date);
+        } catch (java.text.ParseException e) {
+            e.printStackTrace();
+            return 0;
+        }
+        return date1.getTime();
+    }
+
+    /**
+     * 将值转换成 毫秒
+     */
+    @SuppressLint("SimpleDateFormat")
+    public static long getLongTime(String date, String format) {
+        if (TextUtils.isEmpty(date)) {
+            return 0L;
+        }
+        Date date1;
+        try {
+            date1 = new SimpleDateFormat(format).parse(date);
+        } catch (java.text.ParseException e) {
+            e.printStackTrace();
+            return 0;
+        }
+        return date1.getTime();
+    }
+
 }

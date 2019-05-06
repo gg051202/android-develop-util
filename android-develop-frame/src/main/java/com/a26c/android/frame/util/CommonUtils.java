@@ -1,14 +1,16 @@
 package com.a26c.android.frame.util;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -20,18 +22,21 @@ import android.os.Environment;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
-import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.FrameLayout;
 import android.widget.Toast;
+
+import com.chad.library.adapter.base.BaseQuickAdapter;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
@@ -44,9 +49,6 @@ import java.util.Date;
  */
 public class CommonUtils {
 
-    private static final String TAG = "CommonUtils";
-
-
     /**
      * @return 返回true表示没有授权
      */
@@ -55,7 +57,7 @@ public class CommonUtils {
                 != PackageManager.PERMISSION_GRANTED;
     }
 
-    private static final char hexDigits[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C',
+    private static final char[] hexDigits = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C',
             'D', 'E', 'F'};
 
     /**
@@ -81,59 +83,7 @@ public class CommonUtils {
         return null;
     }
 
-    /**
-     * 获取设备的型号
-     *
-     * @param context
-     */
-    @SuppressLint("MissingPermission")
-    public static String getDeviceId(Context context) {
-        TelephonyManager TelephonyMgr = (TelephonyManager) context
-                .getSystemService(Context.TELEPHONY_SERVICE);
-        return TelephonyMgr.getDeviceId(); // Requires READ_PHONE_STATE
-    }
-
-    /**
-     * 获取版本名称 如 1.0.1
-     *
-     * @param context
-     */
-    public static String getVerName(Context context) {
-        PackageInfo info;
-        try {
-            info = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-            return "";
-        }
-        return info.versionName;
-    }
-
-    /**
-     * 判断是否有网络连接
-     */
-    public static boolean isNetworkConnected(Context context) {
-        if (context != null) {
-            ConnectivityManager mConnectivityManager = (ConnectivityManager) context
-                    .getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
-            if (mNetworkInfo == null || !mNetworkInfo.isAvailable()) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-
-    public static NetworkInfo getActiveNetwork(Context context) {
-        if (context == null) return null;
-        ConnectivityManager manager = (ConnectivityManager) context.getSystemService(context.CONNECTIVITY_SERVICE);
-        if (manager == null) return null;
-        NetworkInfo networkInfo = manager.getActiveNetworkInfo();
-        return networkInfo;
-    }
-
-    public static boolean checkNet(Context context) {// 获取手机所有连接管理对象（包括对wi-fi,net等连接的管理）
+    public static boolean isNetworkConnected(Context context) {// 获取手机所有连接管理对象（包括对wi-fi,net等连接的管理）
         try {
             ConnectivityManager connectivity = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
             if (connectivity != null) {
@@ -146,7 +96,7 @@ public class CommonUtils {
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return false;
     }
@@ -526,4 +476,162 @@ public class CommonUtils {
 
     }
 
+    public static String get2String(int i) {
+        if (i >= 0 && i <= 9) {
+            return "0" + i;
+        } else {
+            return String.valueOf(i);
+        }
+    }
+
+    /**
+     * 利用反射机制，不隐藏dialog
+     */
+    public static void stillShowDialog(DialogInterface dialog) {
+        try {
+            Field field = dialog.getClass().getSuperclass().getSuperclass().getDeclaredField("mShowing");
+            field.setAccessible(true);
+            field.set(dialog, false);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 取消dialog
+     */
+    public static void dismissDialog(DialogInterface dialog) {
+        try {
+            Field field = dialog.getClass().getSuperclass().getSuperclass().getDeclaredField("mShowing");
+            field.setAccessible(true);
+            field.set(dialog, true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    /**
+     * 隐藏身份证号码
+     */
+    public static String hideIDcarNumber(String idcardNumber) {
+        return idcardNumber.substring(0, 3) + "************" + idcardNumber.substring(idcardNumber.length() - 4);
+    }
+
+
+    /**
+     * 隐藏手机号码
+     */
+    public static String hidePhone(String phone) {
+        if (TextUtils.isEmpty(phone)) {
+            return "";
+
+        }
+        if (phone.length() != 11) {
+            return phone;
+        }
+        return phone.substring(0, 3) + "****" + phone.substring(phone.length() - 4);
+    }
+
+    public static void copyText(Context context, String text) {
+        ClipboardManager cmb = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+        if (cmb != null) {
+            cmb.setPrimaryClip(ClipData.newPlainText(text, text));
+        }
+    }
+    private static DecimalFormat df = new DecimalFormat("#.##");
+
+    // 格式化数字显示方式,double类型会显示小数点后很多位
+    public static String getTwoPointnumberAuto(float e) {
+        return df.format(e);
+    }
+
+    /**
+     * 从View获取Bitmap
+     *
+     * @param view View
+     * @return Bitmap
+     */
+    public static Bitmap getBitmapFromView(View view) {
+        Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+
+        view.layout(view.getLeft(), view.getTop(), view.getRight(), view.getBottom());
+        view.draw(canvas);
+
+        return bitmap;
+    }
+
+
+
+    public static void setBaseRecyclerViewEmptyViewHeight(BaseQuickAdapter adapter, int height) {
+        try {
+            Class<?> clazz = BaseQuickAdapter.class;// 获取PrivateClass整个类
+
+            Field mEmptyLayoutField = clazz.getDeclaredField("mEmptyLayout");// 获取PrivateClass所有属性
+            mEmptyLayoutField.setAccessible(true);
+            FrameLayout mEmptyLayout = (FrameLayout) mEmptyLayoutField.get(adapter);
+            mEmptyLayout.getLayoutParams().height = height;
+            mEmptyLayout.requestLayout();
+
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    /**
+     * 从assets获取文本内容
+     */
+    public static String getContentFromAssetsFile(Context context, String fileName) {
+        String res = "";
+        try {
+            InputStream in = context.getResources().getAssets().open(fileName);
+            int length = in.available();
+            byte[] buffer = new byte[length];
+            if (in.read(buffer) > 0) {
+                // 获得编码格式
+                res = new String(buffer, "UTF-8");
+                // 关闭输入流
+                in.close();
+            }
+        } catch (Exception e) {
+            Log.i("", "读取文件错误" + e.getMessage());
+        }
+        return res;
+    }
+
+
+    /**
+     * unicode 转utf-8
+     */
+    public static String unicodeToUTF_8(String src) {
+        if (null == src) {
+            return null;
+        }
+        StringBuilder out = new StringBuilder();
+        for (int i = 0; i < src.length(); ) {
+            char c = src.charAt(i);
+            if (i + 6 < src.length() && c == '\\' && src.charAt(i + 1) == 'u') {
+                String hex = src.substring(i + 2, i + 6);
+                try {
+                    out.append((char) Integer.parseInt(hex, 16));
+                } catch (NumberFormatException nfe) {
+                    nfe.fillInStackTrace();
+                }
+                i = i + 6;
+            } else {
+                out.append(src.charAt(i));
+                ++i;
+            }
+        }
+        return out.toString();
+
+    }
 }
