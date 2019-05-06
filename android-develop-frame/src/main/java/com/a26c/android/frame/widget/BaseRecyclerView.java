@@ -1,6 +1,8 @@
 package com.a26c.android.frame.widget;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -32,7 +34,6 @@ import rx.schedulers.Schedulers;
  * Created by guilinlin on 16/7/29 15:41.
  * email 973635949@qq.com
  */
-@SuppressWarnings("all")
 public class BaseRecyclerView extends FrameLayout {
 
     /**
@@ -199,7 +200,7 @@ public class BaseRecyclerView extends FrameLayout {
             });
         }
 
-        showNoDataView(mNodataString);
+        showNoDataView();
 
         mStatus = STATUS_NONE;
 
@@ -253,7 +254,7 @@ public class BaseRecyclerView extends FrameLayout {
             classicsFooter.setFinishDuration(500);
         }
 
-        showErrView(errText);
+        showErrView();
 
         mStatus = STATUS_NONE;
     }
@@ -274,7 +275,7 @@ public class BaseRecyclerView extends FrameLayout {
     /**
      * 显示没有数据的视图
      */
-    private void showNoDataView(CharSequence hint) {
+    private void showNoDataView() {
         if (mAdapter.getData().size() > 0 || !mNeedShowNodataView) {
             return;
         }
@@ -287,7 +288,7 @@ public class BaseRecyclerView extends FrameLayout {
     /**
      * 显示网络加载错误的视图
      */
-    private void showErrView(CharSequence hint) {
+    private void showErrView() {
         if (mAdapter.getData().size() > 0 || !mNeedShowNodataView) {
             return;
         }
@@ -300,6 +301,7 @@ public class BaseRecyclerView extends FrameLayout {
     /**
      * 初始化空数据和无数据视图
      */
+    @SuppressLint("InflateParams")
     private void initNoDataView() {
         if (mViewCreator == null) {
             if (placeholderCreater != null) {
@@ -317,18 +319,30 @@ public class BaseRecyclerView extends FrameLayout {
         }
 
         if (mNoDataView == null) {
-            mNoDataView = (TextView) LayoutInflater.from(mContext).inflate(R.layout.frame_layout_network_nodata, null);
+            mNoDataView = LayoutInflater.from(mContext).inflate(R.layout.frame_layout_network_nodata, null);
             mNoDataView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         }
         if (mNoDataView != null) {
             View refreshView = mNoDataView.findViewById(R.id.refresh);
-            if (refreshView != null && !refreshView.hasOnClickListeners()) {
-                refreshView.setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        callRefreshListener();
+            if (refreshView != null) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+                    if (!refreshView.hasOnClickListeners()) {
+                        refreshView.setOnClickListener(new OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                callRefreshListener();
+                            }
+                        });
                     }
-                });
+                } else {
+                    refreshView.setOnClickListener(new OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            callRefreshListener();
+                        }
+                    });
+                }
+
             }
         }
     }
@@ -336,6 +350,7 @@ public class BaseRecyclerView extends FrameLayout {
     /**
      * 初始化空数据和无数据视图
      */
+    @SuppressLint("InflateParams")
     private void initErrView() {
         if (mViewCreator == null) {
             if (placeholderCreater != null) {
@@ -353,18 +368,29 @@ public class BaseRecyclerView extends FrameLayout {
         }
 
         if (mErrView == null) {
-            mErrView = (TextView) LayoutInflater.from(mContext).inflate(R.layout.frame_layout_network_nodata, null);
+            mErrView = LayoutInflater.from(mContext).inflate(R.layout.frame_layout_network_nodata, null);
             mErrView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         }
         if (mErrView != null) {
             View refreshView = mErrView.findViewById(R.id.refresh);
-            if (refreshView != null && !refreshView.hasOnClickListeners()) {
-                refreshView.setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        callRefreshListener();
+            if (refreshView != null) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+                    if (!refreshView.hasOnClickListeners()) {
+                        refreshView.setOnClickListener(new OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                callRefreshListener();
+                            }
+                        });
                     }
-                });
+                } else {
+                    refreshView.setOnClickListener(new OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            callRefreshListener();
+                        }
+                    });
+                }
             }
         }
     }
