@@ -18,7 +18,7 @@ import android.widget.Toast;
 import com.a26c.android.frame.R;
 import com.a26c.android.frame.util.CommonUtils;
 import com.a26c.android.frame.util.DialogFactory;
-import com.a26c.android.frame.util.FrameDownloadUtil;
+import com.a26c.android.frame.util.DownloadUtil;
 import com.a26c.android.frame.util.FrameSPUtils;
 import com.daimajia.numberprogressbar.NumberProgressBar;
 
@@ -52,7 +52,7 @@ public class UpdateDialog implements View.OnClickListener {
     private CharSequence mSubmitName = "抢先体验";
     private CharSequence mCancleName = "留在旧版";
     private String mDownloadUrl;
-    private FrameDownloadUtil mDownloadUtil;
+    private DownloadUtil mDownloadUtil;
 
 
     /**
@@ -145,7 +145,7 @@ public class UpdateDialog implements View.OnClickListener {
     private void startDownload() {
         String fileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() +
                 File.separatorChar + CommonUtils.MD5(mDownloadUrl) + ".apk";
-        mDownloadUtil = new FrameDownloadUtil(mActivity);
+        mDownloadUtil = new DownloadUtil(mActivity);
         mDownloadUtil.setOnDownloadListener(mDownloadListener);
         mDownloadUtil.startDownload(fileName, mDownloadUrl);
     }
@@ -190,7 +190,7 @@ public class UpdateDialog implements View.OnClickListener {
     /**
      * 下载的监听事件
      */
-    private FrameDownloadUtil.OnDownloadListener mDownloadListener = new FrameDownloadUtil.OnDownloadListener() {
+    private DownloadUtil.OnDownloadListener mDownloadListener = new DownloadUtil.OnDownloadListener() {
         @Override
         public void start() {
             mNumberProgressBar.setVisibility(View.VISIBLE);

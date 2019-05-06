@@ -18,7 +18,7 @@ import android.webkit.MimeTypeMap;
 import com.a26c.android.frame.R;
 import com.a26c.android.frame.util.AndroidScheduler;
 import com.a26c.android.frame.util.CommonUtils;
-import com.a26c.android.frame.util.FrameBitmapUtil;
+import com.a26c.android.frame.util.BitmapUtil;
 import com.a26c.android.frame.util.FrameCropUtils;
 import com.a26c.android.frame.util.SelectVideoUtil;
 import com.bumptech.glide.Glide;
@@ -239,7 +239,7 @@ public class UploadPhotoDialog implements View.OnClickListener {
             bitmap = Glide.with(context).asBitmap().load(data).apply(requestOptions)
                     .into(imageWidth, imageHeight).get();
             String newFilePath = String.format("%s/saved_%s.jpg", getFileDir(), System.currentTimeMillis());
-            if (FrameBitmapUtil.savePicture(newFilePath, bitmap)) {
+            if (BitmapUtil.savePicture(newFilePath, bitmap)) {
                 ResultData resultData = new ResultData(false, ResultData.TYPE_SUCCESS);
                 resultData.setPath(newFilePath);
                 subscriber.onNext(resultData);

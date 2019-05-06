@@ -26,7 +26,7 @@ import rx.schedulers.Schedulers;
  * Created by guilinlin on 2018/8/6 11:32.
  * email 973635949@qq.com
  */
-public class FrameDownloadUtil {
+public class DownloadUtil {
 
 
     private static final String TAG = "DownloadUtil";
@@ -39,7 +39,7 @@ public class FrameDownloadUtil {
     private LoadingRandomAccessFile mRandomAccessFile;
 
 
-    public FrameDownloadUtil(Activity activity) {
+    public DownloadUtil(Activity activity) {
         this.mActivity = activity;
     }
 

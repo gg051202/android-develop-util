@@ -16,7 +16,7 @@ import java.io.InputStream;
  *
  * @author jingle1267@163.com
  */
-public final class FrameBitmapUtil {
+public final class BitmapUtil {
     public static Bitmap getBitmapFromUri(Context context, Uri uri) {
 
         try {

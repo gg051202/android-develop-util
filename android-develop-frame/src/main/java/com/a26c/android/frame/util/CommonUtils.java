@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Rect;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -23,12 +24,7 @@ import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Adapter;
-import android.widget.BaseAdapter;
-import android.widget.GridView;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -36,7 +32,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
@@ -480,5 +475,55 @@ public class CommonUtils {
         }
     }
 
+
+    /**
+     * 获取当前屏幕截图，包含状态栏
+     *
+     * @param activity
+     */
+    public static Bitmap snapShotWithStatusBar(Activity activity) {
+        View view = activity.getWindow().getDecorView();
+        view.setDrawingCacheEnabled(true);
+        view.buildDrawingCache();
+        Bitmap bmp = view.getDrawingCache();
+        int width = ActivityUtil.getScreenWidth(activity);
+        int height = ActivityUtil.getScreenHeight(activity);
+        Bitmap bp = null;
+        bp = Bitmap.createBitmap(bmp, 0, 0, width, height);
+        view.destroyDrawingCache();
+        return bp;
+
+    }
+
+    /**
+     * 获取当前屏幕截图，不包含状态栏
+     */
+    public static Bitmap snapShotWithoutStatusBar(Activity activity) {
+        View view = activity.getWindow().getDecorView();
+        view.setDrawingCacheEnabled(true);
+        view.buildDrawingCache();
+        Bitmap bmp = view.getDrawingCache();
+        Rect frame = new Rect();
+        activity.getWindow().getDecorView().getWindowVisibleDisplayFrame(frame);
+        int statusBarHeight = frame.top;
+
+        int width = ActivityUtil.getScreenWidth(activity);
+        int height = ActivityUtil.getScreenHeight(activity);
+        Bitmap bp;
+        bp = Bitmap.createBitmap(bmp, 0, statusBarHeight, width, height - statusBarHeight);
+        view.destroyDrawingCache();
+        return bp;
+
+    }
+
+    /**
+     * 获取当前屏幕截图，不包含状态栏
+     */
+    public static Bitmap screenShootView(View view) {
+        view.setDrawingCacheEnabled(true);
+        view.buildDrawingCache();
+        return view.getDrawingCache();
+
+    }
 
 }
