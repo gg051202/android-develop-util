@@ -56,7 +56,7 @@ public class BaseRecyclerView<T> extends FrameLayout {
     /**
      * 默认的分页大小，一个APP可以看需要，初始化一次
      */
-    public static final int DEFAULT_PAGE_SIZE = 10;
+    public static int DEFAULT_PAGE_SIZE = 10;
     private final Context mContext;
 
     private BaseQuickAdapter<T, BaseViewHolder> mAdapter;
