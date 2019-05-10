@@ -1,12 +1,12 @@
 package com.a26c.android.frame.widget;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.a26c.android.frame.R;
 import com.a26c.android.frame.util.AndroidScheduler;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshFooter;
@@ -26,15 +27,13 @@ import com.scwang.smartrefresh.layout.listener.OnRefreshLoadMoreListener;
 import java.util.List;
 
 import rx.Observable;
-import rx.functions.Action1;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 /**
  * Created by guilinlin on 16/7/29 15:41.
  * email 973635949@qq.com
  */
-public class BaseRecyclerView extends FrameLayout {
+public class BaseRecyclerView<T> extends FrameLayout {
 
     /**
      * 无操作状态
@@ -57,10 +56,10 @@ public class BaseRecyclerView extends FrameLayout {
     /**
      * 默认的分页大小，一个APP可以看需要，初始化一次
      */
-    public static int DEFAULT_PAGE_SIZE = 10;
+    public static final int DEFAULT_PAGE_SIZE = 10;
     private final Context mContext;
 
-    private BaseQuickAdapter mAdapter;
+    private BaseQuickAdapter<T, BaseViewHolder> mAdapter;
     private RecyclerView mRecyclerView;
     private FrameLayout mContentFrameLayout;
     private SmartRefreshLayout mRefreshLayout;
@@ -116,7 +115,7 @@ public class BaseRecyclerView extends FrameLayout {
         mRefreshLayout.setNestedScrollingEnabled(true);
     }
 
-    public void init(BaseQuickAdapter baseQuickAdapter, NetworkHandle networkHandle) {
+    public void init(BaseQuickAdapter<T, BaseViewHolder> baseQuickAdapter, NetworkHandle networkHandle) {
         mNetworkHandle = networkHandle;
         mAdapter = baseQuickAdapter;
 
@@ -172,7 +171,7 @@ public class BaseRecyclerView extends FrameLayout {
      *
      * @param data 网络请求到的数据
      */
-    public void onLoadDataComplete(List data) {
+    public void onLoadDataComplete(List<T> data) {
         if (isRefreshing() || mPageIndex == 1) {
             mAdapter.getData().clear();
         }
@@ -191,13 +190,8 @@ public class BaseRecyclerView extends FrameLayout {
 
         mRefreshLayout.setEnableAutoLoadMore(true);
 
-        if (mAdapter.getData().size() > 0 && isRefreshing()) {
-            post(new Runnable() {
-                @Override
-                public void run() {
-                    mRecyclerView.smoothScrollToPosition(0);
-                }
-            });
+        if (!mAdapter.getData().isEmpty() && isRefreshing()) {
+            post(() -> mRecyclerView.smoothScrollToPosition(0));
         }
 
         showNoDataView();
@@ -209,24 +203,18 @@ public class BaseRecyclerView extends FrameLayout {
         } else {
             Observable.just(1)
                     .subscribeOn(Schedulers.io())
-                    .map(new Func1<Integer, Object>() {
-                        @Override
-                        public Object call(Integer integer) {
-                            try {
-                                Thread.sleep(500);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                            return null;
+                    .map(integer -> {
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            Log.i("", e.toString());
                         }
+                        return null;
                     })
                     .observeOn(AndroidScheduler.mainThread())
-                    .subscribe(new Action1<Object>() {
-                        @Override
-                        public void call(Object integer) {
-                            if (mRefreshLayout != null) {
-                                mRefreshLayout.finishLoadMoreWithNoMoreData();
-                            }
+                    .subscribe(integer -> {
+                        if (mRefreshLayout != null) {
+                            mRefreshLayout.finishLoadMoreWithNoMoreData();
                         }
                     });
 
@@ -276,7 +264,7 @@ public class BaseRecyclerView extends FrameLayout {
      * 显示没有数据的视图
      */
     private void showNoDataView() {
-        if (mAdapter.getData().size() > 0 || !mNeedShowNodataView) {
+        if (!mAdapter.getData().isEmpty() || !mNeedShowNodataView) {
             return;
         }
         initNoDataView();
@@ -289,7 +277,7 @@ public class BaseRecyclerView extends FrameLayout {
      * 显示网络加载错误的视图
      */
     private void showErrView() {
-        if (mAdapter.getData().size() > 0 || !mNeedShowNodataView) {
+        if (!mAdapter.getData().isEmpty() || !mNeedShowNodataView) {
             return;
         }
         initErrView();
@@ -301,7 +289,6 @@ public class BaseRecyclerView extends FrameLayout {
     /**
      * 初始化空数据和无数据视图
      */
-    @SuppressLint("InflateParams")
     private void initNoDataView() {
         if (mViewCreator == null) {
             if (placeholderCreater != null) {
@@ -319,7 +306,7 @@ public class BaseRecyclerView extends FrameLayout {
         }
 
         if (mNoDataView == null) {
-            mNoDataView = LayoutInflater.from(mContext).inflate(R.layout.frame_layout_network_nodata, null);
+            mNoDataView = View.inflate(mContext, R.layout.frame_layout_network_nodata, null);
             mNoDataView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         }
         if (mNoDataView != null) {
@@ -327,20 +314,10 @@ public class BaseRecyclerView extends FrameLayout {
             if (refreshView != null) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
                     if (!refreshView.hasOnClickListeners()) {
-                        refreshView.setOnClickListener(new OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                callRefreshListener();
-                            }
-                        });
+                        refreshView.setOnClickListener(v -> callRefreshListener());
                     }
                 } else {
-                    refreshView.setOnClickListener(new OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            callRefreshListener();
-                        }
-                    });
+                    refreshView.setOnClickListener(v -> callRefreshListener());
                 }
 
             }
@@ -350,7 +327,6 @@ public class BaseRecyclerView extends FrameLayout {
     /**
      * 初始化空数据和无数据视图
      */
-    @SuppressLint("InflateParams")
     private void initErrView() {
         if (mViewCreator == null) {
             if (placeholderCreater != null) {
@@ -368,7 +344,7 @@ public class BaseRecyclerView extends FrameLayout {
         }
 
         if (mErrView == null) {
-            mErrView = LayoutInflater.from(mContext).inflate(R.layout.frame_layout_network_nodata, null);
+            mErrView = View.inflate(mContext, R.layout.frame_layout_network_nodata, null);
             mErrView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         }
         if (mErrView != null) {
@@ -376,20 +352,10 @@ public class BaseRecyclerView extends FrameLayout {
             if (refreshView != null) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
                     if (!refreshView.hasOnClickListeners()) {
-                        refreshView.setOnClickListener(new OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                callRefreshListener();
-                            }
-                        });
+                        refreshView.setOnClickListener(v -> callRefreshListener());
                     }
                 } else {
-                    refreshView.setOnClickListener(new OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            callRefreshListener();
-                        }
-                    });
+                    refreshView.setOnClickListener(v -> callRefreshListener());
                 }
             }
         }

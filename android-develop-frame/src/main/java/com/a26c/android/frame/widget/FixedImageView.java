@@ -21,7 +21,7 @@ public class FixedImageView extends AppCompatImageView {
         super(context, attrs);
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FixedImageView);
         mHeight = typedArray.getInt(R.styleable.FixedImageView_fixed_height, 1);
-        mWidth = typedArray.getInt(R.styleable.FixedImageView_fived_width, 1);
+        mWidth = typedArray.getInt(R.styleable.FixedImageView_fixed_width, 1);
         typedArray.recycle();
     }
 

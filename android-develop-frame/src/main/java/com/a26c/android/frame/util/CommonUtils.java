@@ -1,6 +1,7 @@
 package com.a26c.android.frame.util;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -539,6 +540,7 @@ public class CommonUtils {
             cmb.setPrimaryClip(ClipData.newPlainText(text, text));
         }
     }
+
     private static DecimalFormat df = new DecimalFormat("#.##");
 
     // 格式化数字显示方式,double类型会显示小数点后很多位
@@ -561,7 +563,6 @@ public class CommonUtils {
 
         return bitmap;
     }
-
 
 
     public static void setBaseRecyclerViewEmptyViewHeight(BaseQuickAdapter adapter, int height) {
@@ -634,4 +635,26 @@ public class CommonUtils {
         return out.toString();
 
     }
+
+    /**
+     * 获取当前进程名
+     */
+    private static String getCurrentProcessName(Context context) {
+        int pid = android.os.Process.myPid();
+        String processName = "";
+        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        if (manager != null) {
+            for (ActivityManager.RunningAppProcessInfo process : manager.getRunningAppProcesses()) {
+                if (process.pid == pid) {
+                    processName = process.processName;
+                }
+            }
+        }
+        return processName;
+    }
+
+    public static boolean isMainProcess(Context context) {
+        return context.getPackageName().equals(getCurrentProcessName(context));
+    }
+
 }

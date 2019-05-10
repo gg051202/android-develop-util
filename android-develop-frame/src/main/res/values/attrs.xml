@@ -67,7 +67,7 @@
 
     <declare-styleable name="FixedImageView">
         <attr name="fixed_height" format="integer" />
-        <attr name="fived_width" format="integer" />
+        <attr name="fixed_width" format="integer" />
     </declare-styleable>
 
 </resources>

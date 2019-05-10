@@ -17,15 +17,14 @@ import android.webkit.MimeTypeMap;
 
 import com.a26c.android.frame.R;
 import com.a26c.android.frame.util.AndroidScheduler;
-import com.a26c.android.frame.util.CommonUtils;
 import com.a26c.android.frame.util.BitmapUtil;
+import com.a26c.android.frame.util.CommonUtils;
 import com.a26c.android.frame.util.FrameCropUtils;
 import com.a26c.android.frame.util.SelectVideoUtil;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.util.concurrent.ExecutionException;
 
 import rx.Observable;
@@ -269,7 +268,7 @@ public class UploadPhotoDialog implements View.OnClickListener {
         intent.putExtra("outputX", imageWidth);//裁剪图片宽高
         intent.putExtra("outputY", imageHeight);
         intent.putExtra("scale", true);
-        cropFile = new File(getFileDir(), System.currentTimeMillis() + "crop.jpg");
+        cropFile = new File(getFileDir(), "saved_" + System.currentTimeMillis() + ".jpg");
         CommonUtils.clearFile(cropFile);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(cropFile));
         intent.putExtra("return-data", false);
@@ -376,12 +375,7 @@ public class UploadPhotoDialog implements View.OnClickListener {
     public static void deleteCacheFiles() {
         File dir = new File(getFileDir());
         if (dir.exists() && dir.isDirectory()) {
-            File[] files = dir.listFiles(new FilenameFilter() {
-                @Override
-                public boolean accept(File dir1, String name) {
-                    return name.startsWith("saved_") && (name.endsWith(".jpg") || name.endsWith(".png"));
-                }
-            });
+            File[] files = dir.listFiles((dir1, name) -> name.startsWith("saved_") && (name.endsWith(".jpg") || name.endsWith(".png")));
             for (File file : files) {
                 Log.i("delete file", file.getName() + ",result:" + file.delete());
             }
