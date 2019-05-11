@@ -555,13 +555,16 @@ public class CommonUtils {
      * @return Bitmap
      */
     public static Bitmap getBitmapFromView(View view) {
-        Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
 
-        view.layout(view.getLeft(), view.getTop(), view.getRight(), view.getBottom());
-        view.draw(canvas);
-
-        return bitmap;
+        view.buildDrawingCache();
+        return view.getDrawingCache();
+//
+//        Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
+//        Canvas canvas = new Canvas(bitmap);
+//
+//        view.layout(view.getLeft(), view.getTop(), view.getRight(), view.getBottom());
+//        view.draw(canvas);
+//        return bitmap;
     }
 
 
