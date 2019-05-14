@@ -114,31 +114,12 @@ public class RedPointTextView extends View {
         invalidate();
     }
 
-    public void setLayoutParams(int leftMargin, int topMargin, int rightMargin, int bottomMargin) {
-        android.widget.RelativeLayout.LayoutParams lp = (android.widget.RelativeLayout.LayoutParams) getLayoutParams();
-        if (leftMargin != 0)
-            lp.leftMargin = leftMargin;
-        if (topMargin != 0)
-            lp.topMargin = topMargin;
-        if (rightMargin != 0)
-            lp.rightMargin = rightMargin;
-        if (bottomMargin != 0)
-            lp.bottomMargin = bottomMargin;
-        setLayoutParams(lp);
-    }
-
-    /**
-     * 设置已一个点为中心点对其
-     *
-     * @param left
-     * @param top
-     */
-    public void setLocationLeftTop(int left, int top) {
-        android.widget.RelativeLayout.LayoutParams lp = (android.widget.RelativeLayout.LayoutParams) getLayoutParams();
-        lp.leftMargin = (int) (left - height / 2);
-        lp.topMargin = (int) (top - height / 2);
-        setLayoutParams(lp);
-    }
+//    public int getNumber() {
+//        if (TextUtils.isEmpty(number)) {
+//            return 0;
+//        }
+//        return Integer.parseInt(number.replace("+", ""));
+//    }
 
     public int getMaxNumber() {
         return mMaxNumber;
