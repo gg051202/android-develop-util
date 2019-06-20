@@ -1,6 +1,3 @@
-/**
- *
- */
 package com.a26c.android.frame.widget;
 
 
