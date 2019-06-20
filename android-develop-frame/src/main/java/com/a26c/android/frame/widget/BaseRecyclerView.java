@@ -93,6 +93,7 @@ public class BaseRecyclerView<T> extends FrameLayout {
      */
     private int mStatus;
     private View mProgressView;
+    private final LinearLayoutManager mLayoutManager;
 
     public BaseRecyclerView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -105,8 +106,8 @@ public class BaseRecyclerView<T> extends FrameLayout {
 
         //初始化recyclerView
         mMutiItemDecoration = new MutiItemDecoration(MutiItemDecoration.Type.ALL);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(context);
-        mRecyclerView.setLayoutManager(layoutManager);
+        mLayoutManager = new LinearLayoutManager(context);
+        mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.addItemDecoration(mMutiItemDecoration);
 
         mRefreshLayout.setEnableLoadMore(false);
@@ -546,5 +547,9 @@ public class BaseRecyclerView<T> extends FrameLayout {
 
     public static void setPlaceholderCreater(BaseRecyclerViewPlaceholderCreater placeholderCreater) {
         BaseRecyclerView.placeholderCreater = placeholderCreater;
+    }
+
+    public LinearLayoutManager getLayoutManager() {
+        return mLayoutManager;
     }
 }

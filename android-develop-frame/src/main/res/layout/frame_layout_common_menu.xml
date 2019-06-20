@@ -57,8 +57,8 @@
 
     <com.a26c.android.frame.widget.RedPointTextView
         android:id="@+id/redPointView"
-        android:layout_width="8dp"
-        android:layout_height="8dp"
+        android:layout_width="9dp"
+        android:layout_height="9dp"
         android:layout_marginEnd="13dp"
         android:layout_marginRight="13dp"
         app:layout_constraintBottom_toBottomOf="@id/parentLayout"

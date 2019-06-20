@@ -1,15 +1,11 @@
-package com.magic.moly.dai.util;
+package com.a26c.android.frame.util;
 
+import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
-
-import com.google.gson.Gson;
-import com.magic.moly.dai.base.BaseActivity;
-import com.magic.moly.dai.util.network.NetWorkApi;
-import com.magic.moly.dai.util.network.NetworkUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,12 +17,12 @@ import java.util.List;
  */
 public class GetConnactsUtil {
 
-    public static void getContacts(BaseActivity baseActivity) {
+    public static void getContacts(Activity activity) {
 
         List<ContactData> resultList = new ArrayList<>();
         Uri uri = ContactsContract.Contacts.CONTENT_URI;
         String[] projection = new String[]{ContactsContract.Contacts._ID, ContactsContract.Contacts.DISPLAY_NAME};
-        Cursor cursor = baseActivity.getContentResolver().query(uri, projection, null, null, null);
+        Cursor cursor = activity.getContentResolver().query(uri, projection, null, null, null);
         while (cursor != null && cursor.moveToNext()) {
             try {
                 long id = cursor.getLong(0);
@@ -36,33 +32,20 @@ public class GetConnactsUtil {
                 }
                 ContactData data = new ContactData(name);
                 //获取备注
-                data.setDictClass(getRemark(baseActivity, id));
+                data.setDictClass(getRemark(activity, id));
                 //获取关系
-                data.setDictRelationList(getRelation(baseActivity, id));
+                data.setDictRelationList(getRelation(activity, id));
                 //获取电话号码
-                data.setDictNumberList(getPhone(baseActivity, id));
+                data.setDictNumberList(getPhone(activity, id));
 
                 resultList.add(data);
-            } catch (Exception e) {
-                LL.i(e.toString());
+            } catch (Exception ignored) {
             }
         }
         if (cursor != null) {
             cursor.close();
         }
-        String str = new Gson().toJson(resultList);
-        LL.i(str);
-        baseActivity.send(NetWorkApi.getApi().addBook(resultList), new NetworkUtil.OnNetworkResponseListener<Object>() {
-            @Override
-            public void onSuccess(Object data) {
 
-            }
-
-            @Override
-            public void onFail(int code, String message) {
-
-            }
-        });
     }
 
     private static List<ContactData.RelationData> getRelation(Context context, long id) {

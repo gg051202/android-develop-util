@@ -11,7 +11,6 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -23,6 +22,9 @@ import android.os.Environment;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.OrientationHelper;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -43,6 +45,10 @@ import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import me.jessyan.autosize.utils.LogUtils;
+
+import static android.os.Environment.DIRECTORY_DCIM;
 
 /**
  * Created by guilinlin on 2016/11/18 15:14.
@@ -554,17 +560,17 @@ public class CommonUtils {
      * @param view View
      * @return Bitmap
      */
-    public static Bitmap getBitmapFromView(View view) {
-
-        view.buildDrawingCache();
-        return view.getDrawingCache();
-//
-//        Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
-//        Canvas canvas = new Canvas(bitmap);
-//
-//        view.layout(view.getLeft(), view.getTop(), view.getRight(), view.getBottom());
-//        view.draw(canvas);
-//        return bitmap;
+    public static String saveBitmapFromView(View view, String fileName) {
+        view.setDrawingCacheEnabled(true);
+        Bitmap bitmap = view.getDrawingCache();
+        try {
+            File file = new File(Environment.getExternalStoragePublicDirectory(DIRECTORY_DCIM), fileName);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, new FileOutputStream(file));
+            return file.getAbsolutePath();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
 
@@ -658,6 +664,30 @@ public class CommonUtils {
 
     public static boolean isMainProcess(Context context) {
         return context.getPackageName().equals(getCurrentProcessName(context));
+    }
+
+
+    public static int[] getRecyclerViewLastPosition(RecyclerView recyclerView, int size, LinearLayoutManager layoutManager) {
+        int[] pos = new int[2];
+        pos[0] = layoutManager.findFirstCompletelyVisibleItemPosition();
+        OrientationHelper orientationHelper = OrientationHelper.createOrientationHelper(layoutManager, OrientationHelper.VERTICAL);
+        int fromIndex = 0;
+        final int start = orientationHelper.getStartAfterPadding();
+        final int end = orientationHelper.getEndAfterPadding();
+        final int next = size > fromIndex ? 1 : -1;
+        for (int i = fromIndex; i != size; i += next) {
+            final View child = recyclerView.getChildAt(i);
+            final int childStart = orientationHelper.getDecoratedStart(child);
+            final int childEnd = orientationHelper.getDecoratedEnd(child);
+            if (childStart < end && childEnd > start) {
+                if (childStart >= start && childEnd <= end) {
+                    pos[1] = childStart;
+                    Log.v("", "position = " + pos[0] + " off = " + pos[1]);
+                    return pos;
+                }
+            }
+        }
+        return pos;
     }
 
 }
