@@ -36,13 +36,13 @@ dependencies {
     api 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.40'
     api 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-alpha-15'
     //Glide
-    api 'com.github.bumptech.glide:glide:4.9.0'
+    api 'com.github.bumptech.glide:glide:4.7.1'
     api 'jp.wasabeef:glide-transformations:3.3.0'
 
     //RxJava
     api 'io.reactivex:rxjava:1.3.0'
     implementation 'com.daimajia.numberprogressbar:library:1.4@aar'
     //比例适配
-    implementation 'me.jessyan:autosize:1.1.2'
+    api 'me.jessyan:autosize:1.1.2'
 }
 
