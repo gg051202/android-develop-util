@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +13,6 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.a26c.android.frame.R;
-import com.a26c.android.frame.util.AndroidScheduler;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
@@ -25,9 +23,6 @@ import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
 import com.scwang.smartrefresh.layout.listener.OnRefreshLoadMoreListener;
 
 import java.util.List;
-
-import rx.Observable;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by guilinlin on 16/7/29 15:41.
@@ -57,6 +52,10 @@ public class BaseRecyclerView<T> extends FrameLayout {
      * 默认的分页大小，一个APP可以看需要，初始化一次
      */
     public static int DEFAULT_PAGE_SIZE = 10;
+    /**
+     * 是否需要显示"没有更多"的footer
+     */
+    private boolean mNeedShowNoMoreFooter = true;
     private final Context mContext;
 
     private BaseQuickAdapter<T, BaseViewHolder> mAdapter;
@@ -176,7 +175,7 @@ public class BaseRecyclerView<T> extends FrameLayout {
     public void onLoadDataComplete(List<T> data) {
         if (isRefreshing() || mPageIndex == 1) {
             mAdapter.getData().clear();
-            if (mNoMoreFooterView != null) {
+            if (mNeedShowNoMoreFooter && mNoMoreFooterView != null) {
                 mAdapter.removeFooterView(mNoMoreFooterView);
                 mNoMoreFooterView = null;
             }
@@ -207,29 +206,13 @@ public class BaseRecyclerView<T> extends FrameLayout {
         if (data.size() >= mPageSize) {
             mRefreshLayout.setEnableLoadMore(true);
         } else {
-            Observable.just(1)
-                    .subscribeOn(Schedulers.io())
-                    .map(integer -> {
-                        try {
-                            Thread.sleep(500);
-                        } catch (InterruptedException e) {
-                            Log.i("", e.toString());
-                            Thread.currentThread().interrupt();
-                        }
-                        return null;
-                    })
-                    .observeOn(AndroidScheduler.mainThread())
-                    .subscribe(integer -> {
-                        if (mRefreshLayout != null) {
-                            if (mNoMoreFooterView == null) {
-                                mNoMoreFooterView = View.inflate(mContext, R.layout.frame_layout_no_more_data_footer, null);
-                                mAdapter.addFooterView(mNoMoreFooterView);
-                            }
-                            mRefreshLayout.finishLoadMore();
-                            mRefreshLayout.setEnableLoadMore(false);
-                        }
-                    });
-
+            if (mRefreshLayout != null) {
+                if (mNeedShowNoMoreFooter &&mNoMoreFooterView == null) {
+                    mNoMoreFooterView = View.inflate(mContext, R.layout.frame_layout_no_more_data_footer, null);
+                    mAdapter.addFooterView(mNoMoreFooterView);
+                }
+                mRefreshLayout.setEnableLoadMore(false);
+            }
         }
     }
 
@@ -557,6 +540,14 @@ public class BaseRecyclerView<T> extends FrameLayout {
 
     public static void setPlaceholderCreater(BaseRecyclerViewPlaceholderCreater placeholderCreater) {
         BaseRecyclerView.placeholderCreater = placeholderCreater;
+    }
+
+    public boolean isNeedShowNoMoreFooter() {
+        return mNeedShowNoMoreFooter;
+    }
+
+    public void setNeedShowNoMoreFooter(boolean needShowNoMoreFooter) {
+        mNeedShowNoMoreFooter = needShowNoMoreFooter;
     }
 
     public LinearLayoutManager getLayoutManager() {
