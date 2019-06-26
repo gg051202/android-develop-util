@@ -94,6 +94,7 @@ public class BaseRecyclerView<T> extends FrameLayout {
     private int mStatus;
     private View mProgressView;
     private final LinearLayoutManager mLayoutManager;
+    private View mNoMoreFooterView;
 
     public BaseRecyclerView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -175,6 +176,10 @@ public class BaseRecyclerView<T> extends FrameLayout {
     public void onLoadDataComplete(List<T> data) {
         if (isRefreshing() || mPageIndex == 1) {
             mAdapter.getData().clear();
+            if (mNoMoreFooterView != null) {
+                mAdapter.removeFooterView(mNoMoreFooterView);
+                mNoMoreFooterView = null;
+            }
         }
         mAdapter.addData(data);
         mPageIndex++;
@@ -216,7 +221,12 @@ public class BaseRecyclerView<T> extends FrameLayout {
                     .observeOn(AndroidScheduler.mainThread())
                     .subscribe(integer -> {
                         if (mRefreshLayout != null) {
-                            mRefreshLayout.finishLoadMoreWithNoMoreData();
+                            if (mNoMoreFooterView == null) {
+                                mNoMoreFooterView = View.inflate(mContext, R.layout.frame_layout_no_more_data_footer, null);
+                                mAdapter.addFooterView(mNoMoreFooterView);
+                            }
+                            mRefreshLayout.finishLoadMore();
+                            mRefreshLayout.setEnableLoadMore(false);
                         }
                     });
 
