@@ -2,7 +2,7 @@ package a26c.com.android_frame_test.util;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.util.AttributeSet;
 
 /**
@@ -10,7 +10,7 @@ import android.util.AttributeSet;
  * email 973635949@qq.com
  */
 
-public class CenterAlignTextView extends android.support.v7.widget.AppCompatTextView {
+public class CenterAlignTextView extends androidx.appcompat.widget.AppCompatTextView {
 
     private int ruleSize = 5;
 

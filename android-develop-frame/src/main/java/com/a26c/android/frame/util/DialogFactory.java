@@ -2,7 +2,7 @@ package com.a26c.android.frame.util;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.support.v7.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
 import android.text.TextUtils;
 import android.widget.TextView;
 

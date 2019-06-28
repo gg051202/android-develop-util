@@ -1,6 +1,6 @@
 package com.a26c.android.frame.base;
 
-import android.support.v4.view.PagerAdapter;
+import androidx.viewpager.widget.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
 

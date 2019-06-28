@@ -1,6 +1,6 @@
 package com.a26c.android.frame.adapter;
 
-import android.support.v4.view.ViewPager.OnPageChangeListener;
+import androidx.viewpager.widget.ViewPager.OnPageChangeListener;
 
 /**
  * Created by guilinlin on 2016/11/26 10:51.

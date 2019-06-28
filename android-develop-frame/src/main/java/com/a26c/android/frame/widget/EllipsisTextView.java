@@ -1,7 +1,7 @@
 package com.a26c.android.frame.widget;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.text.Layout;
 import android.util.AttributeSet;
 import android.view.ViewTreeObserver;
@@ -12,7 +12,7 @@ import android.widget.TextView;
  * 监听是否触发 ellipsize 属性的TextView
  */
 
-public class EllipsisTextView extends android.support.v7.widget.AppCompatTextView {
+public class EllipsisTextView extends androidx.appcompat.widget.AppCompatTextView {
 
     private OnEllipsisListener onEllipsisListener;
 

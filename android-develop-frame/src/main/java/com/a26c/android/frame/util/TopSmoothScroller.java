@@ -1,7 +1,7 @@
 package com.a26c.android.frame.util;
 
 import android.content.Context;
-import android.support.v7.widget.LinearSmoothScroller;
+import androidx.recyclerview.widget.LinearSmoothScroller;
 
 /**
  * RecyclerView滑动到某个ITEM，并且设置其为顶部
