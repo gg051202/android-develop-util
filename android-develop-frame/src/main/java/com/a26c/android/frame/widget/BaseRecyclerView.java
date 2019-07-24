@@ -62,6 +62,7 @@ public class BaseRecyclerView<T> extends FrameLayout {
     private RecyclerView mRecyclerView;
     private FrameLayout mContentFrameLayout;
     private SmartRefreshLayout mRefreshLayout;
+    private MutiItemDecoration mMutiItemDecoration;
     private NetworkHandle mNetworkHandle;
     private ViewCreator mViewCreator;
     protected static BaseRecyclerViewPlaceholderCreater placeholderCreater = null;
@@ -104,8 +105,10 @@ public class BaseRecyclerView<T> extends FrameLayout {
         mPageSize = DEFAULT_PAGE_SIZE;
 
         //初始化recyclerView
+        mMutiItemDecoration = new MutiItemDecoration(MutiItemDecoration.Type.ALL);
         mLayoutManager = new LinearLayoutManager(context);
         mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.addItemDecoration(mMutiItemDecoration);
 
         mRefreshLayout.setEnableLoadMore(false);
         mRefreshLayout.setEnableLoadMoreWhenContentNotFull(false);
@@ -373,6 +376,10 @@ public class BaseRecyclerView<T> extends FrameLayout {
         View getErrDataView();
     }
 
+    public void removeDivider() {
+        mRecyclerView.removeItemDecoration(mMutiItemDecoration);
+    }
+
     public void addOnItemTouchListener(OnItemClickListener listener) {
         mRecyclerView.addOnItemTouchListener(listener);
     }
@@ -395,6 +402,14 @@ public class BaseRecyclerView<T> extends FrameLayout {
 
     public void setRefreshLayout(SmartRefreshLayout refreshLayout) {
         mRefreshLayout = refreshLayout;
+    }
+
+    public MutiItemDecoration getMutiItemDecoration() {
+        return mMutiItemDecoration;
+    }
+
+    public void setMutiItemDecoration(MutiItemDecoration mutiItemDecoration) {
+        mMutiItemDecoration = mutiItemDecoration;
     }
 
     public NetworkHandle getNetworkHandle() {
