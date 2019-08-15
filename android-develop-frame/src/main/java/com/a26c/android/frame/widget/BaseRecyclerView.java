@@ -207,7 +207,7 @@ public class BaseRecyclerView<T> extends FrameLayout {
             mRefreshLayout.setEnableLoadMore(true);
         } else {
             if (mRefreshLayout != null) {
-                if (mNeedShowNoMoreFooter &&mNoMoreFooterView == null) {
+                if (mNeedShowNoMoreFooter && mNoMoreFooterView == null && !mAdapter.getData().isEmpty()) {
                     mNoMoreFooterView = View.inflate(mContext, R.layout.frame_layout_no_more_data_footer, null);
                     mAdapter.addFooterView(mNoMoreFooterView);
                 }
