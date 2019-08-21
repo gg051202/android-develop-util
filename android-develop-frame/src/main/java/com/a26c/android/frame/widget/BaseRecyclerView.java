@@ -524,6 +524,14 @@ public class BaseRecyclerView<T> extends FrameLayout {
         mErrString = errString;
     }
 
+    public View getNoMoreFooterView() {
+        return mNoMoreFooterView;
+    }
+
+    public void setNoMoreFooterView(View noMoreFooterView) {
+        mNoMoreFooterView = noMoreFooterView;
+    }
+
     private boolean isRefreshing() {
         return mStatus == STATUS_FIRST_LOAD_DATA || mStatus == STATUS_REFRESHING;
     }
