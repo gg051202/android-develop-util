@@ -55,14 +55,6 @@ public class UpdateDialog implements View.OnClickListener {
 
 
     /**
-     * true表示是自动检测更新，当自动更新时如果是最新版本，不需要弹出"已是最新版本"的提示窗
-     */
-    private boolean mIsAutoCheck = false;
-    /**
-     * 是否需要更新，根据这个值判断，如果需要更新，弹出更新框，如果不需要更新，弹出"已是最新版本提示框"
-     */
-    private boolean mNeedUpdate = false;
-    /**
      * 点击"暂不更新"，下次再弹窗更新窗口的间隔,小时为单位
      */
     private int mSpaceTimeHour = 8;
@@ -73,28 +65,11 @@ public class UpdateDialog implements View.OnClickListener {
     }
 
     public void show() {
-        if (mNeedUpdate) {
-            update();
-        } else {
-            if (!mIsAutoCheck) {//如果不是自动更新，才需要弹出提示窗
-                new AlertDialog.Builder(mActivity, R.style.FrameDefaultDialogStyle)
-                        .setTitle("提示")
-                        .setMessage("当前版本已是最新版本")
-                        .setPositiveButton("确定", (dialog, which) -> {
-                        })
-                        .create()
-                        .show();
-            }
-        }
-    }
-
-    private void update() {
         //如果是自动更新但是距离上次点击"明天再说"的时间还没超过一天，就不弹出
-        if (mIsAutoCheck && !checkLastTimeIsOver()) {
+        if (!checkLastTimeIsOver()) {
             Log.i(TAG, "需要更新但是用户设置了提醒间隔");
             return;
         }
-
 
         if (mAlertDialog == null) {
             @SuppressLint("InflateParams")
@@ -270,16 +245,6 @@ public class UpdateDialog implements View.OnClickListener {
         return this;
     }
 
-    public UpdateDialog setIsAutoCheck(boolean isAutoCheck) {
-        this.mIsAutoCheck = isAutoCheck;
-        return this;
-    }
-
-    public UpdateDialog setNeedUpdate(boolean needUpdate) {
-        this.mNeedUpdate = needUpdate;
-        return this;
-    }
-
     public UpdateDialog setSpaceTimeHour(int spaceTimeHour) {
         this.mSpaceTimeHour = spaceTimeHour;
         return this;
@@ -311,6 +276,82 @@ public class UpdateDialog implements View.OnClickListener {
 
     public void setOnUpdateListener(OnUpdateListener l) {
         mOnUpdateListener = l;
+    }
+
+    public AlertDialog getAlertDialog() {
+        return mAlertDialog;
+    }
+
+    public void setAlertDialog(AlertDialog alertDialog) {
+        mAlertDialog = alertDialog;
+    }
+
+    public Activity getActivity() {
+        return mActivity;
+    }
+
+    public void setActivity(Activity activity) {
+        mActivity = activity;
+    }
+
+    public NumberProgressBar getNumberProgressBar() {
+        return mNumberProgressBar;
+    }
+
+    public void setNumberProgressBar(NumberProgressBar numberProgressBar) {
+        mNumberProgressBar = numberProgressBar;
+    }
+
+    public View getBottomLayout1() {
+        return mBottomLayout1;
+    }
+
+    public void setBottomLayout1(View bottomLayout1) {
+        mBottomLayout1 = bottomLayout1;
+    }
+
+    public View getBottomLayout2() {
+        return mBottomLayout2;
+    }
+
+    public void setBottomLayout2(View bottomLayout2) {
+        mBottomLayout2 = bottomLayout2;
+    }
+
+    public CharSequence getTitleName() {
+        return mTitleName;
+    }
+
+    public CharSequence getDescName() {
+        return mDescName;
+    }
+
+    public String getDownloadUrl() {
+        return mDownloadUrl;
+    }
+
+    public DownloadUtil getDownloadUtil() {
+        return mDownloadUtil;
+    }
+
+    public void setDownloadUtil(DownloadUtil downloadUtil) {
+        mDownloadUtil = downloadUtil;
+    }
+
+    public int getSpaceTimeHour() {
+        return mSpaceTimeHour;
+    }
+
+    public DownloadUtil.OnDownloadListener getDownloadListener() {
+        return mDownloadListener;
+    }
+
+    public void setDownloadListener(DownloadUtil.OnDownloadListener downloadListener) {
+        mDownloadListener = downloadListener;
+    }
+
+    public OnUpdateListener getOnUpdateListener() {
+        return mOnUpdateListener;
     }
 }
 
