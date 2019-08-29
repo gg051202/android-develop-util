@@ -95,7 +95,6 @@ public class UpdateDialog implements View.OnClickListener {
             return;
         }
 
-
         if (mAlertDialog == null) {
             @SuppressLint("InflateParams")
             View view = LayoutInflater.from(mActivity).inflate(R.layout.frame_dialog_download, null);
@@ -153,10 +152,10 @@ public class UpdateDialog implements View.OnClickListener {
             if (isRunningBackground()) {
                 dismissDialog();
                 DialogFactory.show(mActivity, "提示", "更新程序正在后台运行，请稍候", "确定", null);
-
                 return;
             }
             if (mOnUpdateListener != null) {
+                dismissDialog();
                 mOnUpdateListener.submit(this);
             }
         }
