@@ -311,5 +311,93 @@ public class UpdateDialog implements View.OnClickListener {
     public void setOnUpdateListener(OnUpdateListener l) {
         mOnUpdateListener = l;
     }
+
+    public AlertDialog getAlertDialog() {
+        return mAlertDialog;
+    }
+
+    public void setAlertDialog(AlertDialog alertDialog) {
+        mAlertDialog = alertDialog;
+    }
+
+    public Activity getActivity() {
+        return mActivity;
+    }
+
+    public void setActivity(Activity activity) {
+        mActivity = activity;
+    }
+
+    public NumberProgressBar getNumberProgressBar() {
+        return mNumberProgressBar;
+    }
+
+    public void setNumberProgressBar(NumberProgressBar numberProgressBar) {
+        mNumberProgressBar = numberProgressBar;
+    }
+
+    public View getBottomLayout1() {
+        return mBottomLayout1;
+    }
+
+    public void setBottomLayout1(View bottomLayout1) {
+        mBottomLayout1 = bottomLayout1;
+    }
+
+    public View getBottomLayout2() {
+        return mBottomLayout2;
+    }
+
+    public void setBottomLayout2(View bottomLayout2) {
+        mBottomLayout2 = bottomLayout2;
+    }
+
+    public CharSequence getTitleName() {
+        return mTitleName;
+    }
+
+    public CharSequence getDescName() {
+        return mDescName;
+    }
+
+    public String getDownloadUrl() {
+        return mDownloadUrl;
+    }
+
+    public DownloadUtil getDownloadUtil() {
+        return mDownloadUtil;
+    }
+
+    public void setDownloadUtil(DownloadUtil downloadUtil) {
+        mDownloadUtil = downloadUtil;
+    }
+
+    public boolean isAutoCheck() {
+        return mIsAutoCheck;
+    }
+
+    public void setAutoCheck(boolean autoCheck) {
+        mIsAutoCheck = autoCheck;
+    }
+
+    public boolean isNeedUpdate() {
+        return mNeedUpdate;
+    }
+
+    public int getSpaceTimeHour() {
+        return mSpaceTimeHour;
+    }
+
+    public DownloadUtil.OnDownloadListener getDownloadListener() {
+        return mDownloadListener;
+    }
+
+    public void setDownloadListener(DownloadUtil.OnDownloadListener downloadListener) {
+        mDownloadListener = downloadListener;
+    }
+
+    public OnUpdateListener getOnUpdateListener() {
+        return mOnUpdateListener;
+    }
 }
 
