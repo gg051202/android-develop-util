@@ -36,10 +36,6 @@ public class GotoPermissionPageUtils {
         this.packageName = packageName;
     }
 
-    public GotoPermissionPageUtils(Context context) {
-        this.mContext = context;
-    }
-
     public void jump() {
         try {
 
