@@ -3,7 +3,6 @@ package com.a26c.android.frame.widget;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.os.Environment;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
@@ -81,10 +80,7 @@ public class UpdateDialog implements View.OnClickListener {
                 new AlertDialog.Builder(mActivity, R.style.FrameDefaultDialogStyle)
                         .setTitle("提示")
                         .setMessage("当前版本已是最新版本")
-                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                            }
+                        .setPositiveButton("确定", (dialog, which) -> {
                         })
                         .create()
                         .show();
@@ -142,7 +138,7 @@ public class UpdateDialog implements View.OnClickListener {
     /**
      * 开始下载
      */
-    private void startDownload() {
+    public void startDownload() {
         String fileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() +
                 File.separatorChar + CommonUtils.MD5(mDownloadUrl) + ".apk";
         mDownloadUtil = new DownloadUtil(mActivity);
@@ -160,7 +156,9 @@ public class UpdateDialog implements View.OnClickListener {
 
                 return;
             }
-            startDownload();
+            if (mOnUpdateListener != null) {
+                mOnUpdateListener.submit(this);
+            }
         }
         //暂不更新
         else if (v.getId() == R.id.cancelTextView) {
@@ -303,6 +301,16 @@ public class UpdateDialog implements View.OnClickListener {
     public UpdateDialog setCancleName(CharSequence cancleName) {
         mCancleName = cancleName;
         return this;
+    }
+
+    public interface OnUpdateListener {
+        void submit(UpdateDialog updateDialog);
+    }
+
+    private OnUpdateListener mOnUpdateListener;
+
+    public void setOnUpdateListener(OnUpdateListener l) {
+        mOnUpdateListener = l;
     }
 }
 
