@@ -242,7 +242,7 @@ public class UpdateDialog implements View.OnClickListener {
         return ((System.currentTimeMillis() - latest) > (mSpaceTimeHour == 0 ? 24 : mSpaceTimeHour * 3600000L));//24*60*60*1000
     }
 
-    private void setIsRunningBackground(boolean isRunningBackground) {
+    public void setIsRunningBackground(boolean isRunningBackground) {
         FrameSPUtils.put(mActivity, "setIsRunningBackground_update", isRunningBackground);
     }
 
