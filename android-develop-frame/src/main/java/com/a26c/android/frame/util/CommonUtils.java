@@ -423,10 +423,6 @@ public class CommonUtils {
 
     public static void install(Activity activity, File file, boolean force) {
 
-        System.out.println(file.getAbsolutePath());
-//        if (Build.VERSION.SDK_INT >= 29) {
-//            androidQInstall(activity, file);
-//        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
