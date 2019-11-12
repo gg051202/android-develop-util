@@ -3,6 +3,7 @@ package com.a26c.android.frame.widget;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.os.Build;
 import android.os.Environment;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
@@ -66,6 +67,11 @@ public class UpdateDialog implements View.OnClickListener {
      * 点击"暂不更新"，下次再弹窗更新窗口的间隔,小时为单位
      */
     private int mSpaceTimeHour = 8;
+
+    /**
+     * 兼容7.0需要传provider
+     */
+    private String authority;
 
     public UpdateDialog(Activity activity) {
         this.mActivity = activity;
@@ -138,10 +144,15 @@ public class UpdateDialog implements View.OnClickListener {
      * 开始下载
      */
     public void startDownload() {
-//        String fileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() +
-//                File.separatorChar + CommonUtils.MD5(mDownloadUrl) + ".apk";
-        String fileName = mActivity.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() +
-                File.separatorChar + CommonUtils.MD5(mDownloadUrl) + ".apk";
+        String fileName;
+        if (Build.VERSION.SDK_INT >= 29) {//10以上不需要申请权限
+            fileName = mActivity.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() +
+                    File.separatorChar + CommonUtils.MD5(mDownloadUrl) + ".apk";
+        } else {
+            fileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() +
+                    File.separatorChar + CommonUtils.MD5(mDownloadUrl) + ".apk";
+        }
+
         mDownloadUtil = new DownloadUtil(mActivity);
         mDownloadUtil.setOnDownloadListener(mDownloadListener);
         mDownloadUtil.startDownload(fileName, mDownloadUrl);
@@ -212,7 +223,7 @@ public class UpdateDialog implements View.OnClickListener {
         @Override
         public void success(File file) {
             dismissDialog();
-            CommonUtils.install(mActivity, file, false);
+            CommonUtils.install(mActivity, getAuthority(), file, false);
             setIsRunningBackground(false);
         }
 
@@ -396,6 +407,15 @@ public class UpdateDialog implements View.OnClickListener {
 
     public void setDownloadListener(DownloadUtil.OnDownloadListener downloadListener) {
         mDownloadListener = downloadListener;
+    }
+
+    public String getAuthority() {
+        return authority;
+    }
+
+    public UpdateDialog setAuthority(String authority) {
+        this.authority = authority;
+        return this;
     }
 
     public OnUpdateListener getOnUpdateListener() {

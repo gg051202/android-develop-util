@@ -421,12 +421,12 @@ public class CommonUtils {
     }
 
 
-    public static void install(Activity activity, File file, boolean force) {
+    public static void install(Activity activity, String authority, File file, boolean force) {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            Uri apkUri = FileProvider.getUriForFile(activity, activity.getPackageName() + ".mytest", file);
+            Uri apkUri = FileProvider.getUriForFile(activity, authority, file);
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
             try {

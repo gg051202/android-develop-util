@@ -85,6 +85,11 @@ public class CheckUpdateManager {
      */
     private boolean needUpdate;
 
+    /**
+     * 兼容7.0需要穿provider
+     */
+    private String authority;
+
     private Activity mContext;
     private long totalSize = 0;
     private HttpURLConnection mConnection;
@@ -208,7 +213,7 @@ public class CheckUpdateManager {
                     public void onNext(Integer progress) {
                         if (progress == 100) {
                             mManager.cancel(NOTIFICATION_ID);
-                            CommonUtils.install(mContext, downloadFile, false);
+                            CommonUtils.install(mContext, getAuthority(), downloadFile, false);
                         } else {
                             if (progress % 5 == 0 || progress >= 1) {
                                 mBuilder.setProgress(100, progress, false);
@@ -513,4 +518,11 @@ public class CheckUpdateManager {
         return ((System.currentTimeMillis() - latest) > (spaceTimeHour == 0 ? 24 : spaceTimeHour * 3600000L));//24*60*60*1000
     }
 
+    public String getAuthority() {
+        return authority;
+    }
+
+    public void setAuthority(String authority) {
+        this.authority = authority;
+    }
 }
