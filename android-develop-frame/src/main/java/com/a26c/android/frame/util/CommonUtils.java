@@ -2,12 +2,15 @@ package com.a26c.android.frame.util;
 
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.PendingIntent;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.pm.PackageInfo;
+import android.content.pm.PackageInstaller;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.content.res.Resources;
@@ -24,6 +27,7 @@ import android.os.Environment;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
@@ -41,6 +45,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -416,20 +421,106 @@ public class CommonUtils {
     }
 
 
-    public static void install(Context context, File file, boolean force) {
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-            intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
+    public static void install(Activity activity, File file, boolean force) {
+
+        System.out.println(file.getAbsolutePath());
+//        if (Build.VERSION.SDK_INT >= 29) {
+//            androidQInstall(activity, file);
+//        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            Uri apkUri = FileProvider.getUriForFile(activity, activity.getPackageName() + ".mytest", file);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
+            try {
+                activity.startActivity(intent);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         } else {//修复7.0无法更新
-            StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-            StrictMode.setVmPolicy(builder.build());
+            Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            activity.startActivity(intent);
         }
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(intent);
+
         if (force) {
             System.exit(0);
         }
+    }
+
+
+    public static final String PACKAGE_INSTALLED_ACTION =
+            "com.example.android.apis.content.SESSION_API_PACKAGE_INSTALLED";
+
+    private static boolean androidQInstall(Activity activity, File file) {
+        boolean result = true;
+
+        if (Build.VERSION.SDK_INT >= 29) {
+
+            Uri uri = FileProvider.getUriForFile(activity, activity.getPackageName() + ".mytest", file);
+
+            PackageInstaller.Session session = null;
+            try {
+                PackageInstaller packageInstaller = activity.getPackageManager().getPackageInstaller();
+                PackageInstaller.SessionParams params = new PackageInstaller.SessionParams(
+                        PackageInstaller.SessionParams.MODE_FULL_INSTALL);
+                int sessionId = packageInstaller.createSession(params);
+                session = packageInstaller.openSession(sessionId);
+                if (addApkToInstallSession(activity, uri, session)) {
+                    return false;
+                }
+                System.out.println("install");
+
+                // Create an install status receiver.
+                Intent intent = new Intent(activity, activity.getClass());
+                intent.setAction(PACKAGE_INSTALLED_ACTION);
+                PendingIntent pendingIntent = PendingIntent.getActivity(activity, 0, intent, 0);
+                IntentSender statusReceiver = pendingIntent.getIntentSender();
+                // Commit the session (this will start the installation workflow).
+                session.commit(statusReceiver);
+            } catch (IOException e) {
+                e.printStackTrace();
+                result = false;
+            } catch (RuntimeException e) {
+                if (session != null) {
+                    session.abandon();
+                }
+                e.printStackTrace();
+                result = false;
+            }
+
+        }
+        return result;
+    }
+
+    private static boolean addApkToInstallSession(Context context, Uri uri, PackageInstaller.Session session) {
+        // It's recommended to pass the file size to openWrite(). Otherwise installation may fail
+        // if the disk is almost full.
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            try (OutputStream packageInSession = session.openWrite("package", 0, -1);
+                 InputStream is = context.getContentResolver().openInputStream(uri)) {
+                if (is == null) {
+                    System.out.println("is isnull");
+                    return false;
+                }
+
+                byte[] buffer = new byte[16384];
+                int n;
+                while ((n = is.read(buffer)) >= 0) {
+                    packageInSession.write(buffer, 0, n);
+                }
+                return true;
+            } catch (IOException e) {
+                e.printStackTrace();
+
+                return false;
+            }
+
+        }
+
+        return false;
     }
 
 

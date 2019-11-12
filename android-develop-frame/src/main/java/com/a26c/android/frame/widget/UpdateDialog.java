@@ -138,7 +138,9 @@ public class UpdateDialog implements View.OnClickListener {
      * 开始下载
      */
     public void startDownload() {
-        String fileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() +
+//        String fileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() +
+//                File.separatorChar + CommonUtils.MD5(mDownloadUrl) + ".apk";
+        String fileName = mActivity.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() +
                 File.separatorChar + CommonUtils.MD5(mDownloadUrl) + ".apk";
         mDownloadUtil = new DownloadUtil(mActivity);
         mDownloadUtil.setOnDownloadListener(mDownloadListener);

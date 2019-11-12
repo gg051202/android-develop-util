@@ -1,5 +1,6 @@
 package com.a26c.android.frame.util;
 
+import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
@@ -84,7 +85,7 @@ public class CheckUpdateManager {
      */
     private boolean needUpdate;
 
-    private Context mContext;
+    private Activity mContext;
     private long totalSize = 0;
     private HttpURLConnection mConnection;
     private File downloadFile;
@@ -441,11 +442,11 @@ public class CheckUpdateManager {
         private int iconResourceId;
         private boolean isAutoCheck;
         private boolean needUpdate;
-        private Context mContext;
+        private Activity mContext;
         private CharSequence contentTitle;
         private int spaceTimeHour;
 
-        public Builder(Context context) {
+        public Builder(Activity context) {
             mContext = context;
         }
 
