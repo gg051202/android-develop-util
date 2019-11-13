@@ -55,7 +55,7 @@ public class Main2aActivity extends AppCompatActivity implements View.OnClickLis
 
     private void initView() {
         mFangdaiTextView = findViewById(R.id.fangdaiTextView);
-        mSDKTextView =  findViewById(R.id.sdkTextView);
+        mSDKTextView = findViewById(R.id.sdkTextView);
         mFangdaiTextView.setOnClickListener(this);
         mImage = findViewById(R.id.image);
         mButton = findViewById(R.id.button);
@@ -63,7 +63,7 @@ public class Main2aActivity extends AppCompatActivity implements View.OnClickLis
         mCommonMenu = findViewById(R.id.commonMenu);
 
         mCommonMenu.getRedPointView().setEmptyString();
-        mSDKTextView.setText(String.format("Android %s", Build.VERSION.RELEASE));
+        mSDKTextView.setText(String.format("Android %s %s", Build.VERSION.RELEASE, CommonUtils.getSingleId()));
     }
 
     @Override
@@ -254,4 +254,5 @@ public class Main2aActivity extends AppCompatActivity implements View.OnClickLis
             }
         }
     }
+
 }
