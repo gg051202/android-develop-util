@@ -10,11 +10,21 @@
         android:orientation="vertical"
         android:padding="20dp">
 
+        <TextView
+            android:id="@+id/sdkTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textColor="#333333"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+
         <Button
             android:id="@+id/fangdaiTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="算房贷"
+            android:text="安装APK"
             android:textColor="#313131"
             android:textSize="13sp" />
 

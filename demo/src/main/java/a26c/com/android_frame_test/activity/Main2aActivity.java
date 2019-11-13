@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageInstaller;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -14,8 +15,10 @@ import android.text.SpannableStringBuilder;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.a26c.android.frame.util.CommonUtils;
 import com.a26c.android.frame.util.DialogFactory;
 import com.a26c.android.frame.widget.CommonMenu;
 import com.a26c.android.frame.widget.UpdateDialog;
@@ -35,6 +38,7 @@ public class Main2aActivity extends AppCompatActivity implements View.OnClickLis
      * 算房贷
      */
     private Button mFangdaiTextView;
+    private TextView mSDKTextView;
     private ImageView mImage;
     /**
      * 更新
@@ -50,21 +54,21 @@ public class Main2aActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void initView() {
-        mFangdaiTextView = (Button) findViewById(R.id.fangdaiTextView);
+        mFangdaiTextView = findViewById(R.id.fangdaiTextView);
+        mSDKTextView =  findViewById(R.id.sdkTextView);
         mFangdaiTextView.setOnClickListener(this);
-        mImage = (ImageView) findViewById(R.id.image);
-        mButton = (Button) findViewById(R.id.button);
+        mImage = findViewById(R.id.image);
+        mButton = findViewById(R.id.button);
         mButton.setOnClickListener(this);
-        mCommonMenu = (CommonMenu) findViewById(R.id.commonMenu);
+        mCommonMenu = findViewById(R.id.commonMenu);
 
         mCommonMenu.getRedPointView().setEmptyString();
+        mSDKTextView.setText(String.format("Android %s", Build.VERSION.RELEASE));
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            default:
-                break;
             case R.id.fangdaiTextView:
                 UpdateDialog updateDialog = new UpdateDialog(this)
                         .setNeedUpdate(true)
@@ -72,18 +76,35 @@ public class Main2aActivity extends AppCompatActivity implements View.OnClickLis
                         .setDescName("11M")
                         .setDownloadUrl("https://718e31e8894454e98bf531c997f4e6fb.dd.cdntips.com/imtt.dd.qq.com/16891/apk/0EA25E7AB5CEF53B09162351A941A990.apk?mkey=5dca5e157ae94b02&f=8935&fsname=com.kyle.sfc14.jqm_1.11.0807_402.apk&csr=1bbd&cip=122.233.109.247&proto=https")
                         .setIsAutoCheck(false)
+                        .setAuthority(getPackageName() + ".mytest")
                         .setSubmitName("抢先体验")
                         .setCancleName("留在旧版")
                         .setSpaceTimeHour(1);
-                updateDialog.setOnUpdateListener(updateDialog1 ->{
-                    updateDialog1.getAlertDialog().show();
-                    updateDialog1.startDownload();
+                updateDialog.setOnUpdateListener(updateDialog1 -> {
+
+                    if (CommonUtils.isOverAndroid_10()) {
+                        updateDialog1.getAlertDialog().show();
+                        updateDialog1.startDownload();
+                    } else {
+                        checkPermission(new OnCheckPermissionListener() {
+                            @Override
+                            public void success() {
+                                updateDialog1.getAlertDialog().show();
+                                updateDialog1.startDownload();
+                            }
+
+                            @Override
+                            public boolean fail() {
+                                return false;
+                            }
+                        }, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE);
+                    }
+
+
                 });
                 updateDialog.show();
                 break;
             case R.id.button:
-//                DialogFactory.show(this, "提示", "123", "确定", null, "取消", null);
-//                DialogFactory.showProgress(this, "123", false) ;
                 ArrayList<DialogFactory.SimpleChoiceData> list = new ArrayList<>();
                 list.add(new DialogFactory.SimpleChoiceData("1", "1"));
                 DialogFactory.showMulti(this, list, new DialogFactory.OnDialogSelectedListener<DialogFactory.SimpleChoiceData>() {

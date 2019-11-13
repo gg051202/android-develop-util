@@ -22,6 +22,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.net.wifi.aware.PublishConfig;
 import android.os.Build;
 import android.os.Environment;
 import android.os.StrictMode;
@@ -818,6 +819,27 @@ public class CommonUtils {
             e.printStackTrace();
         }
         return "";
+    }
+
+    public static boolean isOverAndroid_10() {
+        return Build.VERSION.SDK_INT >= 29;
+    }
+
+
+    public static boolean isOverAndroid_9() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.P;
+    }
+
+    public static boolean isOverAndroid_8() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O;
+    }
+
+    public static boolean isOverAndroid_7() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N;
+    }
+
+    public static boolean isOverAndroid_6() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
     }
 
 }
