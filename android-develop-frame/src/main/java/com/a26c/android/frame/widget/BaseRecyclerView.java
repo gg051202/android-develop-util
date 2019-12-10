@@ -183,8 +183,6 @@ public class BaseRecyclerView<T> extends FrameLayout {
         mAdapter.addData(data);
         mPageIndex++;
 
-        mAdapter.notifyDataSetChanged();
-
         mRefreshLayout.finishRefresh();
         mRefreshLayout.finishLoadMore();
         RefreshFooter refreshFooter = mRefreshLayout.getRefreshFooter();
