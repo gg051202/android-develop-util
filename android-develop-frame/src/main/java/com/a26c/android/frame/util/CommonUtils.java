@@ -23,7 +23,6 @@ import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
@@ -52,8 +51,6 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
-
-import static android.os.Environment.DIRECTORY_DCIM;
 
 /**
  * Created by guilinlin on 2016/11/18 15:14.
@@ -345,28 +342,6 @@ public class CommonUtils {
         }
     }
 
-    /**
-     * 读/写检查
-     */
-    public boolean isExternalStorageWritable() {
-        String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state)) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * 只读检查
-     */
-    public boolean isExternalStorageReadable() {
-        String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state) ||
-                Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
-            return true;
-        }
-        return false;
-    }
 
     /**
      * 应根据实际展示需要，压缩图片，而不是直接显示原图。手机屏幕比较小，
@@ -639,25 +614,6 @@ public class CommonUtils {
     // 格式化数字显示方式,double类型会显示小数点后很多位
     public static String getTwoPointnumberAuto(float e) {
         return df.format(e);
-    }
-
-    /**
-     * 从View获取Bitmap
-     *
-     * @param view View
-     * @return Bitmap
-     */
-    public static String saveBitmapFromView(View view, String fileName) {
-        view.setDrawingCacheEnabled(true);
-        Bitmap bitmap = view.getDrawingCache();
-        try {
-            File file = new File(Environment.getExternalStoragePublicDirectory(DIRECTORY_DCIM), fileName);
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, new FileOutputStream(file));
-            return file.getAbsolutePath();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 
 
